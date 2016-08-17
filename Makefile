@@ -1,6 +1,6 @@
 
 CC := clang++
-# CC := clang++ --analyze
+CCANALYZE := clang++ --analyze
 
 INC := -I include
 LIB :=
@@ -17,3 +17,6 @@ TARGET := bin/renju
 
 all:
 	$(CC) $(CFLAGS) $(INC) $(LIB) -o $(TARGET) $(SOURCES)
+
+analyze:
+	$(CCANALYZE) $(CFLAGS) $(INC) $(LIB) $(SOURCES)

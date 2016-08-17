@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_API_RENJUAPI_H_
-#define INCLUDE_API_RENJUAPI_H_
+#ifndef INCLUDE_API_RENJU_API_H_
+#define INCLUDE_API_RENJU_API_H_
 
 #include <string>
 
@@ -32,4 +32,4 @@ public:
                                     int  numThreads);
 };
 
-#endif  // INCLUDE_API_RENJUAPI_H_
+#endif  // INCLUDE_API_RENJU_API_H_

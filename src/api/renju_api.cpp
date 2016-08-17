@@ -18,7 +18,7 @@
 
 #include <cstring>
 #include <ai/utils.h>
-#include <api/renjuapi.h>
+#include <api/renju_api.h>
 
 std::string RenjuAPI::renderBoard(const char *board) {
     std::string result = "";

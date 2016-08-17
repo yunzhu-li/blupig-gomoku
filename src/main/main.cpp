@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
-#include <api/renjuapi.h>
+#include <api/renju_api.h>
 
 std::string generateMoveWithCLIArgs(int argc, char const *argv[]) {
     // Initialize arguments
