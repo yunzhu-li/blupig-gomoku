@@ -21,64 +21,57 @@
 #include <cstring>
 #include <api/renjuapi.h>
 
-bool processArguments(int        argc,
-                      char const *argv[],
-                      char       *board_b64,
-                      int        &aiPlayerID,
-                      int        &serachDepth,
-                      int        &numThreads) {
-
+std::string generateMoveWithCLIArgs(int argc, char const *argv[]) {
     // Initialize arguments
-    memset(board_b64, 0, 25);
-    aiPlayerID  = -1;
-    numThreads  = -1;
-    serachDepth = -1;
+    char board_string[225] = {0};
+    int ai_player  = 1;
+    int num_threads  = 1;
+    int search_depth = 1;
 
     // Iterate through arguments
     for (int i = 0; i < argc; i++) {
         const char *arg = argv[i];
         if (strncmp(arg, "-b", 2) == 0) {
             // Check if value exists
-            if (i >= argc - 1) return false;
+            if (i >= argc - 1) continue;
 
-            // Check value length
-            if (strlen(argv[i + 1]) != 24) return false;
-
-            // Copy board
-            strncpy(board_b64, argv[i + 1], 24);
+            // Check length anc copy
+            if (strlen(argv[i + 1]) == 225)
+                memcpy(board_string, argv[i + 1], 225);
 
         } else if (strncmp(arg, "-p", 2) == 0) {
             // AI player ID
-            if (i >= argc - 1) return false;
-            aiPlayerID = atoi(argv[i + 1]);
-
-        } else if (strncmp(arg, "-t", 2) == 0) {
-            // Number of threads
-            if (i >= argc - 1) return false;
-            numThreads = atoi(argv[i + 1]);
+            if (i >= argc - 1) continue;
+            ai_player = atoi(argv[i + 1]);
 
         } else if (strncmp(arg, "-d", 2) == 0) {
             // Search depth
-            if (i >= argc - 1) return false;
-            serachDepth = atoi(argv[i + 1]);
+            if (i >= argc - 1) continue;
+            search_depth = atoi(argv[i + 1]);
+
+        } else if (strncmp(arg, "-t", 2) == 0) {
+            // Number of threads
+            if (i >= argc - 1) continue;
+            num_threads = atoi(argv[i + 1]);
         }
     }
 
-    return true;
+    std::string result = RenjuAPI::generateMove(board_string, ai_player, search_depth, num_threads);
+    return result;
 }
 
 int main(int argc, char const *argv[]) {
-
-    // Process arguments
-    char board_b64[25];
-    int ai_player, num_threads, search_depth;
-    if (!processArguments(argc, argv, board_b64, ai_player, search_depth, num_threads)) {
-        printf("{\"result\": false, \"message\": \"Invalid arguments\"}\n");
+    // Print usage if no arguments provided
+    if (argc < 2) {
+        printf("Usage: renju-parallel -b <board>        The 225-character board state (required)\n");
+        printf("                      [-p <ai_player>]  AI player (1: black, 2: white; default: 1)\n");
+        printf("                      [-d <depth>]      AI Search depth (default: xx)\n");
+        printf("                      [-t <threads>]    Number of threads (default: 1)\n");
         return 1;
     }
 
-    // Call RenjuAPI and print results
-    std::string result = RenjuAPI::generateMove(board_b64, ai_player, search_depth, num_threads);
+    // Process arguments and generate move
+    std::string result = generateMoveWithCLIArgs(argc, argv);
     printf("%s\n", result.c_str());
 
     return 0;

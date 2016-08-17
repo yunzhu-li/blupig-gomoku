@@ -16,20 +16,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_API_RENJUAPI_H_
-#define INCLUDE_API_RENJUAPI_H_
-
-#include <string>
-
-class RenjuAPI {
-public:
-    RenjuAPI();
-    ~RenjuAPI();
-    static std::string renderBoard(const char *board);
-    static std::string generateMove(char *boardBase64,
-                                    int  aiPlayerID,
-                                    int  serachDepth,
-                                    int  numThreads);
-};
-
-#endif  // INCLUDE_API_RENJUAPI_H_
+#include <ai/utils.h>

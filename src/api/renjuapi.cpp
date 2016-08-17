@@ -17,32 +17,41 @@
  */
 
 #include <cstring>
-#include <utils/base64.h>
+#include <ai/utils.h>
 #include <api/renjuapi.h>
 
-std::string RenjuAPI::generateMove(char *boardBase64,
+std::string RenjuAPI::renderBoard(const char *board) {
+    std::string result = "";
+    for (int r = 0; r < 15; r++) {
+        for (int c = 0; c < 15; c++) {
+            result.push_back(RenjuAIUtils::getPiece(board, r, c) + '0');
+            result.push_back(' ');
+        }
+        result.push_back('\n');
+    }
+    return result;
+}
+
+std::string RenjuAPI::generateMove(char *boardString,
                                    int  aiPlayerID,
                                    int  serachDepth,
                                    int  numThreads) {
-
     // Check arguments
-    int dec_len = Base64decode_len(boardBase64);
-    if (dec_len     < 16)                  return "";
+    if (strlen(boardString) != 225)        return "";
     if (aiPlayerID  < 1 || aiPlayerID > 2) return "";
     if (serachDepth < 1)                   return "";
     if (numThreads  < 1)                   return "";
 
-    // Decode board
-    char *buf = new char[dec_len];
-    Base64decode(buf, boardBase64);
-
     // Copy board
-    char *board = new char[16];
-    std::memcpy(board, buf, 16);
+    char *board = new char[225];
+    std::memcpy(board, boardString, 225);
+    for (int i = 0; i < 225; i++) board[i] -= '0';
 
-    // Free temporary buffer
-    delete[] buf;
+    std::string result = "{\"move\":[1, 2]}";
 
-    return "{\"move\":[1, 2]}";
+    // Free memory
+    delete[] board;
+
+    return result;
 }
 

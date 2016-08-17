@@ -16,20 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_API_RENJUAPI_H_
-#define INCLUDE_API_RENJUAPI_H_
+#ifndef INCLUDE_AI_UTILS_H_
+#define INCLUDE_AI_UTILS_H_
 
 #include <string>
 
-class RenjuAPI {
-public:
-    RenjuAPI();
-    ~RenjuAPI();
-    static std::string renderBoard(const char *board);
-    static std::string generateMove(char *boardBase64,
-                                    int  aiPlayerID,
-                                    int  serachDepth,
-                                    int  numThreads);
+class RenjuAIUtils {
+ public:
+    RenjuAIUtils();
+    ~RenjuAIUtils();
+
+    static inline char getPiece(const char *board, int r, int c) {
+        if (r < 0 || r >= 15 || c < 0 || c >= 15) return -1;
+        return board[15 * r + c];
+    }
+
+    static inline bool setPiece(char *board, int r, int c, char value) {
+        if (r < 0 || r >= 15 || c < 0 || c >= 15) return false;
+        board[15 * r + c] = value;
+        return true;
+    }
 };
 
-#endif  // INCLUDE_API_RENJUAPI_H_
+#endif  // INCLUDE_AI_UTILS_H_
