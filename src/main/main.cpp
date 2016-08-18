@@ -16,14 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <cstring>
+#include <iostream>
 #include <api/renju_api.h>
 
 std::string generateMoveWithCLIArgs(int argc, char const *argv[]) {
     // Initialize arguments
-    char board_string[225] = {0};
+    char board_string[226] = {0};
     int ai_player  = 1;
     int num_threads  = 1;
     int search_depth = 1;
@@ -37,7 +36,7 @@ std::string generateMoveWithCLIArgs(int argc, char const *argv[]) {
 
             // Check length anc copy
             if (strlen(argv[i + 1]) == 225)
-                memcpy(board_string, argv[i + 1], 225);
+                memcpy(board_string, argv[i + 1], 226);
 
         } else if (strncmp(arg, "-p", 2) == 0) {
             // AI player ID
@@ -53,6 +52,11 @@ std::string generateMoveWithCLIArgs(int argc, char const *argv[]) {
             // Number of threads
             if (i >= argc - 1) continue;
             num_threads = atoi(argv[i + 1]);
+
+        } else if (strncmp(arg, "test", 4) == 0) {
+            // Build test data
+            for (int i = 0; i < 225; i++)
+                board_string[i] = '0';
         }
     }
 
@@ -63,10 +67,10 @@ std::string generateMoveWithCLIArgs(int argc, char const *argv[]) {
 int main(int argc, char const *argv[]) {
     // Print usage if no arguments provided
     if (argc < 2) {
-        printf("Usage: renju-parallel -b <board>        The 225-character board state (required)\n");
-        printf("                      [-p <ai_player>]  AI player (1: black, 2: white; default: 1)\n");
-        printf("                      [-d <depth>]      AI Search depth (default: xx)\n");
-        printf("                      [-t <threads>]    Number of threads (default: 1)\n");
+        std::cerr << "Usage: renju-parallel -b <board>        The 225-character board state (required)" << std::endl;
+        std::cerr << "                      [-p <ai_player>]  AI player (1: black, 2: white; default: 1)" << std::endl;
+        std::cerr << "                      [-d <depth>]      AI Search depth (default: xx)" << std::endl;
+        std::cerr << "                      [-t <threads>]    Number of threads (default: 1)" << std::endl;
         return 1;
     }
 

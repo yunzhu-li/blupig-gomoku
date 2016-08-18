@@ -20,16 +20,26 @@
 #define INCLUDE_API_RENJU_API_H_
 
 #include <string>
+#include <unordered_map>
 
 class RenjuAPI {
-public:
+ public:
     RenjuAPI();
     ~RenjuAPI();
+
+    // Generate move based on a given game state
+    static std::string generateMove(const char *boardString,
+                                    int        aiPlayerID,
+                                    int        serachDepth,
+                                    int        numThreads);
+
+ private:
+    // Render board to text
     static std::string renderBoard(const char *board);
-    static std::string generateMove(char *boardBase64,
-                                    int  aiPlayerID,
-                                    int  serachDepth,
-                                    int  numThreads);
+
+    // Generate json response
+    static std::string generateResultJson(const std::unordered_map<std::string, std::string> *data,
+                                          const std::string &message);
 };
 
 #endif  // INCLUDE_API_RENJU_API_H_

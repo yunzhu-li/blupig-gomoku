@@ -21,6 +21,30 @@
 #include <utils/json.h>
 #include <api/renju_api.h>
 
+std::string RenjuAPI::generateMove(const char *boardString,
+                                   int        aiPlayerID,
+                                   int        serachDepth,
+                                   int        numThreads) {
+    // Check input data
+    if (strlen(boardString) != 225 ||
+        aiPlayerID  < 1 || aiPlayerID > 2 ||
+        serachDepth < 1 ||
+        numThreads  < 1) {
+        return RenjuAPI::generateResultJson(nullptr, "Invalid input data.");
+    }
+
+    // Copy board
+    char *board = new char[225];
+    std::memcpy(board, boardString, 225);
+    for (int i = 0; i < 225; i++) board[i] -= '0';
+
+    // Free memory
+    delete[] board;
+
+    std::unordered_map<std::string, std::string> data = {{"move_r", "1"}, {"move_c", "2"}};
+    return RenjuAPI::generateResultJson(&data, "ok");
+}
+
 std::string RenjuAPI::renderBoard(const char *board) {
     std::string result = "";
     for (int r = 0; r < 15; r++) {
@@ -33,25 +57,19 @@ std::string RenjuAPI::renderBoard(const char *board) {
     return result;
 }
 
-std::string RenjuAPI::generateMove(char *boardString,
-                                   int  aiPlayerID,
-                                   int  serachDepth,
-                                   int  numThreads) {
-    // Check arguments
-    if (strlen(boardString) != 225)        return "";
-    if (aiPlayerID  < 1 || aiPlayerID > 2) return "";
-    if (serachDepth < 1)                   return "";
-    if (numThreads  < 1)                   return "";
+std::string RenjuAPI::generateResultJson(const std::unordered_map<std::string, std::string> *data,
+                                         const std::string &message) {
+    nlohmann::json result;
+    if (data != nullptr) {
+        // Iterate through map
+        for (auto pair : *data) {
+            result["result"][pair.first] = pair.second;
+        }
+    } else {
+        result["result"] = nullptr;
+    }
+    result["message"] = message;
 
-    // Copy board
-    char *board = new char[225];
-    std::memcpy(board, boardString, 225);
-    for (int i = 0; i < 225; i++) board[i] -= '0';
-
-    std::string result = "{\"move\":[1, 2]}";
-
-    // Free memory
-    delete[] board;
-
-    return result;
+    // Serialize
+    return result.dump();
 }
