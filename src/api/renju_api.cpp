@@ -18,6 +18,7 @@
 
 #include <cstring>
 #include <ai/utils.h>
+#include <utils/json.h>
 #include <api/renju_api.h>
 
 std::string RenjuAPI::renderBoard(const char *board) {
@@ -54,4 +55,3 @@ std::string RenjuAPI::generateMove(char *boardString,
 
     return result;
 }
-

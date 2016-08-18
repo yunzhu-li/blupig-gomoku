@@ -15,3 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#ifndef INCLUDE_AI_EVAL_H_
+#define INCLUDE_AI_EVAL_H_
+
+class RenjuAIEval {
+public:
+    RenjuAIEval();
+    ~RenjuAIEval();
+};
+
+#endif  // INCLUDE_AI_EVAL_H_

@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_AI_RENJU_AI_H_
-#define INCLUDE_AI_RENJU_AI_H_
+#ifndef INCLUDE_AI_AI_H_
+#define INCLUDE_AI_AI_H_
 
 class RenjuAI {
 public:
@@ -25,4 +25,4 @@ public:
     ~RenjuAI();
 };
 
-#endif  // INCLUDE_AI_RENJU_AI_H_
+#endif  // INCLUDE_AI_AI_H_
