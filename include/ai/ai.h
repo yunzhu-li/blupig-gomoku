@@ -20,7 +20,7 @@
 #define INCLUDE_AI_AI_H_
 
 class RenjuAI {
-public:
+ public:
     RenjuAI();
     ~RenjuAI();
 };

@@ -20,7 +20,7 @@
 #define INCLUDE_AI_EVAL_H_
 
 class RenjuAIEval {
-public:
+ public:
     RenjuAIEval();
     ~RenjuAIEval();
 };

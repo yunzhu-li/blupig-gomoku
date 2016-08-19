@@ -49,7 +49,7 @@ std::string RenjuAPI::renderBoard(const char *board) {
     std::string result = "";
     for (int r = 0; r < 15; r++) {
         for (int c = 0; c < 15; c++) {
-            result.push_back(RenjuAIUtils::getPiece(board, r, c) + '0');
+            result.push_back(RenjuAIUtils::getCell(board, r, c) + '0');
             result.push_back(' ');
         }
         result.push_back('\n');

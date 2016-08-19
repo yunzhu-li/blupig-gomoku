@@ -20,7 +20,7 @@
 #define INCLUDE_PARALLEL_CONTROLLER_H_
 
 class RenjuParallelController {
-public:
+ public:
     RenjuParallelController();
     ~RenjuParallelController();
 };

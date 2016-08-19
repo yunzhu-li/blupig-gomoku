@@ -26,12 +26,12 @@ class RenjuAIUtils {
     RenjuAIUtils();
     ~RenjuAIUtils();
 
-    static inline char getPiece(const char *board, int r, int c) {
+    static inline char getCell(const char *board, int r, int c) {
         if (r < 0 || r >= 15 || c < 0 || c >= 15) return -1;
         return board[15 * r + c];
     }
 
-    static inline bool setPiece(char *board, int r, int c, char value) {
+    static inline bool setCell(char *board, int r, int c, char value) {
         if (r < 0 || r >= 15 || c < 0 || c >= 15) return false;
         board[15 * r + c] = value;
         return true;

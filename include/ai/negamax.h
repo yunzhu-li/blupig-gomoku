@@ -20,7 +20,7 @@
 #define INCLUDE_AI_NEGAMAX_H_
 
 class RenjuAINegamax {
-public:
+ public:
     RenjuAINegamax();
     ~RenjuAINegamax();
 };
