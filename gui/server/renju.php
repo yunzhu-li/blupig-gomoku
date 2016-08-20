@@ -27,5 +27,7 @@
     if (isset($_GET['t'])) $cmdline .= ' -t ' . $_GET['t'];
     if (isset($_GET['d'])) $cmdline .= ' -d ' . $_GET['d'];
 
+    header("Access-Control-Allow-Origin: *");
+
     echo(shell_exec($cmdline));
 ?>

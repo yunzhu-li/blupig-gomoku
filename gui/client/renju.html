@@ -1,0 +1,228 @@
+<!doctype html>
+<!--
+    renju-parallel
+    Copyright (C) 2016 Yunzhu Li
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="author" content="Yunzhu Li">
+    <title>Renju</title>
+
+    <script src="jquery-3.1.0.min.js"></script>
+  </head>
+
+  <body style="font-family: Consolas, monospace; font-size: 14px; background-color: #fff; margin: 10px;">
+    <div id="div_gamearea" style="width: 600px; height: 600px; margin: 0 auto; ">
+      <table id="tbl_board" style="border-collapse: collapse; border-spacing: 0; background-color: #ddd;">
+      </table>
+      <br>
+      <span id="txt_msg"></span>
+    </div>
+  </body>
+
+  <script>
+    // Script: Game display control, input and message
+    // Preset graphics
+    var svg_lines = [
+      '<line x1="50%" y1="0" x2="50%" y2="50%" style="stroke:rgb(110,110,110); stroke-width:2px;" />',
+      '<line x1="0" y1="50%" x2="50%" y2="50%" style="stroke:rgb(110,110,110); stroke-width:2px;" />',
+      '<line x1="50%" y1="50%" x2="50%" y2="100%" style="stroke:rgb(110,110,110); stroke-width:2px;" />',
+      '<line x1="50%" y1="50%" x2="100%" y2="50%" style="stroke:rgb(110,110,110); stroke-width:2px;" />'];
+
+    var svg_circles = [
+      '<circle cx="50%" cy="50%" r="32%" fill="#333" />',
+      '<circle cx="50%" cy="50%" r="32%" fill="#fff" />'];
+
+    var colors = ['#bbb', '#777', '#eee'];
+
+    // Bind elements
+    var tbl_board = document.getElementById('tbl_board');
+    var div_gamearea = document.getElementById('div_gamearea');
+
+    // Board
+    var current_board = initBoard();
+
+    // Randomly select first player
+    var human_player = '1';
+    var ai_player = '2';
+    if (Math.random() > 0.5) {
+      human_player = '2';
+      ai_player = '1';
+    }
+
+    if (human_player == '1') showMessage('Player: black');
+    else showMessage('Player: white');
+
+    initGameDisplay();
+    renderCurrentBoard();
+
+    // Game status
+    var game_active = true;
+
+    // Initializes game display
+    function initGameDisplay() {
+
+      // Automatically adjust display size
+      var window_width = Math.min(600, window.innerWidth);
+      var window_height = Math.min(600, window.innerHeight);
+      var window_size = Math.min(window_width, window_height);
+
+      // Game area size
+      div_gamearea.style.width = window_width - 20 + 'px';
+      div_gamearea.style.height = window_height - 20 + 'px';
+
+      // Control table size with cell size
+      var cell_width = Math.floor((window_size - 20) / 15);
+      var cell_height = Math.floor((window_size - 20) / 15);
+
+      // No more blurry
+      cell_width -= cell_width % 2;
+      cell_height -= cell_height % 2;
+
+      // Initializes tbl_board
+      for (var r = 0; r < 15; r++) {
+        var row = tbl_board.insertRow();
+        for (var c = 0; c < 15; c++) {
+          // New cell and data
+          var cell = row.insertCell();
+          cell.r = r; cell.c = c;
+          cell.board_data = '0';
+
+          // Style
+          cell.width = cell_width; cell.height = cell_height;
+          cell.style.padding = '0';
+          cell.style.verticalAlign = 'bottom';
+
+          // Handle click event
+          cell.addEventListener("click", tblBoardOnClick);
+        }
+      }
+    }
+
+    // Renders tbl_board with board data
+    function renderCurrentBoard() {
+      for (var r = 0; r < 15; r++) {
+        for (var c = 0; c < 15; c++) {
+          var cell = tbl_board.rows[r].cells[c];
+          var cell_innerhtml = '<svg style="display: block; width: 100%; height: 100%;">';
+
+          // Skip unchanged cells
+          var cell_value = getCell(current_board, r, c);
+          if (cell.current_val == cell_value) continue;
+          cell.current_val = cell_value;
+
+          // Grid (lines)
+          if (r > 0)  cell_innerhtml += svg_lines[0];
+          if (c > 0)  cell_innerhtml += svg_lines[1];
+          if (r < 14) cell_innerhtml += svg_lines[2];
+          if (c < 14) cell_innerhtml += svg_lines[3];
+
+          // Pieces
+          if (cell_value == '1') cell_innerhtml += svg_circles[0];
+          if (cell_value == '2') cell_innerhtml += svg_circles[1];
+
+          // Update node
+          cell.innerHTML = cell_innerhtml + '</svg>';
+        }
+      }
+    }
+
+    // Update status (callback)
+    function gameStatusUpdate(renju) {
+      // Check if any player wins
+      if (renju != -1) {
+        game_active = false;
+        var player_color = 'Black';
+        if (renju == 1) player_color = 'White';
+        showMessage(player_color + ' wins! <a href=".">Restart</a>');
+      } else {
+        game_active = true;
+
+        if (human_player == '1') showMessage('Player: black');
+        else showMessage('Player: white');
+      }
+    }
+
+    // Handles tbl_board cells click events
+    function tblBoardOnClick(e) {
+      if (!game_active) return;
+      game_active = false;
+      showMessage('Working', '#fff', '#777');
+
+      // Place piece
+      var r = e.currentTarget.r, c = e.currentTarget.c;
+      current_board = replaceCell(current_board, r, c, human_player);
+
+      // Send game status
+      sendGameStatus(current_board, ai_player);
+    }
+
+    // Shows message on page
+    function showMessage(msg, txtColor = '#333', bgColor = '#fff') {
+      var msg_html = '<span style="color:' + txtColor + ';background-color:' + bgColor + ';">' + msg + '</span>';
+      document.getElementById('txt_msg').innerHTML = msg_html;
+    }
+
+    function initBoard() {
+      var b = [];
+      for (var i = 0; i < 225; i++)
+        b.push('0');
+
+      return b.join('');
+    }
+
+    function getCell(board, r, c) {
+      return board[15 * r + c];
+    }
+
+    function replaceCell(board, r, c, val) {
+      var idx = 15 * r + c;
+      return board.substr(0, idx) + val + board.substr(idx + 1);
+    }
+
+    function sendGameStatus(board, ai_player) {
+      var req_url = 'http://127.0.0.1/renju/?b=' + board +
+                    '&p=' + ai_player;
+
+      $.get(req_url, function(data) {
+        // Process response
+        var result = $.parseJSON(data);
+        if (result.result === null) {
+          showMessage('Failed to process response: ' + result.message);
+          return;
+        }
+
+        result = result.result;
+
+        console.log(result);
+
+        var move_r = parseInt(result.move_r);
+        var move_c = parseInt(result.move_c);
+
+        current_board = replaceCell(current_board, move_r, move_c, ai_player);
+        renderCurrentBoard();
+
+        game_active = true;
+        if (human_player == '1') showMessage('Player: black');
+        else showMessage('Player: white');
+
+      });
+    }
+
+  </script>
+</html>

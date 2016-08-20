@@ -34,14 +34,13 @@ std::string RenjuAPI::generateMove(const char *boardString,
     }
 
     // Copy board
-    char *board = new char[225];
+    char board[225];
     std::memcpy(board, boardString, 225);
+
+    // Convert from string
     for (int i = 0; i < 225; i++) board[i] -= '0';
 
-    // Free memory
-    delete[] board;
-
-    std::unordered_map<std::string, std::string> data = {{"move_r", "1"}, {"move_c", "2"}};
+    std::unordered_map<std::string, std::string> data = {{"player_wins", "0"}, {"move_r", "1"}, {"move_c", "2"}};
     return RenjuAPI::generateResultJson(&data, "ok");
 }
 
