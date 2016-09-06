@@ -23,6 +23,8 @@ class RenjuAIEval {
  public:
     RenjuAIEval();
     ~RenjuAIEval();
+
+    static int evalState(const char *board, int player);
 };
 
 #endif  // INCLUDE_AI_EVAL_H_

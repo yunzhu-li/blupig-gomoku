@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <api/renju_api.h>
 #include <cstring>
 #include <iostream>
-#include <api/renju_api.h>
 
 std::string generateMoveWithCLIArgs(int argc, char const *argv[]) {
     // Initialize arguments
@@ -34,7 +34,7 @@ std::string generateMoveWithCLIArgs(int argc, char const *argv[]) {
             // Check if value exists
             if (i >= argc - 1) continue;
 
-            // Check length anc copy
+            // Check length and copy
             if (strlen(argv[i + 1]) == 225)
                 memcpy(board_string, argv[i + 1], 226);
 

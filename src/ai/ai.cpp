@@ -17,3 +17,14 @@
  */
 
 #include <ai/ai.h>
+#include <ai/negamax.h>
+
+void RenjuAI::generateMove(const char *board,
+                           int player,
+                           int serachDepth,
+                           int *move_r,
+                           int *move_c) {
+
+    if (move_r != nullptr) *move_r = 0;
+    if (move_c != nullptr) *move_c = 0;
+}

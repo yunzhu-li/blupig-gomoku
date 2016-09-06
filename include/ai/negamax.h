@@ -23,6 +23,8 @@ class RenjuAINegamax {
  public:
     RenjuAINegamax();
     ~RenjuAINegamax();
+
+    static int negamax(char *board, int player, int depth, int *move_r, int *move_c);
 };
 
 #endif  // INCLUDE_AI_NEGAMAX_H_

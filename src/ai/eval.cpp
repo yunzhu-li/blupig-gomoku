@@ -17,3 +17,8 @@
  */
 
 #include <ai/eval.h>
+
+int RenjuAIEval::evalState(const char *board, int player) {
+    return 0;
+}
+

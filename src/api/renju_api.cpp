@@ -16,10 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cstring>
+#include <api/renju_api.h>
+#include <ai/ai.h>
 #include <ai/utils.h>
 #include <utils/json.h>
-#include <api/renju_api.h>
+#include <cstring>
 
 std::string RenjuAPI::generateMove(const char *boardString,
                                    int        aiPlayerID,
@@ -40,7 +41,14 @@ std::string RenjuAPI::generateMove(const char *boardString,
     // Convert from string
     for (int i = 0; i < 225; i++) board[i] -= '0';
 
-    std::unordered_map<std::string, std::string> data = {{"player_wins", "0"}, {"move_r", "1"}, {"move_c", "2"}};
+    // Generate move
+    int move_r, move_c;
+    RenjuAI::generateMove(board, aiPlayerID, serachDepth, &move_r, &move_c);
+
+    // Generate result map
+    std::unordered_map<std::string, std::string> data = {{"player_wins", "0"},
+                                                         {"move_r", std::to_string(move_r)},
+                                                         {"move_c", std::to_string(move_c)}};
     return RenjuAPI::generateResultJson(&data, "ok");
 }
 
