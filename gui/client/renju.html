@@ -65,8 +65,13 @@
       ai_player = '1';
     }
 
-    if (human_player == '1') showMessage('Player: black');
-    else showMessage('Player: white');
+    if (human_player == '1') {
+      showMessage('Player: black');
+    } else {
+      // Put a piece for black (AI)
+      current_board = replaceCell(current_board, 7, 7, '1');
+      showMessage('Player: white');
+    }
 
     initGameDisplay();
     renderCurrentBoard();
@@ -196,8 +201,9 @@
     }
 
     function sendGameStatus(board, ai_player) {
-      var req_url = 'http://127.0.0.1/renju/?b=' + board +
-                    '&p=' + ai_player;
+      var req_url = 'http://127.0.0.1/renju/?s=' + board +
+                    '&p=' + ai_player +
+                    '&d=1';
 
       $.get(req_url, function(data) {
         // Process response

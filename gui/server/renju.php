@@ -22,7 +22,7 @@
 
     $cmdline = "bin/renju";
 
-    if (isset($_GET['b'])) $cmdline .= ' -b ' . $_GET['b'];
+    if (isset($_GET['s'])) $cmdline .= ' -s ' . $_GET['s'];
     if (isset($_GET['p'])) $cmdline .= ' -p ' . $_GET['p'];
     if (isset($_GET['t'])) $cmdline .= ' -t ' . $_GET['t'];
     if (isset($_GET['d'])) $cmdline .= ' -d ' . $_GET['d'];

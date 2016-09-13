@@ -18,13 +18,28 @@
 
 #include <ai/ai.h>
 #include <ai/negamax.h>
+#include <cstring>
 
-void RenjuAI::generateMove(const char *board,
-                           int player,
-                           int serachDepth,
-                           int *move_r,
-                           int *move_c) {
+void RenjuAI::generateMove(const char *gs,
+                           int         player,
+                           int         serach_depth,
+                           int        *move_r,
+                           int        *move_c,
+                           int        *winning_player) {
+    // Check arguments
+    if (move_r == nullptr ||
+        move_c == nullptr ||
+        winning_player == nullptr) return;
 
-    if (move_r != nullptr) *move_r = 0;
-    if (move_c != nullptr) *move_c = 0;
+    // Initialize data
+    *move_r = 0;
+    *move_c = 0;
+    *winning_player = 0;
+
+    // Copy game state
+    char b[225];
+    std::memcpy(b, gs, 225);
+
+    // Run negamax
+    RenjuAINegamax::negamax(b, player, serach_depth, move_r, move_c);
 }

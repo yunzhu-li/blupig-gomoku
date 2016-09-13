@@ -21,34 +21,39 @@
 #include <ai/utils.h>
 #include <climits>
 
-int RenjuAINegamax::negamax(char *board,
-                            int player,
-                            int depth,
-                            int *move_r,
-                            int *move_c) {
+int RenjuAINegamax::negamax(char *gs, int player, int depth, int *move_r, int *move_c) {
+    // RenjuAIEval::test(gs);
+    // return 0;
+
+    // Initialize with a minimum score
     int max_score = INT_MIN;
 
-    // Eval game
-    if (depth == 0) return RenjuAIEval::evalState(board, player);
+    // Eval game state
+    if (depth == 0) return RenjuAIEval::evalState(gs, player);
 
     // Loop through all cells
     for (int r = 0; r < 15; r++) {
         for (int c = 0; c < 15; c++) {
             // Consider only empty cells
-            if (RenjuAIUtils::getCell(board, r, c) != 0) continue;
+            if (RenjuAIUtils::getCell(gs, r, c) != 0) continue;
+
+            // Skip remote cells (no pieces within 2 cells)
+            if (RenjuAIUtils::remoteCell(gs, r, c)) continue;
 
             // Place piece
-            RenjuAIUtils::setCell(board, r, c, player);
-
-            // Change player
-            player = player == 1 ? 2 : 1;
+            RenjuAIUtils::setCell(gs, r, c, player);
 
             // Run negamax recursively
-            int s = -negamax(board, player, depth - 1, nullptr, nullptr);
+            int s = -negamax(gs,                   // Game state
+                             player == 1 ? 2 : 1,  // Change player
+                             depth - 1,            // Reduce depth by 1
+                             nullptr,              // Result move not required
+                             nullptr);
 
             // Remove piece
-            RenjuAIUtils::setCell(board, r, c, 0);
+            RenjuAIUtils::setCell(gs, r, c, 0);
 
+            // Update max score
             if (s > max_score) {
                 max_score = s;
                 if (move_r != nullptr) *move_r = r;

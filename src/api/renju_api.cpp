@@ -22,41 +22,41 @@
 #include <utils/json.h>
 #include <cstring>
 
-std::string RenjuAPI::generateMove(const char *boardString,
-                                   int        aiPlayerID,
-                                   int        serachDepth,
-                                   int        numThreads) {
+std::string RenjuAPI::generateMove(const char *gs_string,
+                                   int ai_player_id,
+                                   int serach_depth,
+                                   int num_threads) {
     // Check input data
-    if (strlen(boardString) != 225 ||
-        aiPlayerID  < 1 || aiPlayerID > 2 ||
-        serachDepth < 1 ||
-        numThreads  < 1) {
-        return RenjuAPI::generateResultJson(nullptr, "Invalid input data.");
+    if (strlen(gs_string) != 225 ||
+        ai_player_id  < 1 || ai_player_id > 2 ||
+        serach_depth < 1 || serach_depth > 10 ||
+        num_threads  < 1) {
+        return generateResultJson(nullptr, "Invalid input data.");
     }
 
-    // Copy board
-    char board[225];
-    std::memcpy(board, boardString, 225);
+    // Copy game state
+    char gs[225];
+    std::memcpy(gs, gs_string, 225);
 
     // Convert from string
-    for (int i = 0; i < 225; i++) board[i] -= '0';
+    for (int i = 0; i < 225; i++) gs[i] -= '0';
 
     // Generate move
-    int move_r, move_c;
-    RenjuAI::generateMove(board, aiPlayerID, serachDepth, &move_r, &move_c);
+    int move_r, move_c, winning_player;
+    RenjuAI::generateMove(gs, ai_player_id, serach_depth, &move_r, &move_c, &winning_player);
 
     // Generate result map
-    std::unordered_map<std::string, std::string> data = {{"player_wins", "0"},
+    std::unordered_map<std::string, std::string> data = {{"winning_player", std::to_string(winning_player)},
                                                          {"move_r", std::to_string(move_r)},
                                                          {"move_c", std::to_string(move_c)}};
-    return RenjuAPI::generateResultJson(&data, "ok");
+    return generateResultJson(&data, "ok");
 }
 
-std::string RenjuAPI::renderBoard(const char *board) {
+std::string RenjuAPI::renderGameState(const char *gs) {
     std::string result = "";
     for (int r = 0; r < 15; r++) {
         for (int c = 0; c < 15; c++) {
-            result.push_back(RenjuAIUtils::getCell(board, r, c) + '0');
+            result.push_back(RenjuAIUtils::getCell(gs, r, c) + '0');
             result.push_back(' ');
         }
         result.push_back('\n');

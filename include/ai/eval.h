@@ -19,12 +19,51 @@
 #ifndef INCLUDE_AI_EVAL_H_
 #define INCLUDE_AI_EVAL_H_
 
+#include <vector>
+
 class RenjuAIEval {
  public:
     RenjuAIEval();
     ~RenjuAIEval();
 
-    static int evalState(const char *board, int player);
+    static int evalState(const char *gs, int player);
+    static void test(char *gs);
+
+ private:
+    struct DirectionMeasurement {
+        int length;
+        int cut_count;
+        int space_count;
+    };
+
+    struct DirectionPattern {
+        int min_occurrence;
+        int length;
+        int cut_count;
+        int space_count;
+    };
+
+    static std::vector<std::vector<DirectionPattern>> *preset_patterns;
+    static std::vector<int> *preset_scores;
+
+    static int evalPosition(const char *gs, int r, int c, int player);
+    static void generatePresetPatterns();
+    static int evalADM(std::vector<DirectionMeasurement *> *all_direction_measurement);
+    static int matchPattern(std::vector<DirectionMeasurement *> *all_direction_measurement,
+                            std::vector<DirectionPattern> *patterns);
+
+    static std::vector<DirectionMeasurement *> *measureAllDirections(const char *gs,
+                                                                     int r,
+                                                                     int c,
+                                                                     int player,
+                                                                     bool contiguous);
+
+    static DirectionMeasurement *measureDirection(const char *gs,
+                                                  int r, int c,
+                                                  int dr, int dc,
+                                                  int player,
+                                                  bool contiguous);
+
 };
 
 #endif  // INCLUDE_AI_EVAL_H_

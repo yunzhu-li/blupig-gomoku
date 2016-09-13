@@ -28,14 +28,14 @@ class RenjuAPI {
     ~RenjuAPI();
 
     // Generate move based on a given game state
-    static std::string generateMove(const char *boardString,
-                                    int        aiPlayerID,
-                                    int        serachDepth,
-                                    int        numThreads);
+    static std::string generateMove(const char *gs_string,
+                                    int ai_player_id,
+                                    int serach_depth,
+                                    int num_threads);
 
  private:
-    // Render board to text
-    static std::string renderBoard(const char *board);
+    // Render game state into text
+    static std::string renderGameState(const char *gs);
 
     // Generate json response
     static std::string generateResultJson(const std::unordered_map<std::string, std::string> *data,

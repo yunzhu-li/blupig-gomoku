@@ -24,8 +24,12 @@ class RenjuAI {
     RenjuAI();
     ~RenjuAI();
 
-    static void generateMove(const char *board, int player, int serachDepth,
-                             int *move_r, int *move_c);
+    static void generateMove(const char *gs,
+                             int         player,
+                             int         serach_depth,
+                             int        *move_r,
+                             int        *move_c,
+                             int        *winning_player);
 };
 
 #endif  // INCLUDE_AI_AI_H_
