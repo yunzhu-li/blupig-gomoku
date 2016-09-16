@@ -27,6 +27,8 @@ class RenjuAIEval {
     ~RenjuAIEval();
 
     static int evalState(const char *gs, int player);
+    static int evalMove(const char *gs, int r, int c, int player);
+    static int winningPlayer(const char *gs);
     static void test(char *gs);
 
  private:
@@ -46,7 +48,6 @@ class RenjuAIEval {
     static std::vector<std::vector<DirectionPattern>> *preset_patterns;
     static std::vector<int> *preset_scores;
 
-    static int evalPosition(const char *gs, int r, int c, int player);
     static void generatePresetPatterns();
     static int evalADM(std::vector<DirectionMeasurement *> *all_direction_measurement);
     static int matchPattern(std::vector<DirectionMeasurement *> *all_direction_measurement,

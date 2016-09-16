@@ -165,12 +165,15 @@
 
     // Handles tbl_board cells click events
     function tblBoardOnClick(e) {
+      var r = e.currentTarget.r, c = e.currentTarget.c;
+
       if (!game_active) return;
+      if (getCell(current_board, r, c) != '0') return;
+
       game_active = false;
       showMessage('Working', '#fff', '#777');
 
       // Place piece
-      var r = e.currentTarget.r, c = e.currentTarget.c;
       current_board = replaceCell(current_board, r, c, human_player);
 
       // Send game status
@@ -203,7 +206,7 @@
     function sendGameStatus(board, ai_player) {
       var req_url = 'http://127.0.0.1/renju/?s=' + board +
                     '&p=' + ai_player +
-                    '&d=1';
+                    '&d=3';
 
       $.get(req_url, function(data) {
         // Process response

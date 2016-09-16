@@ -28,25 +28,38 @@ std::vector<std::vector<RenjuAIEval::DirectionPattern>>
 std::vector<int> *RenjuAIEval::preset_scores = nullptr;
 
 int RenjuAIEval::evalState(const char *gs, int player) {
+    // Check parameters
+    if (gs == nullptr) return 0;
+
     int score = 0;
     for (int r = 0; r < 15; r++) {
         for (int c = 0; c < 15; c++) {
-            score += evalPosition(gs, r, c, player);
+            score += evalMove(gs, r, c, player);
         }
     }
     return score;
 }
 
-int RenjuAIEval::evalPosition(const char *gs, int r, int c, int player) {
+int RenjuAIEval::evalMove(const char *gs, int r, int c, int player) {
+    // Check parameters
+    if (gs == nullptr) return 0;
+
+    // Generate preset patterns structure in memory
     if (preset_patterns == nullptr) generatePresetPatterns();
 
     int score = 0;
     for (bool contiguous = false;; contiguous = true) {
         auto adm = measureAllDirections(gs, r, c, player, contiguous);
+
+        // Choose the better between contiguous and non-contiguous
         score = std::max(score, evalADM(adm));
+
+        // Release ADM
+        for (auto dm : *adm) delete dm;
+        delete adm;
+
         if (contiguous == true) break;
     }
-
     return score;
 }
 
@@ -160,6 +173,13 @@ RenjuAIEval::DirectionMeasurement *RenjuAIEval::measureDirection(const char *gs,
         cr = r; cc = c;
         dr = -dr; dc = -dc;
     }
+
+    // More than 5 pieces in a row is equivalent to 5 pieces
+    if (result->length >= 5 && result->space_count == 0) {
+        result->length = 5;
+        result->cut_count = 0;
+    }
+
     return result;
 }
 
@@ -221,6 +241,27 @@ void RenjuAIEval::generatePresetPatterns() {
     }
 }
 
+int RenjuAIEval::winningPlayer(const char *gs) {
+    for (int r = 0; r < 15; r++) {
+        for (int c = 0; c < 15; c++) {
+            int cell = RenjuAIUtils::getCell(gs, r, c);
+            if (cell == 0) continue;
+            for (int dr = -1; dr <= 1; dr++) {
+                for (int dc = -1; dc <= 1; dc++) {
+                    if (dr == 0 && dc <= 0) continue;
+                    auto dm = measureDirection(gs, r, c, dr, dc, cell, 1);
+                    if (dm->length >= 5) {
+                        delete dm;
+                        return cell;
+                    }
+                    delete dm;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 void RenjuAIEval::test(char *gs) {
     // Unit test
     RenjuAIUtils::setCell(gs, 2, 2, 1);
@@ -266,7 +307,7 @@ void RenjuAIEval::test(char *gs) {
 
     std::cout << std::endl;
 
-    std::cout << evalPosition(gs, 2, 3, 1) << std::endl;
+    std::cout << evalMove(gs, 2, 3, 1) << std::endl;
 
     std::cout << evalState(gs, 1) << std::endl;
 

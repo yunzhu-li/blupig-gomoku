@@ -17,7 +17,9 @@
  */
 
 #include <ai/ai.h>
+#include <ai/eval.h>
 #include <ai/negamax.h>
+#include <ai/utils.h>
 #include <cstring>
 
 void RenjuAI::generateMove(const char *gs,
@@ -36,10 +38,20 @@ void RenjuAI::generateMove(const char *gs,
     *move_c = 0;
     *winning_player = 0;
 
+    // Check if anyone wins the game
+    *winning_player = RenjuAIEval::winningPlayer(gs);
+    if (*winning_player != 0) return;
+
     // Copy game state
     char b[225];
     std::memcpy(b, gs, 225);
 
     // Run negamax
-    RenjuAINegamax::negamax(b, player, serach_depth, move_r, move_c);
+    RenjuAINegamax::heuristicNegamax(b, player, serach_depth, move_r, move_c);
+
+    // Check if anyone wins the game
+    // Execute the move
+    std::memcpy(b, gs, 225);
+    RenjuAIUtils::setCell(b, *move_r, *move_c, player);
+    *winning_player = RenjuAIEval::winningPlayer(b);
 }

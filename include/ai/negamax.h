@@ -19,16 +19,32 @@
 #ifndef INCLUDE_AI_NEGAMAX_H_
 #define INCLUDE_AI_NEGAMAX_H_
 
+#include <vector>
+
 class RenjuAINegamax {
  public:
     RenjuAINegamax();
     ~RenjuAINegamax();
 
-    static int negamax(char *gs,
-                       int   player,
-                       int   depth,
-                       int  *move_r,
-                       int  *move_c);
+    static int negamax(char *gs, int player, int depth,
+                       int *move_r, int *move_c);
+
+    static int heuristicNegamax(char *gs, int player, int depth,
+                                int *move_r, int *move_c);
+
+ private:
+    struct Move {
+        int heuristic_val;
+        int r;
+        int c;
+
+        bool operator<(Move other) const {
+            return heuristic_val > other.heuristic_val;
+        }
+    };
+
+    static std::vector<Move> *searchMoveOrdered(char *gs, int player);
+
 };
 
 #endif  // INCLUDE_AI_NEGAMAX_H_

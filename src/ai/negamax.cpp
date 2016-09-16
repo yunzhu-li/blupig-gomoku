@@ -19,12 +19,81 @@
 #include <ai/negamax.h>
 #include <ai/eval.h>
 #include <ai/utils.h>
+#include <algorithm>
 #include <climits>
 
-int RenjuAINegamax::negamax(char *gs, int player, int depth, int *move_r, int *move_c) {
-    // RenjuAIEval::test(gs);
-    // return 0;
+int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
+                                     int *move_r, int *move_c) {
+    if (depth == 0) return 0;
+    int max_score = INT_MIN;
 
+    auto moves = searchMoveOrdered(gs, player);
+
+    int size = moves->size();
+    for (int i = 0; i < size; i++) {
+        auto move = (*moves)[i];
+
+        if (move.heuristic_val >= 100000) {
+            max_score = move.heuristic_val;
+            if (move_r != nullptr) *move_r = move.r;
+            if (move_c != nullptr) *move_c = move.c;
+            break;
+        }
+
+        // Execute move
+        RenjuAIUtils::setCell(gs, move.r, move.c, player);
+
+        // Run negamax recursively
+        int score = heuristicNegamax(gs,                   // Game state
+                                     player == 1 ? 2 : 1,  // Change player
+                                     depth - 1,            // Reduce depth by 1
+                                     nullptr,              // Result move not required
+                                     nullptr);
+
+        // A little bit more aggressive
+        score *= 0.9;
+
+        // Restore
+        RenjuAIUtils::setCell(gs, move.r, move.c, 0);
+
+        if (move.heuristic_val - score > max_score) {
+            max_score = move.heuristic_val - score;
+            if (move_r != nullptr) *move_r = move.r;
+            if (move_c != nullptr) *move_c = move.c;
+        }
+    }
+
+    // Release memory
+    delete moves;
+
+    return max_score;
+}
+
+std::vector<RenjuAINegamax::Move> *RenjuAINegamax::searchMoveOrdered(char *gs, int player) {
+    std::vector<Move> *result = new std::vector<Move>();
+
+    // Loop through all cells
+    for (int r = 0; r < 15; r++) {
+        for (int c = 0; c < 15; c++) {
+            // Consider only empty cells
+            if (RenjuAIUtils::getCell(gs, r, c) != 0) continue;
+
+            // Skip remote cells (no pieces within 2 cells)
+            if (RenjuAIUtils::remoteCell(gs, r, c)) continue;
+
+            Move m;
+            m.r = r;
+            m.c = c;
+            m.heuristic_val = RenjuAIEval::evalMove(gs, r, c, player);
+
+            result->push_back(m);
+        }
+    }
+    std::sort(result->begin(), result->end());
+    return result;
+}
+
+int RenjuAINegamax::negamax(char *gs, int player, int depth, int *move_r, int *move_c) {
     // Initialize with a minimum score
     int max_score = INT_MIN;
 
