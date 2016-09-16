@@ -19,19 +19,68 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="keywords" content="Renju">
     <meta name="author" content="Yunzhu Li">
     <title>Renju</title>
 
-    <script src="jquery-3.1.0.min.js"></script>
+    <link href="assets/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/yl-v4-main.css" rel="stylesheet">
+    <link href="assets/proxima_nova.css" rel="stylesheet">
+    <script src="assets/jquery-3.1.0.min.js"></script>
   </head>
 
-  <body style="font-family: Consolas, monospace; font-size: 14px; background-color: #fff; margin: 10px;">
-    <div id="div_gamearea" style="width: 600px; height: 600px; margin: 0 auto; ">
-      <table id="tbl_board" style="border-collapse: collapse; border-spacing: 0; background-color: #ddd;">
-      </table>
-      <br>
-      <span id="txt_msg"></span>
+  <body style="font-size: 14px; background-color: #fff; margin: 10px;">
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Renju</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+
+            <li><a href="https://yunzhu.li/contact/" target="_blank">Contact</a></li>
+            <li><a href="https://github.com/yunzhu-li/renju-parallel" target="_blank">Project on Github</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid" style="padding-top:10px;">
+      <div class="row">
+        <!-- Renju -->
+        <div class="col-md-8">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Game</h3>
+            </div>
+            <div id="panel_gamearea" class="panel-body text-center">
+              <div id="div_gamearea" style="margin: 0 auto; ">
+                <table id="tbl_board" style="border-collapse: collapse; border-spacing: 0; background-color: #efefef;">
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Status -->
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title">Status</h3></div>
+            <div id="panel_status" class="panel-body"></div>
+            <ul id="list_status" class="list-group">
+              <li class="list-group-item">Cras justo odio</li>
+              <li class="list-group-item">Cras justo odio</li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 
@@ -83,23 +132,21 @@
     function initGameDisplay() {
 
       // Automatically adjust display size
-      var window_width = Math.min(600, window.innerWidth);
-      var window_height = Math.min(600, window.innerHeight);
-      var window_size = Math.min(window_width, window_height);
-
-      // Game area size
-      div_gamearea.style.width = window_width - 20 + 'px';
-      div_gamearea.style.height = window_height - 20 + 'px';
+      var container_size = panel_gamearea.offsetWidth - 32;
 
       // Control table size with cell size
-      var cell_width = Math.floor((window_size - 20) / 15);
-      var cell_height = Math.floor((window_size - 20) / 15);
+      var cell_width = Math.floor((container_size) / 15);
+      var cell_height = Math.floor((container_size) / 15);
 
       // No more blurry
       cell_width -= cell_width % 2;
       cell_height -= cell_height % 2;
 
-      // Initializes tbl_board
+      // Set containing div size
+      div_gamearea.style.width = cell_width * 15 + 'px';
+      div_gamearea.style.height = cell_height * 15 + 'px';
+
+      // Initialize tbl_board
       for (var r = 0; r < 15; r++) {
         var row = tbl_board.insertRow();
         for (var c = 0; c < 15; c++) {
@@ -147,22 +194,6 @@
       }
     }
 
-    // Update status (callback)
-    function gameStatusUpdate(renju) {
-      // Check if any player wins
-      if (renju != -1) {
-        game_active = false;
-        var player_color = 'Black';
-        if (renju == 1) player_color = 'White';
-        showMessage(player_color + ' wins! <a href=".">Restart</a>');
-      } else {
-        game_active = true;
-
-        if (human_player == '1') showMessage('Player: black');
-        else showMessage('Player: white');
-      }
-    }
-
     // Handles tbl_board cells click events
     function tblBoardOnClick(e) {
       var r = e.currentTarget.r, c = e.currentTarget.c;
@@ -171,19 +202,21 @@
       if (getCell(current_board, r, c) != '0') return;
 
       game_active = false;
-      showMessage('Working', '#fff', '#777');
+      showMessage('Working', '#ff9800');
 
       // Place piece
       current_board = replaceCell(current_board, r, c, human_player);
+      renderCurrentBoard();
 
       // Send game status
       sendGameStatus(current_board, ai_player);
     }
 
     // Shows message on page
-    function showMessage(msg, txtColor = '#333', bgColor = '#fff') {
-      var msg_html = '<span style="color:' + txtColor + ';background-color:' + bgColor + ';">' + msg + '</span>';
-      document.getElementById('txt_msg').innerHTML = msg_html;
+    function showMessage(msg, statusColor = '#00c853', txtColor = '#333', bgColor = '#fff') {
+      var msg_html = '<div class="status-indicator" style="background-color:' + statusColor + ';"></div>'
+      msg_html += ' <span style="color:' + txtColor + ';background-color:' + bgColor + ';">' + msg + '</span>';
+      document.getElementById('panel_status').innerHTML = msg_html;
     }
 
     function initBoard() {
@@ -218,8 +251,6 @@
 
         result = result.result;
 
-        console.log(result);
-
         var move_r = parseInt(result.move_r);
         var move_c = parseInt(result.move_c);
 
@@ -227,8 +258,8 @@
         renderCurrentBoard();
 
         game_active = true;
-        if (human_player == '1') showMessage('Player: black');
-        else showMessage('Player: white');
+        if (human_player == '1') showMessage('Ready<br>Player: black');
+        else showMessage('Ready<br>Player: white');
 
       });
     }
