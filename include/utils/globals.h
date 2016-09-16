@@ -16,21 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_AI_AI_H_
-#define INCLUDE_AI_AI_H_
+#ifndef INCLUDE_UTILS_GLOBALS_H_
+#define INCLUDE_UTILS_GLOBALS_H_
 
-class RenjuAI {
- public:
-    RenjuAI();
-    ~RenjuAI();
+extern int g_eval_count;
 
-    static void generateMove(const char *gs,
-                             int         player,
-                             int         serach_depth,
-                             int        *move_r,
-                             int        *move_c,
-                             int        *winning_player,
-                             int        *eval_count);
-};
-
-#endif  // INCLUDE_AI_AI_H_
+#endif  // INCLUDE_UTILS_GLOBALS_H_

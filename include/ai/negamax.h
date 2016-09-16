@@ -43,7 +43,7 @@ class RenjuAINegamax {
         }
     };
 
-    static std::vector<Move> *searchMoveOrdered(char *gs, int player);
+    static std::vector<Move> *searchMovesOrdered(char *gs, int player);
 
 };
 

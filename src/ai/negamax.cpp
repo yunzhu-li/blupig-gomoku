@@ -27,7 +27,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
     if (depth == 0) return 0;
     int max_score = INT_MIN;
 
-    auto moves = searchMoveOrdered(gs, player);
+    auto moves = searchMovesOrdered(gs, player);
 
     int size = moves->size();
     for (int i = 0; i < size; i++) {
@@ -69,7 +69,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
     return max_score;
 }
 
-std::vector<RenjuAINegamax::Move> *RenjuAINegamax::searchMoveOrdered(char *gs, int player) {
+std::vector<RenjuAINegamax::Move> *RenjuAINegamax::searchMovesOrdered(char *gs, int player) {
     std::vector<Move> *result = new std::vector<Move>();
 
     // Loop through all cells

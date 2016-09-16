@@ -20,6 +20,7 @@
 #include <ai/eval.h>
 #include <ai/negamax.h>
 #include <ai/utils.h>
+#include <utils/globals.h>
 #include <cstring>
 
 void RenjuAI::generateMove(const char *gs,
@@ -27,11 +28,15 @@ void RenjuAI::generateMove(const char *gs,
                            int         serach_depth,
                            int        *move_r,
                            int        *move_c,
-                           int        *winning_player) {
+                           int        *winning_player,
+                           int        *eval_count) {
     // Check arguments
     if (move_r == nullptr ||
         move_c == nullptr ||
         winning_player == nullptr) return;
+
+    // Initialize evaluation counter
+    g_eval_count = 0;
 
     // Initialize data
     *move_r = 0;
@@ -54,4 +59,7 @@ void RenjuAI::generateMove(const char *gs,
     std::memcpy(b, gs, 225);
     RenjuAIUtils::setCell(b, *move_r, *move_c, player);
     *winning_player = RenjuAIEval::winningPlayer(b);
+
+    // Write evaluation count
+    if (eval_count != nullptr) *eval_count = g_eval_count;
 }

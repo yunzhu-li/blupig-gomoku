@@ -21,6 +21,7 @@
 #include <ai/utils.h>
 #include <utils/json.h>
 #include <cstring>
+#include <ctime>
 
 std::string RenjuAPI::generateMove(const char *gs_string,
                                    int ai_player_id,
@@ -41,14 +42,25 @@ std::string RenjuAPI::generateMove(const char *gs_string,
     // Convert from string
     for (int i = 0; i < 225; i++) gs[i] -= '0';
 
+    // Record start time
+    std::clock_t clock_begin = std::clock();
+
     // Generate move
-    int move_r, move_c, winning_player;
-    RenjuAI::generateMove(gs, ai_player_id, serach_depth, &move_r, &move_c, &winning_player);
+    int move_r, move_c, winning_player, eval_count;
+    RenjuAI::generateMove(gs, ai_player_id, serach_depth, &move_r, &move_c, &winning_player, &eval_count);
+
+    // Calculate elapsed CPU time
+    std::clock_t clock_end = std::clock();
+    int elapsed_time = (clock_end - clock_begin) * 1000 / CLOCKS_PER_SEC;
 
     // Generate result map
     std::unordered_map<std::string, std::string> data = {{"winning_player", std::to_string(winning_player)},
                                                          {"move_r", std::to_string(move_r)},
-                                                         {"move_c", std::to_string(move_c)}};
+                                                         {"move_c", std::to_string(move_c)},
+                                                         {"eval_count", std::to_string(eval_count)},
+                                                         {"num_threads", std::to_string(serach_depth)},
+                                                         {"serach_depth", std::to_string(serach_depth)},
+                                                         {"elapsed_time", std::to_string(elapsed_time)}};
     return generateResultJson(&data, "ok");
 }
 

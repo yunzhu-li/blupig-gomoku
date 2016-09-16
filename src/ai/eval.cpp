@@ -18,6 +18,7 @@
 
 #include <ai/eval.h>
 #include <ai/utils.h>
+#include <utils/globals.h>
 #include <climits>
 #include <iostream>
 
@@ -44,6 +45,9 @@ int RenjuAIEval::evalMove(const char *gs, int r, int c, int player) {
     // Check parameters
     if (gs == nullptr) return 0;
 
+    // Count evaluation
+    g_eval_count++;
+
     // Generate preset patterns structure in memory
     if (preset_patterns == nullptr) generatePresetPatterns();
 
@@ -58,7 +62,7 @@ int RenjuAIEval::evalMove(const char *gs, int r, int c, int player) {
         for (auto dm : *adm) delete dm;
         delete adm;
 
-        if (contiguous == true) break;
+        if (contiguous) break;
     }
     return score;
 }
