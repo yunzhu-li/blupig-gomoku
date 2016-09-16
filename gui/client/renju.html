@@ -28,6 +28,7 @@
     <link href="assets/yl-v4-main.css" rel="stylesheet">
     <link href="assets/proxima_nova.css" rel="stylesheet">
     <script src="assets/jquery-3.1.0.min.js"></script>
+    <script src="assets/bootstrap.min.js"></script>
   </head>
 
   <body style="font-size: 14px; background-color: #fff; margin: 10px;">
@@ -239,7 +240,7 @@
     function sendGameStatus(board, ai_player) {
       var req_url = 'http://127.0.0.1/renju/?s=' + board +
                     '&p=' + ai_player +
-                    '&d=3';
+                    '&d=4';
 
       $.get(req_url, function(data) {
         // Process response
@@ -250,6 +251,8 @@
         }
 
         result = result.result;
+
+        console.log(1000 * result.eval_count / result.elapsed_time);
 
         var move_r = parseInt(result.move_r);
         var move_c = parseInt(result.move_c);

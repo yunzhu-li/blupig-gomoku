@@ -17,3 +17,7 @@
  */
 
 int g_eval_count = 0;
+int g_cc_0 = 0;
+int g_cc_1 = 0;
+int g_cc_2 = 0;
+int g_cc_3 = 0;

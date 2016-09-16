@@ -19,6 +19,7 @@
 #include <api/renju_api.h>
 #include <ai/ai.h>
 #include <ai/utils.h>
+#include <utils/globals.h>
 #include <utils/json.h>
 #include <cstring>
 #include <ctime>
@@ -58,9 +59,11 @@ std::string RenjuAPI::generateMove(const char *gs_string,
                                                          {"move_r", std::to_string(move_r)},
                                                          {"move_c", std::to_string(move_c)},
                                                          {"eval_count", std::to_string(eval_count)},
-                                                         {"num_threads", std::to_string(serach_depth)},
+                                                         {"num_threads", std::to_string(num_threads)},
                                                          {"serach_depth", std::to_string(serach_depth)},
-                                                         {"elapsed_time", std::to_string(elapsed_time)}};
+                                                         {"elapsed_time", std::to_string(elapsed_time)},
+                                                         {"cc_0", std::to_string(g_cc_0)},
+                                                         {"cc_1", std::to_string(g_cc_1)}};
     return generateResultJson(&data, "ok");
 }
 

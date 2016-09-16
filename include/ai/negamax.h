@@ -44,7 +44,6 @@ class RenjuAINegamax {
     };
 
     static std::vector<Move> *searchMovesOrdered(char *gs, int player);
-
 };
 
 #endif  // INCLUDE_AI_NEGAMAX_H_

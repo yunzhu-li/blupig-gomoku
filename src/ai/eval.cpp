@@ -19,11 +19,12 @@
 #include <ai/eval.h>
 #include <ai/utils.h>
 #include <utils/globals.h>
-#include <climits>
 #include <iostream>
+#include <climits>
+#include <ctime>
 
 // Define static members
-std::vector<std::vector<RenjuAIEval::DirectionPattern>>
+std::vector<std::vector<RenjuAIEval::DirectionPattern *> *>
     *RenjuAIEval::preset_patterns = nullptr;
 
 std::vector<int> *RenjuAIEval::preset_scores = nullptr;
@@ -45,7 +46,7 @@ int RenjuAIEval::evalMove(const char *gs, int r, int c, int player) {
     // Check parameters
     if (gs == nullptr) return 0;
 
-    // Count evaluation
+    // Count evaluations
     g_eval_count++;
 
     // Generate preset patterns structure in memory
@@ -71,13 +72,13 @@ int RenjuAIEval::evalADM(std::vector<DirectionMeasurement *> *all_direction_meas
     int score = 0;
     int size = preset_patterns->size();
     for (int i = 0; i < size; i++) {
-        score += matchPattern(all_direction_measurement, &(*preset_patterns)[i]) * (*preset_scores)[i];
+        score += matchPattern(all_direction_measurement, (*preset_patterns)[i]) * (*preset_scores)[i];
     }
     return score;
 }
 
 int RenjuAIEval::matchPattern(std::vector<DirectionMeasurement *> *all_direction_measurement,
-                              std::vector<DirectionPattern> *patterns) {
+                              std::vector<DirectionPattern *> *patterns) {
     // Check arguments
     if (all_direction_measurement == nullptr) return -1;
     if (patterns == nullptr) return -1;
@@ -89,12 +90,12 @@ int RenjuAIEval::matchPattern(std::vector<DirectionMeasurement *> *all_direction
         pattern_match_count = 0;
 
         for (auto dm : *all_direction_measurement) {
-            if (dm->length == p.length && dm->cut_count == p.cut_count &&
-                (p.space_count == -1 || dm->space_count == p.space_count)) {
+            if (dm->length == p->length && dm->cut_count == p->cut_count &&
+                (p->space_count == -1 || dm->space_count == p->space_count)) {
                 pattern_match_count++;
             }
         }
-        if (pattern_match_count < p.min_occurrence) pattern_match_count = 0;
+        if (pattern_match_count < p->min_occurrence) pattern_match_count = 0;
         match_count = std::min(match_count, pattern_match_count);
     }
     return match_count;
@@ -112,6 +113,7 @@ std::vector<RenjuAIEval::DirectionMeasurement *>
 
     //
     auto result = new std::vector<DirectionMeasurement *>();
+    result->reserve(8);
 
     //
     for (int dr = 0; dr <= 1; dr++) {
@@ -224,18 +226,18 @@ void RenjuAIEval::generatePresetPatterns() {
         1
     };
 
-    preset_patterns = new std::vector<std::vector<DirectionPattern>>();
+    preset_patterns = new std::vector<std::vector<DirectionPattern *> *>();
     preset_scores = new std::vector<int>();
 
     for (auto pattern : patterns) {
-        std::vector<DirectionPattern> p;
+        std::vector<DirectionPattern *> *p = new std::vector<DirectionPattern *>();
         for (auto dir_pattern : pattern) {
-            DirectionPattern dp;
-            dp.min_occurrence = dir_pattern[0];
-            dp.length         = dir_pattern[1];
-            dp.cut_count      = dir_pattern[2];
-            dp.space_count    = dir_pattern[3];
-            p.push_back(dp);
+            DirectionPattern *dp = new DirectionPattern();
+            dp->min_occurrence = dir_pattern[0];
+            dp->length         = dir_pattern[1];
+            dp->cut_count      = dir_pattern[2];
+            dp->space_count    = dir_pattern[3];
+            p->push_back(dp);
         }
         preset_patterns->push_back(p);
     }
@@ -303,9 +305,9 @@ void RenjuAIEval::test(char *gs) {
     p1.cut_count = 0;
     p1.space_count = -1;
 
-    std::vector<DirectionPattern> patterns;
-    patterns.push_back(p);
-    patterns.push_back(p1);
+    std::vector<DirectionPattern *> patterns;
+    patterns.push_back(&p);
+    patterns.push_back(&p1);
 
     std::cout << matchPattern(adm, &patterns) << std::endl;
 

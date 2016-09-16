@@ -55,8 +55,10 @@ std::string generateMoveWithCLIArgs(int argc, char const *argv[]) {
 
         } else if (strncmp(arg, "test", 4) == 0) {
             // Build test data
-            for (int i = 0; i < 225; i++)
-                gs_string[i] = '0';
+            // for (int i = 0; i < 225; i++)
+            //     gs_string[i] = '0';
+            memcpy(gs_string, "000000000000000000000000000000000000000000000000000001000000000000002000000000000001010000000000021000000000000211000000000000222000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", 226);
+            search_depth = 4;
         }
     }
 

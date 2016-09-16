@@ -19,8 +19,11 @@
 #include <ai/negamax.h>
 #include <ai/eval.h>
 #include <ai/utils.h>
+#include <utils/globals.h>
 #include <algorithm>
+#include <iostream>
 #include <climits>
+#include <ctime>
 
 int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
                                      int *move_r, int *move_c) {
@@ -33,7 +36,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
     for (int i = 0; i < size; i++) {
         auto move = (*moves)[i];
 
-        if (move.heuristic_val >= 100000) {
+        if (move.heuristic_val >= 50000) {
             max_score = move.heuristic_val;
             if (move_r != nullptr) *move_r = move.r;
             if (move_c != nullptr) *move_c = move.c;
@@ -61,6 +64,8 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
             if (move_r != nullptr) *move_r = move.r;
             if (move_c != nullptr) *move_c = move.c;
         }
+
+        if (score < 200 && i >= 5) break;
     }
 
     // Release memory

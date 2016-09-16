@@ -20,5 +20,9 @@
 #define INCLUDE_UTILS_GLOBALS_H_
 
 extern int g_eval_count;
+extern int g_cc_0;
+extern int g_cc_1;
+extern int g_cc_2;
+extern int g_cc_3;
 
 #endif  // INCLUDE_UTILS_GLOBALS_H_

@@ -45,13 +45,13 @@ class RenjuAIEval {
         int space_count;
     };
 
-    static std::vector<std::vector<DirectionPattern>> *preset_patterns;
+    static std::vector<std::vector<DirectionPattern *> *> *preset_patterns;
     static std::vector<int> *preset_scores;
 
     static void generatePresetPatterns();
     static int evalADM(std::vector<DirectionMeasurement *> *all_direction_measurement);
     static int matchPattern(std::vector<DirectionMeasurement *> *all_direction_measurement,
-                            std::vector<DirectionPattern> *patterns);
+                            std::vector<DirectionPattern *> *patterns);
 
     static std::vector<DirectionMeasurement *> *measureAllDirections(const char *gs,
                                                                      int r,

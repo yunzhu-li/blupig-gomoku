@@ -1,6 +1,7 @@
 
 CC := clang++
 CCANALYZE := clang++ --analyze
+CCPROF := g++ -pg
 
 INC := -I include
 LIB :=
@@ -25,3 +26,8 @@ debug:
 analyze:
 	@mkdir -p $(BINDIR)
 	@$(CCANALYZE) $(CFLAGS) $(INC) $(LIB) $(SOURCES)
+
+profile:
+	@mkdir -p $(BINDIR)
+	@$(CCPROF) $(CFLAGS) $(INC) $(LIB) $(SOURCES)
+
