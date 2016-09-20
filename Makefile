@@ -1,19 +1,21 @@
 
-CC := clang++
+CC        := clang++
 CCANALYZE := clang++ --analyze
-CCPROF := g++ -pg
+CCPROF    := g++ -pg
 
-INC := -I include
-LIB :=
+INC    := -I include
+LIB    :=
 CFLAGS := -std=c++11
 
-SRCDIR := src
-SRCEXT := cpp
+SRCDIR  := src
+SRCEXT  := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 
-BINDIR := bin
-TARGET := $(BINDIR)/renju
+BINDIR     := bin
+PROFDIR    := bin/prof
+TARGET     := $(BINDIR)/renju
+PROFTARGET := $(PROFDIR)/a.out
 
 all:
 	@mkdir -p $(BINDIR)
@@ -28,6 +30,6 @@ analyze:
 	@$(CCANALYZE) $(CFLAGS) $(INC) $(LIB) $(SOURCES)
 
 profile:
-	@mkdir -p $(BINDIR)
-	@$(CCPROF) $(CFLAGS) $(INC) $(LIB) $(SOURCES)
+	@mkdir -p $(PROFDIR)
+	@$(CCPROF) $(CFLAGS) $(INC) $(LIB) -o $(PROFTARGET) $(SOURCES)
 

@@ -19,51 +19,71 @@
 #ifndef INCLUDE_AI_EVAL_H_
 #define INCLUDE_AI_EVAL_H_
 
-#include <vector>
-
 class RenjuAIEval {
  public:
     RenjuAIEval();
     ~RenjuAIEval();
 
+    // Evaluate the entire game state as a player
     static int evalState(const char *gs, int player);
+
+    // Evaluate one possible move as a player
     static int evalMove(const char *gs, int r, int c, int player);
+
+    // Check if any player is winning based on a given state
     static int winningPlayer(const char *gs);
+
+    // Unit tests
     static void test(char *gs);
 
  private:
+
+    // Result of a single direction measurement
     struct DirectionMeasurement {
-        int length;
-        int cut_count;
-        int space_count;
+        char length;          // Number of pieces in a row
+        char block_count;     // Number of ends blocked by edge or the other player (0-2)
+        char space_count;     // Number of spaces in the middle of pattern
     };
 
+    // A single direction pattern
     struct DirectionPattern {
-        int min_occurrence;
-        int length;
-        int cut_count;
-        int space_count;
+        char min_occurrence;  // Minimum number of occurrences to match
+        char length;          // Length of pattern (pieces in a row)
+        char block_count;     // Number of ends blocked by edge or the other player (0-2)
+        char space_count;     // Number of spaces in the middle of pattern (-1: Ignore value)
     };
 
-    static std::vector<std::vector<DirectionPattern *> *> *preset_patterns;
-    static std::vector<int> *preset_scores;
+    // An array of preset patterns
+    static DirectionPattern *preset_patterns;
 
+    // Preset scores of each preset pattern
+    static int *preset_scores;
+
+    // Loads preset patterns into memory
     static void generatePresetPatterns();
-    static int evalADM(std::vector<DirectionMeasurement *> *all_direction_measurement);
-    static int matchPattern(std::vector<DirectionMeasurement *> *all_direction_measurement,
-                            std::vector<DirectionPattern *> *patterns);
 
-    static std::vector<DirectionMeasurement *> *measureAllDirections(const char *gs,
-                                                                     int r,
-                                                                     int c,
-                                                                     int player,
-                                                                     bool contiguous);
+    // Evaluates an all-direction measurement
+    static int evalADM(DirectionMeasurement *all_direction_measurement);
 
-    static DirectionMeasurement *measureDirection(const char *gs,
-                                                  int r, int c,
-                                                  int dr, int dc,
-                                                  int player,
-                                                  bool contiguous);
+    // Tries to match a set of patterns with an all-direction measurement
+    static int matchPattern(DirectionMeasurement *all_direction_measurement,
+                            DirectionPattern *patterns);
+
+    // Measures all 4 directions
+    static void measureAllDirections(const char *gs,
+                                     int r,
+                                     int c,
+                                     int player,
+                                     bool contiguous,
+                                     RenjuAIEval::DirectionMeasurement *adm);
+
+    // Measure a single direction
+    static void measureDirection(const char *gs,
+                                 int r, int c,
+                                 int dr, int dc,
+                                 int player,
+                                 bool contiguous,
+                                 RenjuAIEval::DirectionMeasurement *result);
 
 };
 

@@ -65,7 +65,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
             if (move_c != nullptr) *move_c = move.c;
         }
 
-        if (score < 200 && i >= 5) break;
+        if (score < 200 && i >= 7) break;
     }
 
     // Release memory
