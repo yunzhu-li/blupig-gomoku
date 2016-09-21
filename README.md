@@ -6,6 +6,6 @@ Currently runs single-threaded, I'm working on the parallelization, pattern anal
 
 The game requires C++ compiler, PHP, a web server and some configurations to run.
 
-A live version is hosted on: [https://yunzhu.li/renju](https://yunzhu.li/renju)
+A live version is hosted on: [https://yunzhu.li/apps/renju](https://yunzhu.li/apps/renju)
 
 ![Alt text](gui/screenshots/00.png?raw=true "Screenshot")

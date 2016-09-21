@@ -19,7 +19,7 @@ PROFTARGET := $(PROFDIR)/a.out
 
 all:
 	@mkdir -p $(BINDIR)
-	@$(CC) $(CFLAGS) $(INC) $(LIB) -o $(TARGET) $(SOURCES)
+	@$(CC) $(CFLAGS) $(INC) $(LIB) -Ofast -o $(TARGET) $(SOURCES)
 
 debug:
 	@mkdir -p $(BINDIR)

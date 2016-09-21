@@ -21,9 +21,7 @@
 #include <ai/utils.h>
 #include <utils/globals.h>
 #include <algorithm>
-#include <iostream>
 #include <climits>
-#include <ctime>
 
 int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
                                      int *move_r, int *move_c) {
@@ -59,7 +57,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
                                      nullptr);
 
         // A little bit more aggressive
-        score *= 0.9;
+        if (score > 10) score -= 1;
 
         // Restore
         RenjuAIUtils::setCell(gs, move.r, move.c, 0);
@@ -72,7 +70,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
         }
 
         // An experimental pruning
-        if (score < 200 && i >= 10) break;
+        if (score < 100 && i >= 15) break;
     }
 
     // Release memory
