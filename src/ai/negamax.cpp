@@ -72,7 +72,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
         }
 
         // An experimental pruning
-        if (score < 500 && i >= 7) break;
+        if (score < 200 && i >= 10) break;
     }
 
     // Release memory

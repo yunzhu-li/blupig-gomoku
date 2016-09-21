@@ -231,6 +231,7 @@
 
     // Generates a new board after replacing a cell
     function replaceCell(board, r, c, val) {
+      if (r < 0 || r >= 15 || c < 0 || c >= 15) return board;
       var idx = 15 * r + c;
       return board.substr(0, idx) + val + board.substr(idx + 1);
     }

@@ -42,8 +42,8 @@ void RenjuAI::generateMove(const char *gs,
     g_pm_count = 0;
 
     // Initialize data
-    *move_r = 0;
-    *move_c = 0;
+    *move_r = -1;
+    *move_c = -1;
     *winning_player = 0;
 
     // Check if anyone wins the game
