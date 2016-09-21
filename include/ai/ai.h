@@ -30,7 +30,8 @@ class RenjuAI {
                              int        *move_r,
                              int        *move_c,
                              int        *winning_player,
-                             int        *eval_count);
+                             int        *eval_count,
+                             int        *pm_count);
 };
 
 #endif  // INCLUDE_AI_AI_H_

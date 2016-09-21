@@ -25,7 +25,10 @@
     if (isset($_GET['s'])) $cmdline .= ' -s ' . $_GET['s'];
     if (isset($_GET['p'])) $cmdline .= ' -p ' . $_GET['p'];
     if (isset($_GET['t'])) $cmdline .= ' -t ' . $_GET['t'];
-    if (isset($_GET['d'])) $cmdline .= ' -d ' . $_GET['d'];
+    // if (isset($_GET['d'])) $cmdline .= ' -d ' . $_GET['d'];
+
+    // Set search depth to 4
+    $cmdline .= ' -d 4';
 
     header("Access-Control-Allow-Origin: *");
 

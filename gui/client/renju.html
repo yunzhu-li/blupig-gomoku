@@ -41,7 +41,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/">Renju</a>
+          <a class="navbar-brand" href=".">Renju</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -59,7 +59,7 @@
         <div class="col-md-8">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Game</h3>
+              <h3 class="panel-title">Board</h3>
             </div>
             <div id="panel_gamearea" class="panel-body text-center">
               <div id="div_gamearea" style="margin: 0 auto; ">
@@ -72,13 +72,13 @@
         <!-- Status -->
         <div class="col-md-4">
           <div class="panel panel-default">
-            <div class="panel-heading"><h3 class="panel-title">Status</h3></div>
+            <div class="panel-heading"><h3 class="panel-title">Game Status</h3></div>
             <div id="panel_status" class="panel-body"></div>
-            <ul id="list_status" class="list-group">
-              <li class="list-group-item">Cras justo odio</li>
-              <li class="list-group-item">Cras justo odio</li>
-            </ul>
+          </div>
 
+          <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title">Statistics</h3></div>
+            <div id="panel_stats" class="panel-body" style="font-family: 'Monaco','Consolas','monospace'; font-size: 10px;"></div>
           </div>
         </div>
       </div>
@@ -92,7 +92,9 @@
       '<line x1="50%" y1="0" x2="50%" y2="50%" style="stroke:rgb(110,110,110); stroke-width:2px;" />',
       '<line x1="0" y1="50%" x2="50%" y2="50%" style="stroke:rgb(110,110,110); stroke-width:2px;" />',
       '<line x1="50%" y1="50%" x2="50%" y2="100%" style="stroke:rgb(110,110,110); stroke-width:2px;" />',
-      '<line x1="50%" y1="50%" x2="100%" y2="50%" style="stroke:rgb(110,110,110); stroke-width:2px;" />'];
+      '<line x1="50%" y1="50%" x2="100%" y2="50%" style="stroke:rgb(110,110,110); stroke-width:2px;" />',
+      '<line x1="35%" y1="50%" x2="65%" y2="50%" style="stroke:rgb(150,150,150); stroke-width:2px;" />' +
+      '<line x1="50%" y1="35%" x2="50%" y2="65%" style="stroke:rgb(150,150,150); stroke-width:2px;" />'];
 
     var svg_circles = [
       '<circle cx="50%" cy="50%" r="32%" fill="#333" />',
@@ -104,30 +106,38 @@
     var tbl_board = document.getElementById('tbl_board');
     var div_gamearea = document.getElementById('div_gamearea');
 
-    // Board
-    var current_board = initBoard();
+    // Global game variables
+    var game_active;
+    var current_board;
+    var human_player, ai_player;
 
-    // Randomly select first player
-    var human_player = '1';
-    var ai_player = '2';
-    if (Math.random() > 0.5) {
-      human_player = '2';
-      ai_player = '1';
+    init();
+
+    // Initializes client
+    function init() {
+      // Board
+      current_board = initBoard();
+
+      // Randomly select first player
+      human_player = '1';
+      ai_player = '2';
+      if (Math.random() > 0.5) {
+        human_player = '2';
+        ai_player = '1';
+      }
+
+      if (human_player == '2') {
+        // Put a piece for black (AI)
+        current_board = replaceCell(current_board, 7, 7, '1');
+      }
+
+      initGameDisplay();
+      renderCurrentBoard();
+
+      // Game status
+      game_active = true;
+      updateStatusPanel('Connected', playerColors());
     }
-
-    if (human_player == '1') {
-      showMessage('Player: black');
-    } else {
-      // Put a piece for black (AI)
-      current_board = replaceCell(current_board, 7, 7, '1');
-      showMessage('Player: white');
-    }
-
-    initGameDisplay();
-    renderCurrentBoard();
-
-    // Game status
-    var game_active = true;
 
     // Initializes game display
     function initGameDisplay() {
@@ -168,7 +178,7 @@
     }
 
     // Renders tbl_board with board data
-    function renderCurrentBoard() {
+    function renderCurrentBoard(new_piece_r, new_piece_c) {
       for (var r = 0; r < 15; r++) {
         for (var c = 0; c < 15; c++) {
           var cell = tbl_board.rows[r].cells[c];
@@ -176,8 +186,8 @@
 
           // Skip unchanged cells
           var cell_value = getCell(current_board, r, c);
-          if (cell.current_val == cell_value) continue;
-          cell.current_val = cell_value;
+          if (cell.cache_val == cell_value) continue;
+          cell.cache_val = cell_value;
 
           // Grid (lines)
           if (r > 0)  cell_innerhtml += svg_lines[0];
@@ -189,9 +199,48 @@
           if (cell_value == '1') cell_innerhtml += svg_circles[0];
           if (cell_value == '2') cell_innerhtml += svg_circles[1];
 
+          // Mark new piece
+          if (typeof new_piece_r !== 'undefined' && typeof new_piece_c !== 'undefined') {
+            if (new_piece_r == r && new_piece_c == c) {
+              cell_innerhtml += svg_lines[4];
+
+              // Refresh cell in next rendering
+              cell.cache_val = -2;
+            }
+          }
+
           // Update node
           cell.innerHTML = cell_innerhtml + '</svg>';
         }
+      }
+    }
+
+    // Initializes empty board
+    function initBoard() {
+      var b = [];
+      for (var i = 0; i < 225; i++)
+        b.push('0');
+
+      return b.join('');
+    }
+
+    // Gets cell value
+    function getCell(board, r, c) {
+      return board[15 * r + c];
+    }
+
+    // Generates a new board after replacing a cell
+    function replaceCell(board, r, c, val) {
+      var idx = 15 * r + c;
+      return board.substr(0, idx) + val + board.substr(idx + 1);
+    }
+
+    // Generates an HTML string of player colors
+    function playerColors() {
+      if (human_player == '1') {
+        return 'Player: black<br>AI: white';
+      } else {
+        return 'Player: white<br>AI: black';
       }
     }
 
@@ -203,69 +252,91 @@
       if (getCell(current_board, r, c) != '0') return;
 
       game_active = false;
-      showMessage('Working', '#ff9800');
+      updateStatusPanel('Working', playerColors(), '#ff9800');
 
       // Place piece
       current_board = replaceCell(current_board, r, c, human_player);
-      renderCurrentBoard();
+      renderCurrentBoard(r, c);
 
       // Send game status
       sendGameStatus(current_board, ai_player);
     }
 
-    // Shows message on page
-    function showMessage(msg, statusColor = '#00c853', txtColor = '#333', bgColor = '#fff') {
-      var msg_html = '<div class="status-indicator" style="background-color:' + statusColor + ';"></div>'
-      msg_html += ' <span style="color:' + txtColor + ';background-color:' + bgColor + ';">' + msg + '</span>';
-      document.getElementById('panel_status').innerHTML = msg_html;
+    // Updates status panel
+    function updateStatusPanel(status, message, statusColor) {
+      if (typeof statusColor === 'undefined') statusColor = '#00c853';
+
+      // Generate status indicator
+      var status_html = '<div class="status-indicator" style="background-color:' + statusColor + ';"></div>';
+
+      // Append message
+      status_html += ' ' + status;
+      status_html += '<br><br>' + message;
+      document.getElementById('panel_status').innerHTML = status_html;
     }
 
-    function initBoard() {
-      var b = [];
-      for (var i = 0; i < 225; i++)
-        b.push('0');
-
-      return b.join('');
-    }
-
-    function getCell(board, r, c) {
-      return board[15 * r + c];
-    }
-
-    function replaceCell(board, r, c, val) {
-      var idx = 15 * r + c;
-      return board.substr(0, idx) + val + board.substr(idx + 1);
-    }
-
+    // Sends status to backend api
     function sendGameStatus(board, ai_player) {
-      var req_url = 'http://127.0.0.1/renju/?s=' + board +
-                    '&p=' + ai_player +
-                    '&d=4';
+      var req_url = 'http://127.0.0.1/renju/?s=' + board + '&p=' + ai_player;
 
       $.get(req_url, function(data) {
-        // Process response
-        var result = $.parseJSON(data);
-        if (result.result === null) {
-          showMessage('Failed to process response: ' + result.message);
-          return;
-        }
-
-        result = result.result;
-
-        console.log(1000 * result.eval_count / result.elapsed_time);
-
-        var move_r = parseInt(result.move_r);
-        var move_c = parseInt(result.move_c);
-
-        current_board = replaceCell(current_board, move_r, move_c, ai_player);
-        renderCurrentBoard();
-
-        game_active = true;
-        if (human_player == '1') showMessage('Ready<br>Player: black');
-        else showMessage('Ready<br>Player: white');
-
+        processResponse(data);
       });
     }
 
+    // Process response from backend api
+    function processResponse(data) {
+      // Process response
+      var result = $.parseJSON(data);
+      if (result.result === null) {
+        updateStatusPanel('Error', 'Failed to process response: ' + result.message, '#f44336');
+        return;
+      }
+
+      // Extract data
+      result = result.result;
+
+      // Update board
+      current_board = replaceCell(current_board, parseInt(result.move_r), parseInt(result.move_c), ai_player);
+      renderCurrentBoard(result.move_r, result.move_c);
+
+      // Winning
+      if (result.winning_player == '1') {
+        updateStatusPanel('Black wins! <a href="."><u>Restart</u></a>', playerColors(), '#448aff');
+      } else if (result.winning_player == '2') {
+        updateStatusPanel('White wins! <a href="."><u>Restart</u></a>', playerColors(), '#448aff');
+      } else {
+        game_active = true;
+        updateStatusPanel('Connected', playerColors());
+      }
+
+      // Stats
+      if (result.cpu_time == '0') result.cpu_time = '1';
+
+      // Parse numbers
+      result.cpu_time = parseInt(result.cpu_time);
+      result.num_threads = parseInt(result.num_threads);
+      result.eval_count = parseInt(result.eval_count);
+      result.pm_count = parseInt(result.pm_count);
+
+      // Build stats output
+      var stats_html = '';
+      stats_html += 'CPU time: ' + result.cpu_time / 1000 + 's';
+      stats_html += '<br>Threads: ' + result.num_threads;
+      stats_html += '<br>Moves evaluated: ' + numberWithCommas(result.eval_count) +
+                    '(' + numberWithCommas(Math.floor(1000 * result.eval_count / result.cpu_time)) + '/s)';
+
+      stats_html += '<br>Patterns matched: ' + numberWithCommas(result.pm_count) +
+                    '(' + numberWithCommas(Math.floor(1000 * result.pm_count / result.cpu_time)) + '/s)';
+
+
+
+      document.getElementById('panel_stats').innerHTML = stats_html;
+    }
+
+    // Formats a number with commas as thousands separators
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
   </script>
 </html>

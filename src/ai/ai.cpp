@@ -30,14 +30,16 @@ void RenjuAI::generateMove(const char *gs,
                            int        *move_r,
                            int        *move_c,
                            int        *winning_player,
-                           int        *eval_count) {
+                           int        *eval_count,
+                           int        *pm_count) {
     // Check arguments
     if (move_r == nullptr ||
         move_c == nullptr ||
         winning_player == nullptr) return;
 
-    // Initialize evaluation counter
+    // Initialize counters
     g_eval_count = 0;
+    g_pm_count = 0;
 
     // Initialize data
     *move_r = 0;
@@ -61,6 +63,7 @@ void RenjuAI::generateMove(const char *gs,
     RenjuAIUtils::setCell(b, *move_r, *move_c, player);
     *winning_player = RenjuAIEval::winningPlayer(b);
 
-    // Write evaluation count
+    // Write counters
     if (eval_count != nullptr) *eval_count = g_eval_count;
+    if (pm_count != nullptr) *pm_count = g_eval_count * 30;
 }

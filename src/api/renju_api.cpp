@@ -47,21 +47,24 @@ std::string RenjuAPI::generateMove(const char *gs_string,
     std::clock_t clock_begin = std::clock();
 
     // Generate move
-    int move_r, move_c, winning_player, eval_count;
-    RenjuAI::generateMove(gs, ai_player_id, serach_depth, &move_r, &move_c, &winning_player, &eval_count);
+    int move_r, move_c, winning_player, eval_count, pm_count;
+    RenjuAI::generateMove(gs, ai_player_id, serach_depth,
+                          &move_r, &move_c, &winning_player, &eval_count, &pm_count);
 
     // Calculate elapsed CPU time
     std::clock_t clock_end = std::clock();
-    int elapsed_time = (clock_end - clock_begin) * 1000 / CLOCKS_PER_SEC;
+    int cpu_time = (clock_end - clock_begin) * 1000 / CLOCKS_PER_SEC;
 
     // Generate result map
-    std::unordered_map<std::string, std::string> data = {{"winning_player", std::to_string(winning_player)},
-                                                         {"move_r", std::to_string(move_r)},
+    std::unordered_map<std::string, std::string> data = {{"move_r", std::to_string(move_r)},
                                                          {"move_c", std::to_string(move_c)},
-                                                         {"eval_count", std::to_string(eval_count)},
+                                                         {"winning_player", std::to_string(winning_player)},
+                                                         {"ai_player", std::to_string(ai_player_id)},
+                                                         // {"serach_depth", std::to_string(serach_depth)},
+                                                         {"cpu_time", std::to_string(cpu_time)},
                                                          {"num_threads", std::to_string(num_threads)},
-                                                         {"serach_depth", std::to_string(serach_depth)},
-                                                         {"elapsed_time", std::to_string(elapsed_time)},
+                                                         {"eval_count", std::to_string(eval_count)},
+                                                         {"pm_count", std::to_string(pm_count)},
                                                          {"cc_0", std::to_string(g_cc_0)},
                                                          {"cc_1", std::to_string(g_cc_1)}};
     return generateResultJson(&data, "ok");
@@ -83,7 +86,7 @@ std::string RenjuAPI::generateResultJson(const std::unordered_map<std::string, s
                                          const std::string &message) {
     nlohmann::json result;
     if (data != nullptr) {
-        // Iterate through map
+        // Add all k-v pairs to the result map
         for (auto pair : *data) {
             result["result"][pair.first] = pair.second;
         }

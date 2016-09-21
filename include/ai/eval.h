@@ -74,7 +74,7 @@ class RenjuAIEval {
                                      int r,
                                      int c,
                                      int player,
-                                     bool contiguous,
+                                     bool consecutive,
                                      RenjuAIEval::DirectionMeasurement *adm);
 
     // Measure a single direction
@@ -82,7 +82,7 @@ class RenjuAIEval {
                                  int r, int c,
                                  int dr, int dc,
                                  int player,
-                                 bool contiguous,
+                                 bool consecutive,
                                  RenjuAIEval::DirectionMeasurement *result);
 
 };

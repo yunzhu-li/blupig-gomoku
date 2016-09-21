@@ -27,15 +27,20 @@
 
 int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
                                      int *move_r, int *move_c) {
+    // End condition
     if (depth == 0) return 0;
+
     int max_score = INT_MIN;
 
+    // Search and sort possible moves
     auto moves = searchMovesOrdered(gs, player);
 
+    // Loop through every move
     int size = moves->size();
     for (int i = 0; i < size; i++) {
         auto move = (*moves)[i];
 
+        // Stop if a winning move is found
         if (move.heuristic_val >= 50000) {
             max_score = move.heuristic_val;
             if (move_r != nullptr) *move_r = move.r;
@@ -59,13 +64,15 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
         // Restore
         RenjuAIUtils::setCell(gs, move.r, move.c, 0);
 
+        // Update maximum score
         if (move.heuristic_val - score > max_score) {
             max_score = move.heuristic_val - score;
             if (move_r != nullptr) *move_r = move.r;
             if (move_c != nullptr) *move_c = move.c;
         }
 
-        if (score < 200 && i >= 7) break;
+        // An experimental pruning
+        if (score < 500 && i >= 7) break;
     }
 
     // Release memory
@@ -89,6 +96,8 @@ std::vector<RenjuAINegamax::Move> *RenjuAINegamax::searchMovesOrdered(char *gs, 
             Move m;
             m.r = r;
             m.c = c;
+
+            // Evaluate move
             m.heuristic_val = RenjuAIEval::evalMove(gs, r, c, player);
 
             result->push_back(m);
@@ -114,7 +123,7 @@ int RenjuAINegamax::negamax(char *gs, int player, int depth, int *move_r, int *m
             // Skip remote cells (no pieces within 2 cells)
             if (RenjuAIUtils::remoteCell(gs, r, c)) continue;
 
-            // Place piece
+            // Execute move
             RenjuAIUtils::setCell(gs, r, c, player);
 
             // Run negamax recursively
@@ -124,7 +133,7 @@ int RenjuAINegamax::negamax(char *gs, int player, int depth, int *move_r, int *m
                              nullptr,              // Result move not required
                              nullptr);
 
-            // Remove piece
+            // Restore
             RenjuAIUtils::setCell(gs, r, c, 0);
 
             // Update max score

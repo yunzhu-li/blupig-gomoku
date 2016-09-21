@@ -33,16 +33,19 @@ class RenjuAINegamax {
                                 int *move_r, int *move_c);
 
  private:
+    // A move (candidate)
     struct Move {
         int heuristic_val;
         int r;
         int c;
 
+        // Overloads < for sorting
         bool operator<(Move other) const {
             return heuristic_val > other.heuristic_val;
         }
     };
 
+    // Search possible moves based on a given state, sorted by heuristic values.
     static std::vector<Move> *searchMovesOrdered(char *gs, int player);
 };
 

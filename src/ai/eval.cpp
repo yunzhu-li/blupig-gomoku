@@ -22,7 +22,7 @@
 #include <climits>
 #include <cstring>
 
-// Define global variables
+// Initialize global variables
 RenjuAIEval::DirectionPattern *RenjuAIEval::preset_patterns = nullptr;
 int *RenjuAIEval::preset_scores = nullptr;
 int preset_patterns_size = 0;
@@ -54,16 +54,16 @@ int RenjuAIEval::evalMove(const char *gs, int r, int c, int player) {
     // Allocate 4 direction measurements
     DirectionMeasurement adm[4];
 
-    // Measure in contiguous and non-contiguous conditions
+    // Measure in consecutive and non-consecutive conditions
     int score = 0;
-    for (bool contiguous = false;; contiguous = true) {
+    for (bool consecutive = false;; consecutive = true) {
         // Execute measurement
-        measureAllDirections(gs, r, c, player, contiguous, adm);
+        measureAllDirections(gs, r, c, player, consecutive, adm);
 
-        // Choose the better between contiguous and non-contiguous
+        // Choose the better between consecutive and non-consecutive
         score = std::max(score, evalADM(adm));
 
-        if (contiguous) break;
+        if (consecutive) break;
     }
     return score;
 }
@@ -120,24 +120,24 @@ void RenjuAIEval::measureAllDirections(const char *gs,
                                        int r,
                                        int c,
                                        int player,
-                                       bool contiguous,
+                                       bool consecutive,
                                        RenjuAIEval::DirectionMeasurement *adm) {
     // Check arguments
     if (gs == nullptr) return;
     if (r < 0 || r >= 15 || c < 0 || c >= 15) return;
 
     // Measure 4 directions
-    measureDirection(gs, r, c, 0,  1, player, contiguous, &adm[0]);
-    measureDirection(gs, r, c, 1, -1, player, contiguous, &adm[1]);
-    measureDirection(gs, r, c, 1,  0, player, contiguous, &adm[2]);
-    measureDirection(gs, r, c, 1,  1, player, contiguous, &adm[3]);
+    measureDirection(gs, r, c, 0,  1, player, consecutive, &adm[0]);
+    measureDirection(gs, r, c, 1, -1, player, consecutive, &adm[1]);
+    measureDirection(gs, r, c, 1,  0, player, consecutive, &adm[2]);
+    measureDirection(gs, r, c, 1,  1, player, consecutive, &adm[3]);
 }
 
 void RenjuAIEval::measureDirection(const char *gs,
                                    int r, int c,
                                    int dr, int dc,
                                    int player,
-                                   bool contiguous,
+                                   bool consecutive,
                                    RenjuAIEval::DirectionMeasurement *result) {
     // Check arguments
     if (gs == nullptr) return;
@@ -149,7 +149,7 @@ void RenjuAIEval::measureDirection(const char *gs,
     result->length = 1, result->block_count = 2, result->space_count = 0;
 
     int space_allowance = 1;
-    if (contiguous) space_allowance = 0;
+    if (consecutive) space_allowance = 0;
 
     for (bool reversed = false;; reversed = true) {
         while (true) {
