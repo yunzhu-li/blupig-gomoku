@@ -89,6 +89,9 @@
 
   <script>
     // Script: Game display control, input and message
+    // Configurations
+    var api_base_url = 'http://127.0.0.1';
+
     // Preset graphics
     var svg_lines = [
       '<line x1="50%" y1="0" x2="50%" y2="50%" style="stroke:rgb(110,110,110); stroke-width:2px;" />',
@@ -280,7 +283,7 @@
 
     // Sends status to backend api
     function sendGameStatus(board, ai_player) {
-      var req_url = 'http://127.0.0.1/renju/?s=' + board + '&p=' + ai_player;
+      var req_url = api_base_url + '/renju/?s=' + board + '&p=' + ai_player;
 
       $.get(req_url, function(data) {
         processResponse(data);
@@ -314,8 +317,6 @@
       }
 
       // Stats
-      if (result.cpu_time == '0') result.cpu_time = '1';
-
       // Parse numbers
       result.cpu_time = parseInt(result.cpu_time);
       result.num_threads = parseInt(result.num_threads);
@@ -324,15 +325,25 @@
 
       // Build stats output
       var stats_html = '';
-      stats_html += 'CPU time: ' + result.cpu_time / 1000 + 's';
+
+      // CPU time
+      if (result.cpu_time > 0)
+        stats_html += 'CPU time: ' + result.cpu_time / 1000 + 's';
+      else
+        stats_html += 'CPU time: < 1ms';
+
+      // Threads
       stats_html += '<br>Threads: ' + result.num_threads;
-      stats_html += '<br>Moves evaluated: ' + numberWithCommas(result.eval_count) +
-                    '(' + numberWithCommas(Math.floor(1000 * result.eval_count / result.cpu_time)) + '/s)';
 
-      stats_html += '<br>Patterns matched: ' + numberWithCommas(result.pm_count) +
-                    '(' + numberWithCommas(Math.floor(1000 * result.pm_count / result.cpu_time)) + '/s)';
+      // Move eval count
+      stats_html += '<br>Moves evaluated: ' + numberWithCommas(result.eval_count);
+      if (result.cpu_time > 0)
+        stats_html += '(' + numberWithCommas(Math.floor(1000 * result.eval_count / result.cpu_time)) + '/s)';
 
-
+      // PM eval count
+      stats_html += '<br>Patterns matched: ' + numberWithCommas(result.pm_count);
+      if (result.cpu_time > 0)
+        stats_html += '(' + numberWithCommas(Math.floor(1000 * result.pm_count / result.cpu_time)) + '/s)';
 
       document.getElementById('panel_stats').innerHTML = stats_html;
     }
