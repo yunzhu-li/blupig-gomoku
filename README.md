@@ -55,7 +55,7 @@ cp gui/server/renju.php /var/www/html/renju/index.php
 cp -r gui/client/* /var/www/html/renju/
 ```
 
-##### 7. Configure HTML client
+##### 6. Configure HTML client
 Open `/var/www/html/renju/renju.html`, search for this line:
 ```
 var api_base_url = 'http://127.0.0.1';
@@ -64,7 +64,7 @@ var api_base_url = 'http://127.0.0.1';
 Replace the `IP address` (and port number if needed) to the server's public IP, or leave as default if running locally.
 
 
-##### 6. Configure nginx and PHP
+##### 7. Configure nginx and PHP
 Open the nginx default configuration file `/etc/nginx/sites-available/default`
 
 Delete all content, and paste:
@@ -81,12 +81,12 @@ server {
 }
 ```
 
-##### 7. Start server
+##### 8. Start server
 ```
 systemctl restart nginx
 systemctl restart php7.0-fpm
 ```
 
-##### 8. Test setup
+##### 9. Test setup
 Open `http://<server-ip>/renju/renju.html` in your browser, you should be able to play the game.
 
