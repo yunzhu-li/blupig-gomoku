@@ -89,6 +89,9 @@
 
   <script>
     // Script: Game display control, input and message
+    // Configurations
+    var api_base_url = 'http://127.0.0.1';
+
     // Preset graphics
     var svg_lines = [
       '<line x1="50%" y1="0" x2="50%" y2="50%" style="stroke:rgb(110,110,110); stroke-width:2px;" />',
@@ -280,7 +283,7 @@
 
     // Sends status to backend api
     function sendGameStatus(board, ai_player) {
-      var req_url = 'http://127.0.0.1/renju/?s=' + board + '&p=' + ai_player;
+      var req_url = api_base_url + '/renju/?s=' + board + '&p=' + ai_player;
 
       $.get(req_url, function(data) {
         processResponse(data);
