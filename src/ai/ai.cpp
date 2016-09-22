@@ -22,7 +22,6 @@
 #include <ai/utils.h>
 #include <utils/globals.h>
 #include <cstring>
-#include <iostream>
 
 void RenjuAI::generateMove(const char *gs,
                            int         player,

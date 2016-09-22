@@ -30,7 +30,9 @@
     // Set search depth to 4
     $cmdline .= ' -d 4';
 
+    // Allow access form any origin
     header("Access-Control-Allow-Origin: *");
 
+    // Execute binary and print stdout
     echo(shell_exec($cmdline));
 ?>
