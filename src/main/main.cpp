@@ -66,6 +66,9 @@ std::string generateMoveWithCLIArgs(int argc, char const *argv[]) {
     return result;
 }
 
+// Exclude main() if building with tests
+#ifndef RENJU_PARALLEL_TEST
+
 int main(int argc, char const *argv[]) {
     // Print usage if no arguments provided
     if (argc < 2) {
@@ -82,3 +85,5 @@ int main(int argc, char const *argv[]) {
 
     return 0;
 }
+
+#endif  // RENJU_PARALLEL_TEST

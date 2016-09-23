@@ -37,7 +37,6 @@ class RenjuAIEval {
     static void test(char *gs);
 
  private:
-
     // Result of a single direction measurement
     struct DirectionMeasurement {
         char length;          // Number of pieces in a row
@@ -84,7 +83,6 @@ class RenjuAIEval {
                                  int player,
                                  bool consecutive,
                                  RenjuAIEval::DirectionMeasurement *result);
-
 };
 
 #endif  // INCLUDE_AI_EVAL_H_
