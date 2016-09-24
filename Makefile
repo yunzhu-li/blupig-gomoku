@@ -9,7 +9,7 @@ CFLAGS := -std=c++11
 
 LIBDIR       := lib
 SRCDIR       := src
-SRCEXT       := cpp
+SRCEXT       := cc
 TESTSDIR     := tests
 SOURCES      := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 SOURCES_TEST := $(shell find $(TESTSDIR) -type f -name *.$(SRCEXT))
