@@ -36,7 +36,10 @@ class RenjuAIEval {
     // Unit tests
     static void test(char *gs);
 
+// Allow testing private members in this class
+#ifndef RENJU_PARALLEL_TEST
  private:
+#endif
     // Result of a single direction measurement
     struct DirectionMeasurement {
         char length;          // Number of pieces in a row

@@ -35,14 +35,18 @@ profile:
 	@mkdir -p $(PROFDIR)
 	@$(GPPPROF) $(CFLAGS) $(INC) -o $(PROFTARGET) $(SOURCES)
 
-test:
+test: build_gtest test_source
+
+build_gtest:
 	@mkdir -p $(LIBDIR)
-	@mkdir -p $(BINDIR)
 
 	@# Compile gtest library
 	@$(GPP) -pthread -I 3rdparty -o $(LIBDIR)/gtest-all.o -c 3rdparty/gtest/gtest-all.cc
 	@ar -r $(LIBDIR)/libgtest.a $(LIBDIR)/gtest-all.o
 	@rm $(LIBDIR)/gtest-all.o
+
+test_source:
+	@mkdir -p $(BINDIR)
 
 	@# Compile tests
 	@$(GPP) -pthread $(CFLAGS) $(INC) -I 3rdparty -D RENJU_PARALLEL_TEST \

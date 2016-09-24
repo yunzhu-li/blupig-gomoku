@@ -19,8 +19,68 @@
 #include <gtest/gtest.h>
 #include <ai/eval.h>
 
-TEST(RenjuAIEval, evalMove) {
-    EXPECT_EQ(RenjuAIEval::evalMove(nullptr, 0, 0, 0), 0);
+class RenjuAIEvalTest : public ::testing::Test {
+protected:
+    char gs[255] = {0};
+};
+
+TEST_F(RenjuAIEvalTest, meausreDirection) {
+    RenjuAIEval::DirectionMeasurement dm;
+    RenjuAIEval::measureDirection(gs, 0, 0, 1, 1, 1, true, &dm);
+    EXPECT_EQ(true, dm.length == 1 && dm.block_count == 1 && dm.space_count == 0);
+
+    // * 0 0
+    // 0 1 0
+    // 0 0 0
+    gs[1 * 15 + 1] = 1;
+    RenjuAIEval::measureDirection(gs, 0, 0, 1, 1, 1, true, &dm);
+    EXPECT_EQ(true, dm.length == 2 && dm.block_count == 1 && dm.space_count == 0);
+
+    // * 0 0 0
+    // 0 1 0 0
+    // 0 0 1 0
+    // 0 0 0 0
+    gs[2 * 15 + 2] = 1;
+    RenjuAIEval::measureDirection(gs, 0, 0, 1, 1, 1, true, &dm);
+    EXPECT_EQ(true, dm.length == 3 && dm.block_count == 1 && dm.space_count == 0);
+
+    // * 0 0 0
+    // 0 1 0 0
+    // 0 0 1 0
+    // 0 0 0 2
+    gs[3 * 15 + 3] = 2;
+    RenjuAIEval::measureDirection(gs, 0, 0, 1, 1, 1, true, &dm);
+    EXPECT_EQ(true, dm.length == 3 && dm.block_count == 2 && dm.space_count == 0);
+
+    // * 0 0 0
+    // 0 1 0 0
+    // 0 0 0 0
+    // 0 0 0 1
+    gs[2 * 15 + 2] = 0;
+    gs[3 * 15 + 3] = 1;
+    RenjuAIEval::measureDirection(gs, 0, 0, 1, 1, 1, true, &dm);
+    EXPECT_EQ(true, dm.length == 2 && dm.block_count == 1 && dm.space_count == 0);
+
+    RenjuAIEval::measureDirection(gs, 0, 0, 1, 1, 1, false, &dm);
+    EXPECT_EQ(true, dm.length == 3 && dm.block_count == 1 && dm.space_count == 1);
+}
+
+TEST_F(RenjuAIEvalTest, winningPlayer) {
+    EXPECT_EQ(0, RenjuAIEval::winningPlayer(gs));
+
+    gs[2] = 1; gs[3] = 1; gs[4] = 1; gs[5] = 1;
+    EXPECT_EQ(0, RenjuAIEval::winningPlayer(gs));
+
+    gs[6] = 1;
+    EXPECT_EQ(1, RenjuAIEval::winningPlayer(gs));
+
+    gs[7] = 1;
+    EXPECT_EQ(1, RenjuAIEval::winningPlayer(gs));
+
+    memset(gs, 0, 225);
+
+    gs[2] = 1; gs[3] = 2; gs[4] = 2; gs[5] = 2; gs[6] = 2; gs[7] = 2;
+    EXPECT_EQ(2, RenjuAIEval::winningPlayer(gs));
 }
 
 int main(int argc, char** argv) {
