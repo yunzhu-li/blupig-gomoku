@@ -1,6 +1,9 @@
 renju-parallel
 ------
 
+master [![Build Status](https://travis-ci.org/yunzhu-li/renju-parallel.svg?branch=master)](https://travis-ci.org/yunzhu-li/renju-parallel) &nbsp; dev [![Build Status](https://travis-ci.org/yunzhu-li/renju-parallel.svg?branch=dev)](https://travis-ci.org/yunzhu-li/renju-parallel)
+
+
 A Renju (連珠, 五子棋, Gomoku, Five in a Row) AI with a customized `heuristic Negamax` algorithm, written in `C++`.
 
 Currently runs single-threaded, I'm working on the parallelization, pattern analysis and more to increase depth.
