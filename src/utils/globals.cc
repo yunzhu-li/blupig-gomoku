@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <utils/globals.h>
+
 int g_eval_count = 0;
 int g_pm_count = 0;
 int g_cc_0 = 0;

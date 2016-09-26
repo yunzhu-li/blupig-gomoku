@@ -19,6 +19,7 @@
 #include <ai/eval.h>
 #include <ai/utils.h>
 #include <utils/globals.h>
+#include <stdlib.h>
 #include <climits>
 #include <cstring>
 
