@@ -52,7 +52,7 @@ build_gtest:
 	@mkdir -p $(LIBDIR)
 
 	@# Compile gtest library
-	@$(CX) -pthread -I 3rdparty -o $(LIBDIR)/gtest-all.o -c 3rdparty/gtest/gtest-all.cc
+	@$(CX) -pthread -I tests -o $(LIBDIR)/gtest-all.o -c tests/gtest/gtest-all.cc
 	@ar -r $(LIBDIR)/libgtest.a $(LIBDIR)/gtest-all.o
 	@rm $(LIBDIR)/gtest-all.o
 
@@ -60,7 +60,7 @@ test_source:
 	@mkdir -p $(BINDIR)
 
 	@# Compile tests
-	@$(CX) -pthread $(CFLAGS) $(INC) -I 3rdparty -D RENJU_PARALLEL_TEST \
+	@$(CX) -pthread $(CFLAGS) $(INC) -I tests -D RENJU_PARALLEL_TEST \
 	 -o $(TARGET)_test $(SOURCES_TEST) $(SOURCES) lib/libgtest.a
 
 	@# Run tests

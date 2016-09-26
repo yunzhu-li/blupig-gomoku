@@ -20,7 +20,7 @@
 #include <ai/eval.h>
 
 class RenjuAIEvalTest : public ::testing::Test {
-protected:
+ protected:
     char gs[255] = {0};
 };
 
