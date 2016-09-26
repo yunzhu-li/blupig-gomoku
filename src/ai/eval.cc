@@ -50,7 +50,9 @@ int RenjuAIEval::evalMove(const char *gs, int r, int c, int player) {
     g_eval_count++;
 
     // Generate preset patterns structure in memory
-    if (preset_patterns == nullptr) generatePresetPatterns();
+    if (preset_patterns == nullptr) {
+        generatePresetPatterns(&preset_patterns, &preset_scores, &preset_patterns_size);
+    }
 
     // Allocate 4 direction measurements
     DirectionMeasurement adm[4];
@@ -129,9 +131,9 @@ void RenjuAIEval::measureAllDirections(const char *gs,
 
     // Measure 4 directions
     measureDirection(gs, r, c, 0,  1, player, consecutive, &adm[0]);
-    measureDirection(gs, r, c, 1, -1, player, consecutive, &adm[1]);
+    measureDirection(gs, r, c, 1,  1, player, consecutive, &adm[1]);
     measureDirection(gs, r, c, 1,  0, player, consecutive, &adm[2]);
-    measureDirection(gs, r, c, 1,  1, player, consecutive, &adm[3]);
+    measureDirection(gs, r, c, 1, -1, player, consecutive, &adm[3]);
 }
 
 void RenjuAIEval::measureDirection(const char *gs,
@@ -194,7 +196,9 @@ void RenjuAIEval::measureDirection(const char *gs,
     }
 }
 
-void RenjuAIEval::generatePresetPatterns() {
+void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
+                                         int **preset_scores,
+                                         int *preset_patterns_size) {
     DirectionPattern patterns[30] = {
         {1, 5, 0,  0}, {0, 0, 0,  0},
         {2, 4, 0, -1}, {0, 0, 0,  0},
@@ -231,13 +235,13 @@ void RenjuAIEval::generatePresetPatterns() {
         1
     };
 
-    preset_patterns = (DirectionPattern *)malloc(sizeof(DirectionPattern) * 30);
-    preset_scores   = (int *)malloc(sizeof(int) * 15);
+    *preset_patterns = (DirectionPattern *)malloc(sizeof(DirectionPattern) * 30);
+    *preset_scores   = (int *)malloc(sizeof(int) * 15);
 
-    memcpy(preset_patterns, patterns, sizeof(DirectionPattern) * 30);
-    memcpy(preset_scores, scores, sizeof(int) * 15);
+    memcpy(*preset_patterns, patterns, sizeof(DirectionPattern) * 30);
+    memcpy(*preset_scores, scores, sizeof(int) * 15);
 
-    preset_patterns_size = 15;
+    *preset_patterns_size = 15;
 }
 
 int RenjuAIEval::winningPlayer(const char *gs) {
@@ -257,58 +261,3 @@ int RenjuAIEval::winningPlayer(const char *gs) {
     }
     return 0;
 }
-
-// void RenjuAIEval::test(char *gs) {
-//     // Unit test
-//     RenjuAIUtils::setCell(gs, 2, 2, 1);
-//     RenjuAIUtils::setCell(gs, 2, 4, 1);
-//     RenjuAIUtils::setCell(gs, 2, 5, 1);
-//     RenjuAIUtils::setCell(gs, 3, 4, 1);
-//     DirectionMeasurement *m = measureDirection(gs, 2, 3, 0, 1, 1, false);
-//     std::cout << "len: " << m->length << std::endl;
-//     std::cout << "block_count: " << m->block_count << std::endl;
-//     std::cout << "space_count: " << m->space_count << std::endl;
-//     std::cout << "--" << std::endl;
-//     delete m;
-
-//     auto adm = measureAllDirections(gs, 2, 3, 1, false);
-//     for (auto dm : *adm) {
-//         std::cout << "len: " << dm->length << std::endl;
-//         std::cout << "block_count: " << dm->block_count << std::endl;
-//         std::cout << "space_count: " << dm->space_count << std::endl;
-//         std::cout << "--" << std::endl;
-//         delete dm;
-//     }
-//     delete adm;
-
-
-//     adm = measureAllDirections(gs, 2, 3, 1, false);
-//     DirectionPattern p;
-//     p.min_occurrence = 1;
-//     p.length = 4;
-//     p.block_count = 0;
-//     p.space_count = -1;
-
-//     DirectionPattern p1;
-//     p1.min_occurrence = 1;
-//     p1.length = 2;
-//     p1.block_count = 0;
-//     p1.space_count = -1;
-
-//     std::vector<DirectionPattern *> patterns;
-//     patterns.push_back(&p);
-//     patterns.push_back(&p1);
-
-//     std::cout << matchPattern(adm, &patterns) << std::endl;
-
-//     std::cout << std::endl;
-
-//     std::cout << evalMove(gs, 2, 3, 1) << std::endl;
-
-//     std::cout << evalState(gs, 1) << std::endl;
-
-//     std::cout << RenjuAIUtils::remoteCell(gs, 7, 7) << std::endl;
-
-//     for (int i = 0; i < 20; i++)
-//         evalState(gs, 1);
-// }
