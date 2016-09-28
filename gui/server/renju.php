@@ -27,8 +27,7 @@
     if (isset($_GET['t'])) $cmdline .= ' -t ' . $_GET['t'];
     // if (isset($_GET['d'])) $cmdline .= ' -d ' . $_GET['d'];
 
-    // Set search depth to 8
-    $cmdline .= ' -d 8';
+    $cmdline .= ' -d 6';
 
     // Allow access form any origin
     header("Access-Control-Allow-Origin: *");

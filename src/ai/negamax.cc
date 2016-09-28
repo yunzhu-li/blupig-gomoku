@@ -27,7 +27,7 @@
 // Different breadth configurations are possible:
 // A lower breadth for a higher depth
 // Or vice versa
-#define kSearchBreadth 3
+#define kSearchBreadth 6
 
 int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
                                      int *move_r, int *move_c) {
