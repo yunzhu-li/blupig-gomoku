@@ -19,11 +19,11 @@
 #include <ai/utils.h>
 
 bool RenjuAIUtils::remoteCell(const char *gs, int r, int c) {
-    for (int i = r - 2; i <= r + 2; i++) {
-        if (i < 0 || i >= 15) continue;
-        for (int j = c - 2; j <= c + 2; j++) {
-            if (j < 0 || j >= 15) continue;
-            if (gs[15 * i + j] > 0) return false;
+    for (int i = r - 2; i <= r + 2; ++i) {
+        if (i < 0 || i >= g_board_size) continue;
+        for (int j = c - 2; j <= c + 2; ++j) {
+            if (j < 0 || j >= g_board_size) continue;
+            if (gs[g_board_size * i + j] > 0) return false;
         }
     }
     return true;

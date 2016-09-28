@@ -20,6 +20,7 @@
 #include <ai/utils.h>
 #include <utils/globals.h>
 #include <stdlib.h>
+#include <algorithm>
 #include <climits>
 #include <cstring>
 
@@ -34,8 +35,8 @@ int RenjuAIEval::evalState(const char *gs, int player) {
 
     // Evaluate all possible moves
     int score = 0;
-    for (int r = 0; r < 15; r++) {
-        for (int c = 0; c < 15; c++) {
+    for (int r = 0; r < g_board_size; ++r) {
+        for (int c = 0; c < g_board_size; ++c) {
             score += evalMove(gs, r, c, player);
         }
     }
@@ -66,7 +67,7 @@ int RenjuAIEval::evalMove(const char *gs, int r, int c, int player) {
         int score = evalADM(adm);
 
         // Prefer consecutive
-        if (!consecutive) score *= 0.9;
+        // if (!consecutive) score *= 0.9;
 
         // Choose the better between consecutive and non-consecutive
         max_score = std::max(max_score, score);
@@ -81,7 +82,7 @@ int RenjuAIEval::evalADM(DirectionMeasurement *all_direction_measurement) {
     int size = preset_patterns_size;
 
     // Loop through and try to match all preset patterns
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
         score += matchPattern(all_direction_measurement, &preset_patterns[2 * i]) * preset_scores[i];
     }
     return score;
@@ -97,7 +98,7 @@ int RenjuAIEval::matchPattern(DirectionMeasurement *all_direction_measurement,
     int match_count = INT_MAX, single_pattern_match = 0;
 
     // Currently allows maximum 2 patterns
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; ++i) {
         auto p = patterns[i];
         if (p.length == 0) break;
 
@@ -105,7 +106,7 @@ int RenjuAIEval::matchPattern(DirectionMeasurement *all_direction_measurement,
         single_pattern_match = 0;
 
         // Loop through 4 directions
-        for (int j = 0; j < 4; j++) {
+        for (int j = 0; j < 4; ++j) {
             auto dm = all_direction_measurement[j];
 
             // Requires exact match
@@ -132,7 +133,7 @@ void RenjuAIEval::measureAllDirections(const char *gs,
                                        RenjuAIEval::DirectionMeasurement *adm) {
     // Check arguments
     if (gs == nullptr) return;
-    if (r < 0 || r >= 15 || c < 0 || c >= 15) return;
+    if (r < 0 || r >= g_board_size || c < 0 || c >= g_board_size) return;
 
     // Measure 4 directions
     measureDirection(gs, r, c, 0,  1, player, consecutive, &adm[0]);
@@ -149,7 +150,7 @@ void RenjuAIEval::measureDirection(const char *gs,
                                    RenjuAIEval::DirectionMeasurement *result) {
     // Check arguments
     if (gs == nullptr) return;
-    if (r < 0 || r >= 15 || c < 0 || c >= 15) return;
+    if (r < 0 || r >= g_board_size || c < 0 || c >= g_board_size) return;
     if (dr == 0 && dc == 0) return;
 
     // Initialization
@@ -165,10 +166,10 @@ void RenjuAIEval::measureDirection(const char *gs,
             cr += dr; cc += dc;
 
             // Validate position
-            if (cr < 0 || cr >= 15 || cc < 0 || cc >= 15) break;
+            if (cr < 0 || cr >= g_board_size || cc < 0 || cc >= g_board_size) break;
 
             // Get cell value
-            int cell = gs[15 * cr + cc];
+            int cell = gs[g_board_size * cr + cc];
 
             // Empty cells
             if (cell == 0) {
@@ -240,8 +241,8 @@ void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
         1
     };
 
-    *preset_patterns = (DirectionPattern *)malloc(sizeof(DirectionPattern) * 30);
-    *preset_scores   = (int *)malloc(sizeof(int) * 15);
+    *preset_patterns = new DirectionPattern[30];
+    *preset_scores   = new int[15];
 
     memcpy(*preset_patterns, patterns, sizeof(DirectionPattern) * 30);
     memcpy(*preset_scores, scores, sizeof(int) * 15);
@@ -250,12 +251,12 @@ void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
 }
 
 int RenjuAIEval::winningPlayer(const char *gs) {
-    for (int r = 0; r < 15; r++) {
-        for (int c = 0; c < 15; c++) {
-            int cell = gs[15 * r + c];
+    for (int r = 0; r < g_board_size; ++r) {
+        for (int c = 0; c < g_board_size; ++c) {
+            int cell = gs[g_board_size * r + c];
             if (cell == 0) continue;
-            for (int dr = -1; dr <= 1; dr++) {
-                for (int dc = -1; dc <= 1; dc++) {
+            for (int dr = -1; dr <= 1; ++dr) {
+                for (int dc = -1; dc <= 1; ++dc) {
                     if (dr == 0 && dc <= 0) continue;
                     DirectionMeasurement dm;
                     measureDirection(gs, r, c, dr, dc, cell, 1, &dm);

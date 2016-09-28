@@ -23,18 +23,11 @@
 #include <utils/globals.h>
 #include <cstring>
 
-void RenjuAI::generateMove(const char *gs,
-                           int         player,
-                           int         serach_depth,
-                           int        *move_r,
-                           int        *move_c,
-                           int        *winning_player,
-                           int        *eval_count,
-                           int        *pm_count) {
+void RenjuAI::generateMove(const char *gs, int player, int serach_depth,
+                           int *move_r, int *move_c, int *winning_player,
+                           int *eval_count, int *pm_count) {
     // Check arguments
-    if (move_r == nullptr ||
-        move_c == nullptr ||
-        winning_player == nullptr) return;
+    if (move_r == nullptr || move_c == nullptr) return;
 
     // Initialize counters
     g_eval_count = 0;
@@ -43,26 +36,34 @@ void RenjuAI::generateMove(const char *gs,
     // Initialize data
     *move_r = -1;
     *move_c = -1;
-    *winning_player = 0;
+    int _winning_player = 0;
 
     // Check if anyone wins the game
-    *winning_player = RenjuAIEval::winningPlayer(gs);
-    if (*winning_player != 0) return;
+    _winning_player = RenjuAIEval::winningPlayer(gs);
+    if (_winning_player != 0) {
+        if (winning_player != nullptr) *winning_player = _winning_player;
+        return;
+    }
 
     // Copy game state
-    char b[225];
-    std::memcpy(b, gs, 225);
+    int state_length = g_board_size * g_board_size;
+    char *b = new char[state_length];
+    std::memcpy(b, gs, state_length);
 
     // Run negamax
     RenjuAINegamax::heuristicNegamax(b, player, serach_depth, move_r, move_c);
 
-    // Check if anyone wins the game
     // Execute the move
-    std::memcpy(b, gs, 225);
+    std::memcpy(b, gs, state_length);
     RenjuAIUtils::setCell(b, *move_r, *move_c, player);
-    *winning_player = RenjuAIEval::winningPlayer(b);
 
-    // Write counters
+    // Check if anyone wins the game
+    _winning_player = RenjuAIEval::winningPlayer(b);
+
+    // Write output
+    if (winning_player != nullptr) *winning_player = _winning_player;
     if (eval_count != nullptr) *eval_count = g_eval_count;
     if (pm_count != nullptr) *pm_count = g_eval_count * 30;
+
+    delete[] b;
 }

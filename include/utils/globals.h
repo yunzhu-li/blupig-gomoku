@@ -19,6 +19,7 @@
 #ifndef INCLUDE_UTILS_GLOBALS_H_
 #define INCLUDE_UTILS_GLOBALS_H_
 
+extern int g_board_size;
 extern int g_eval_count;
 extern int g_pm_count;
 extern int g_cc_0;

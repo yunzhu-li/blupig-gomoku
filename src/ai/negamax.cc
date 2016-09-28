@@ -63,7 +63,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
 
     // Loop through every move
     int size = candidate_moves->size();
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
         auto move = (*candidate_moves)[i];
 
         // Stop if a winning move is found
@@ -91,8 +91,9 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
         RenjuAIUtils::setCell(gs, move.r, move.c, 0);
 
         // Update maximum score
-        if (move.heuristic_val - score > max_score) {
-            max_score = move.heuristic_val - score;
+        int score_diff = move.heuristic_val - score;
+        if (score_diff > max_score) {
+            max_score = score_diff;
             if (move_r != nullptr) *move_r = move.r;
             if (move_c != nullptr) *move_c = move.c;
         }
@@ -113,8 +114,8 @@ std::vector<RenjuAINegamax::Move> *RenjuAINegamax::searchMovesOrdered(const char
     std::vector<Move> *result = new std::vector<Move>();
 
     // Loop through all cells
-    for (int r = 0; r < 15; r++) {
-        for (int c = 0; c < 15; c++) {
+    for (int r = 0; r < g_board_size; ++r) {
+        for (int c = 0; c < g_board_size; ++c) {
             // Consider only empty cells
             if (RenjuAIUtils::getCell(gs, r, c) != 0) continue;
 
@@ -144,8 +145,8 @@ int RenjuAINegamax::negamax(char *gs, int player, int depth, int *move_r, int *m
     if (depth == 0) return RenjuAIEval::evalState(gs, player);
 
     // Loop through all cells
-    for (int r = 0; r < 15; r++) {
-        for (int c = 0; c < 15; c++) {
+    for (int r = 0; r < g_board_size; ++r) {
+        for (int c = 0; c < g_board_size; ++c) {
             // Consider only empty cells
             if (RenjuAIUtils::getCell(gs, r, c) != 0) continue;
 

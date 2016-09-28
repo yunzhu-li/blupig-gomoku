@@ -16,25 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_API_RENJU_API_H_
-#define INCLUDE_API_RENJU_API_H_
+#ifndef INCLUDE_PROTOCOLS_CLI_H_
+#define INCLUDE_PROTOCOLS_CLI_H_
 
 #include <string>
+#include <unordered_map>
 
-class RenjuAPI {
+class RenjuProtocolCLI {
  public:
-    RenjuAPI();
-    ~RenjuAPI();
+    RenjuProtocolCLI();
+    ~RenjuProtocolCLI();
 
-    // Generate move based on a given game state
-    static bool generateMove(const char *gs_string, int ai_player_id,
-                             int serach_depth, int num_threads,
-                             int *move_r, int *move_c, int *winning_player,
-                             int *eval_count, int *pm_count);
+    static bool beginSession(int argc, char const *argv[]);
+
+    // Generate move and responds in json
+    static std::string generateMove(const char *gs_string, int ai_player_id,
+                                    int serach_depth, int num_threads);
 
  private:
-    // Render game state into text
-    static std::string renderGameState(const char *gs);
+    // Generate json response
+    static std::string generateResultJson(const std::unordered_map<std::string, std::string> *data,
+                                          const std::string &message);
 };
 
-#endif  // INCLUDE_API_RENJU_API_H_
+#endif  // INCLUDE_PROTOCOLS_CLI_H_

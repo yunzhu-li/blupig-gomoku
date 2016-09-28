@@ -19,7 +19,7 @@
 #ifndef INCLUDE_AI_UTILS_H_
 #define INCLUDE_AI_UTILS_H_
 
-#include <string>
+#include <utils/globals.h>
 
 class RenjuAIUtils {
  public:
@@ -27,13 +27,13 @@ class RenjuAIUtils {
     ~RenjuAIUtils();
 
     static inline char getCell(const char *gs, int r, int c) {
-        if (r < 0 || r >= 15 || c < 0 || c >= 15) return -1;
-        return gs[15 * r + c];
+        if (r < 0 || r >= g_board_size || c < 0 || c >= g_board_size) return -1;
+        return gs[g_board_size * r + c];
     }
 
     static inline bool setCell(char *gs, int r, int c, char value) {
-        if (r < 0 || r >= 15 || c < 0 || c >= 15) return false;
-        gs[15 * r + c] = value;
+        if (r < 0 || r >= g_board_size || c < 0 || c >= g_board_size) return false;
+        gs[g_board_size * r + c] = value;
         return true;
     }
 

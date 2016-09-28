@@ -18,6 +18,7 @@
 
 #include <utils/globals.h>
 
+int g_board_size = 15;
 int g_eval_count = 0;
 int g_pm_count = 0;
 int g_cc_0 = 0;

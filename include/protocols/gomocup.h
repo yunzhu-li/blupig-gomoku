@@ -16,19 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <protocols/cli.h>
-#include <protocols/gomocup.h>
+#ifndef INCLUDE_PROTOCOLS_GOMOCUP_H_
+#define INCLUDE_PROTOCOLS_GOMOCUP_H_
 
-// Exclude main() if building with tests
-#ifndef RENJU_PARALLEL_TEST
+#include <string>
 
-int main(int argc, char const *argv[]) {
-    bool success;
-    success = RenjuProtocolCLI::beginSession(argc, argv);
-    // success = RenjuProtocolGomocup::beginSession(argc, argv);
+class RenjuProtocolGomocup {
+ public:
+    RenjuProtocolGomocup();
+    ~RenjuProtocolGomocup();
 
-    if (success) return 0;
-    return 1;
-}
+    static bool beginSession(int argc, char const *argv[]);
 
-#endif  // RENJU_PARALLEL_TEST
+ private:
+    static void performAndWriteMove(char *gs_string);
+    static void splitLine(const char *line, int *output);
+    static void writeStdout(std::string str);
+};
+
+#endif  // INCLUDE_PROTOCOLS_GOMOCUP_H_
