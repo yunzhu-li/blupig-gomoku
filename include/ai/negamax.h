@@ -35,9 +35,9 @@ class RenjuAINegamax {
  private:
     // A move (candidate)
     struct Move {
-        int heuristic_val;
         int r;
         int c;
+        int heuristic_val;
 
         // Overloads < for sorting
         bool operator<(Move other) const {
@@ -46,7 +46,7 @@ class RenjuAINegamax {
     };
 
     // Search possible moves based on a given state, sorted by heuristic values.
-    static std::vector<Move> *searchMovesOrdered(char *gs, int player);
+    static std::vector<Move> *searchMovesOrdered(const char *gs, int player);
 };
 
 #endif  // INCLUDE_AI_NEGAMAX_H_

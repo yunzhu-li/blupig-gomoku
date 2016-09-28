@@ -58,17 +58,22 @@ int RenjuAIEval::evalMove(const char *gs, int r, int c, int player) {
     DirectionMeasurement adm[4];
 
     // Measure in consecutive and non-consecutive conditions
-    int score = 0;
+    int max_score = 0;
     for (bool consecutive = false;; consecutive = true) {
         // Execute measurement
         measureAllDirections(gs, r, c, player, consecutive, adm);
 
+        int score = evalADM(adm);
+
+        // Prefer consecutive
+        if (!consecutive) score *= 0.9;
+
         // Choose the better between consecutive and non-consecutive
-        score = std::max(score, evalADM(adm));
+        max_score = std::max(max_score, score);
 
         if (consecutive) break;
     }
-    return score;
+    return max_score;
 }
 
 int RenjuAIEval::evalADM(DirectionMeasurement *all_direction_measurement) {
@@ -223,11 +228,11 @@ void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
         1000,
         1000,
         1000,
-        60,
+        50,
         30,
         500,
         60,
-        8,
+        30,
         5,
         4,
         3,
