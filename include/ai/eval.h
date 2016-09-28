@@ -62,7 +62,9 @@ class RenjuAIEval {
     static int *preset_scores;
 
     // Loads preset patterns into memory
-    static void generatePresetPatterns();
+    static void generatePresetPatterns(DirectionPattern **preset_patterns,
+                                       int **preset_scores,
+                                       int *preset_patterns_size);
 
     // Evaluates an all-direction measurement
     static int evalADM(DirectionMeasurement *all_direction_measurement);

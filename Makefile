@@ -44,7 +44,7 @@ analyze:
 
 profile:
 	@mkdir -p $(BINDIR)/prof
-	@$(CX) -pg $(CFLAGS) $(INC) -o $(BINDIR)/a.out $(SOURCES)
+	@$(CX) -pg $(CFLAGS) $(INC) -o $(BINDIR)/prof/a.out $(SOURCES)
 
 test: build_gtest test_source
 
