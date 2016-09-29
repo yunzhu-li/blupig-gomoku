@@ -63,7 +63,7 @@ void RenjuAI::generateMove(const char *gs, int player, int serach_depth,
     // Write output
     if (winning_player != nullptr) *winning_player = _winning_player;
     if (eval_count != nullptr) *eval_count = g_eval_count;
-    if (pm_count != nullptr) *pm_count = g_eval_count * 30;
+    if (pm_count != nullptr) *pm_count = g_eval_count * 22;
 
     delete[] b;
 }

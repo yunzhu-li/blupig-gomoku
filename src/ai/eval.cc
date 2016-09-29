@@ -84,7 +84,21 @@ int RenjuAIEval::evalADM(DirectionMeasurement *all_direction_measurement) {
     // Loop through and try to match all preset patterns
     for (int i = 0; i < size; ++i) {
         score += matchPattern(all_direction_measurement, &preset_patterns[2 * i]) * preset_scores[i];
+
+        // Only match highest scored pattern
+        if (score > 0) break;
     }
+
+    // // If no match, calculate score as the number of open ends
+    // if (score == 0) {
+    //     for (int i = 0; i < 4; i++) {
+    //         if (all_direction_measurement[i].block_count > 0) {
+    //             score = 1;
+    //             break;
+    //         }
+    //     }
+    // }
+
     return score;
 }
 
@@ -110,7 +124,7 @@ int RenjuAIEval::matchPattern(DirectionMeasurement *all_direction_measurement,
             auto dm = all_direction_measurement[j];
 
             // Requires exact match
-            if (dm.length == p.length && dm.block_count == p.block_count &&
+            if (dm.length == p.length && dm.block_count <= p.block_count &&
                 (p.space_count == -1 || dm.space_count == p.space_count)) {
                 single_pattern_match++;
             }
@@ -205,49 +219,46 @@ void RenjuAIEval::measureDirection(const char *gs,
 void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
                                          int **preset_scores,
                                          int *preset_patterns_size) {
-    DirectionPattern patterns[30] = {
-        {1, 5, 0,  0}, {0, 0, 0,  0},
-        {2, 4, 0, -1}, {0, 0, 0,  0},
-        {2, 4, 1, -1}, {0, 0, 0,  0},
-        {1, 4, 1, -1}, {1, 3, 0, -1},
-        {1, 4, 0,  0}, {0, 0, 0,  0},
-        {1, 4, 0,  1}, {0, 0, 0,  0},
-        {1, 4, 1, -1}, {0, 0, 0,  0},
-        {2, 3, 0, -1}, {0, 0, 0,  0},
-        {1, 3, 0, -1}, {0, 0, 0,  0},
-        {2, 2, 0, -1}, {0, 0, 0,  0},
-        {1, 3, 1, -1}, {0, 0, 0,  0},
-        {1, 2, 0, -1}, {0, 0, 0,  0},
-        {1, 2, 1, -1}, {0, 0, 0,  0},
-        {1, 1, 0, -1}, {0, 0, 0,  0},
-        {1, 1, 1, -1}, {0, 0, 0,  0}
+
+    DirectionPattern patterns[22] = {
+        {1, 5, 0,  0}, {0, 0, 0,  0}, // 100000
+        {1, 4, 0,  0}, {0, 0, 0,  0}, // 1000
+        {2, 4, 1, -1}, {0, 0, 0,  0}, // 1000
+        {2, 4, 2,  1}, {0, 0, 0,  0}, // 1000
+        {1, 4, 1, -1}, {1, 4, 2,  1}, // 1000
+        {1, 4, 1, -1}, {1, 3, 0, -1}, // 500
+        {1, 4, 2,  1}, {1, 3, 0, -1}, // 500
+        {2, 3, 0, -1}, {0, 0, 0,  0}, // 400
+        //{1, 4, 1, -1}, {0, 0, 0,  0}, // 10
+        //{1, 4, 2,  1}, {0, 0, 0,  0}, // 10
+        {1, 3, 0, -1}, {0, 0, 0,  0}, // 20
+        {2, 2, 0, -1}, {0, 0, 0,  0}, // 20
+        {1, 2, 0, -1}, {0, 0, 0,  0}  // 5
     };
 
-    int scores[15] = {
+    int scores[11] = {
         100000,
         1000,
         1000,
         1000,
         1000,
-        50,
-        30,
         500,
-        60,
-        30,
-        5,
-        4,
-        3,
-        1,
-        1
+        500,
+        500,
+        //10,
+        //10,
+        20,
+        20,
+        5
     };
 
-    *preset_patterns = new DirectionPattern[30];
-    *preset_scores   = new int[15];
+    *preset_patterns = new DirectionPattern[22];
+    *preset_scores   = new int[11];
 
-    memcpy(*preset_patterns, patterns, sizeof(DirectionPattern) * 30);
-    memcpy(*preset_scores, scores, sizeof(int) * 15);
+    memcpy(*preset_patterns, patterns, sizeof(DirectionPattern) * 22);
+    memcpy(*preset_scores, scores, sizeof(int) * 11);
 
-    *preset_patterns_size = 15;
+    *preset_patterns_size = 11;
 }
 
 int RenjuAIEval::winningPlayer(const char *gs) {

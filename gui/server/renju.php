@@ -27,7 +27,7 @@
     if (isset($_GET['t'])) $cmdline .= ' -t ' . $_GET['t'];
     // if (isset($_GET['d'])) $cmdline .= ' -d ' . $_GET['d'];
 
-    $cmdline .= ' -d 6';
+    $cmdline .= ' -d 8';
 
     // Allow access form any origin
     header("Access-Control-Allow-Origin: *");

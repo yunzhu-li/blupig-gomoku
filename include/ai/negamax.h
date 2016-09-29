@@ -32,6 +32,10 @@ class RenjuAINegamax {
     static int heuristicNegamax(char *gs, int player, int depth,
                                 int *move_r, int *move_c);
 
+    static int heuristicNegamax(char *gs, int player, int depth,
+                                int alpha, int beta,
+                                int *move_r, int *move_c);
+
  private:
     // A move (candidate)
     struct Move {

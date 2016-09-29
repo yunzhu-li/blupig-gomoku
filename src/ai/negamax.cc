@@ -31,8 +31,16 @@
 
 int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
                                      int *move_r, int *move_c) {
+    return heuristicNegamax(gs, player, depth, INT_MIN / 2, INT_MAX / 2, move_r, move_c);
+}
+
+int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
+                                     int alpha, int beta,
+                                     int *move_r, int *move_c) {
     // End condition
     if (depth == 0) return 0;
+
+    g_cc_0++;
 
     int max_score = INT_MIN;
     int opponent = player == 1 ? 2 : 1;
@@ -56,8 +64,11 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
         }
     }
 
+    int breadth = kSearchBreadth;
+    if ((breadth + 1) >> 2 == 4) breadth = 15;
+
     // Copy moves for current player
-    tmp_size = std::min((int)moves_player->size(), kSearchBreadth);
+    tmp_size = std::min((int)moves_player->size(), breadth);
     for (int i = 0; i < tmp_size; ++i)
         candidate_moves->push_back((*moves_player)[i]);
 
@@ -81,11 +92,13 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
         int score = heuristicNegamax(gs,         // Game state
                                      opponent,   // Change player
                                      depth - 1,  // Reduce depth by 1
+                                     -beta,
+                                     -alpha + move.heuristic_val,
                                      nullptr,    // Result move not required
                                      nullptr);
 
         // A little bit more aggressive
-        if (score > 10) score *= 0.9;
+        //if (score > 10) score *= 0.9;
 
         // Restore
         RenjuAIUtils::setCell(gs, move.r, move.c, 0);
@@ -97,6 +110,9 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
             if (move_r != nullptr) *move_r = move.r;
             if (move_c != nullptr) *move_c = move.c;
         }
+
+        if (score_diff > alpha) alpha = score_diff;
+        if (alpha >= beta) break;
 
         // An experimental pruning
         // if (score < 100 && i >= 15) break;
