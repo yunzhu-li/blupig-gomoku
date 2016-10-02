@@ -165,7 +165,7 @@ void RenjuProtocolGomocup::performAndWriteMove(char *gs_string) {
 
 void RenjuProtocolGomocup::splitLine(const char *line, int *output) {
     // Copy input
-    int in_length = strlen(line);
+    size_t in_length = strlen(line);
     char *_line = new char[in_length];
     memcpy(_line, line, in_length);
 

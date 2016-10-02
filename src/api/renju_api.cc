@@ -23,14 +23,14 @@
 #include <cstring>
 
 bool RenjuAPI::generateMove(const char *gs_string, int ai_player_id,
-                            int serach_depth, int num_threads,
+                            int search_depth, int num_threads,
                             int *move_r, int *move_c, int *winning_player,
                             int *eval_count, int *pm_count) {
     // Check input data
-    int input_length = g_board_size * g_board_size;
+    size_t input_length = (size_t)g_board_size * g_board_size;
     if (strlen(gs_string) != input_length ||
         ai_player_id  < 1 || ai_player_id > 2 ||
-        serach_depth < 1 || serach_depth > 10 ||
+        search_depth < 1 || search_depth > 10 ||
         num_threads  < 1) {
         return false;
     }
@@ -43,7 +43,7 @@ bool RenjuAPI::generateMove(const char *gs_string, int ai_player_id,
     for (int i = 0; i < input_length; i++) gs[i] -= '0';
 
     // Generate move
-    RenjuAI::generateMove(gs, ai_player_id, serach_depth,
+    RenjuAI::generateMove(gs, ai_player_id, search_depth,
                           move_r, move_c, winning_player, eval_count, pm_count);
 
     // Release memory

@@ -28,4 +28,4 @@
 *.out
 *.app
 /build/
-
+/.idea/

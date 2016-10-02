@@ -32,10 +32,6 @@ class RenjuAINegamax {
     static int heuristicNegamax(char *gs, int player, int depth,
                                 int *move_r, int *move_c);
 
-    static int heuristicNegamax(char *gs, int player, int depth,
-                                int alpha, int beta,
-                                int *move_r, int *move_c);
-
  private:
     // A move (candidate)
     struct Move {
@@ -48,6 +44,10 @@ class RenjuAINegamax {
             return heuristic_val > other.heuristic_val;
         }
     };
+
+    static int heuristicNegamax(char *gs, int player, int depth,
+                                int alpha, int beta,
+                                int *move_r, int *move_c);
 
     // Search possible moves based on a given state, sorted by heuristic values.
     static std::vector<Move> *searchMovesOrdered(const char *gs, int player);

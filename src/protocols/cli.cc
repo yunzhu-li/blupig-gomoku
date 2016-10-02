@@ -83,20 +83,20 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
 }
 
 std::string RenjuProtocolCLI::generateMove(const char *gs_string, int ai_player_id,
-                                           int serach_depth, int num_threads) {
+                                           int search_depth, int num_threads) {
     // Record start time
     std::clock_t clock_begin = std::clock();
 
     // Generate move
     int move_r, move_c, winning_player, eval_count, pm_count;
-    bool success = RenjuAPI::generateMove(gs_string, ai_player_id, serach_depth, num_threads,
+    bool success = RenjuAPI::generateMove(gs_string, ai_player_id, search_depth, num_threads,
                                           &move_r, &move_c, &winning_player, &eval_count, &pm_count);
 
     if (!success) return generateResultJson(nullptr, "Invalid input data.");
 
     // Calculate elapsed CPU time
     std::clock_t clock_end = std::clock();
-    int cpu_time = (clock_end - clock_begin) * 1000 / CLOCKS_PER_SEC;
+    std::clock_t cpu_time = (clock_end - clock_begin) * 1000 / CLOCKS_PER_SEC;
 
     // Generate result map
     std::unordered_map<std::string, std::string> data = {{"move_r", std::to_string(move_r)},

@@ -73,7 +73,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
         candidate_moves->push_back((*moves_player)[i]);
 
     // Loop through every move
-    int size = candidate_moves->size();
+    int size = (int)candidate_moves->size();
     for (int i = 0; i < size; ++i) {
         auto move = (*candidate_moves)[i];
 
@@ -86,7 +86,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
         }
 
         // Execute move
-        RenjuAIUtils::setCell(gs, move.r, move.c, player);
+        RenjuAIUtils::setCell(gs, move.r, move.c, (char)player);
 
         // Run negamax recursively
         int score = heuristicNegamax(gs,         // Game state
@@ -188,7 +188,7 @@ int RenjuAINegamax::negamax(char *gs, int player, int depth, int *move_r, int *m
             if (RenjuAIUtils::remoteCell(gs, r, c)) continue;
 
             // Execute move
-            RenjuAIUtils::setCell(gs, r, c, player);
+            RenjuAIUtils::setCell(gs, r, c, (char)player);
 
             // Run negamax recursively
             int s = -negamax(gs,                   // Game state

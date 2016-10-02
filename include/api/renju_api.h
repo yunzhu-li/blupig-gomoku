@@ -28,7 +28,7 @@ class RenjuAPI {
 
     // Generate move based on a given game state
     static bool generateMove(const char *gs_string, int ai_player_id,
-                             int serach_depth, int num_threads,
+                             int search_depth, int num_threads,
                              int *move_r, int *move_c, int *winning_player,
                              int *eval_count, int *pm_count);
 

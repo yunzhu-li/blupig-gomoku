@@ -40,8 +40,9 @@ add_executable(renju ${SRC})
 
 # Profiling executable
 if (ENABLE_PROFILING)
+    set(CMAKE_BUILD_TYPE Debug)
     add_executable(renju_prof ${SRC})
-    set_target_properties(renju_prof PROPERTIES COMPILE_FLAGS "-O0 -pg")
+    set_target_properties(renju_prof PROPERTIES COMPILE_FLAGS "-pg")
     set_target_properties(renju_prof PROPERTIES LINK_FLAGS "-pg")
 endif()
 
