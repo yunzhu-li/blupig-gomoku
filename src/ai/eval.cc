@@ -124,7 +124,7 @@ int RenjuAIEval::matchPattern(DirectionMeasurement *all_direction_measurement,
             auto dm = all_direction_measurement[j];
 
             // Requires exact match
-            if (dm.length == p.length && dm.block_count <= p.block_count &&
+            if (dm.length == p.length && dm.block_count == p.block_count &&
                 (p.space_count == -1 || dm.space_count == p.space_count)) {
                 single_pattern_match++;
             }
@@ -235,6 +235,7 @@ void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
         {2, 2, 0, -1}, {0, 0, 0,  0}, // 20
         {1, 2, 0, -1}, {0, 0, 0,  0}  // 5
     };
+
 
     int scores[11] = {
         100000,

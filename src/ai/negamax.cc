@@ -65,7 +65,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
     }
 
     int breadth = kSearchBreadth;
-    if ((breadth + 1) >> 2 == 4) breadth = 15;
+    if ((breadth + 1) >> 2 == 4) breadth = 12;
 
     // Copy moves for current player
     tmp_size = std::min((int)moves_player->size(), breadth);

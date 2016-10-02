@@ -149,7 +149,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
 void RenjuProtocolGomocup::performAndWriteMove(char *gs_string) {
     // Generate move
     int move_r, move_c;
-    bool success = RenjuAPI::generateMove(gs_string, 1, 6, 1,
+    bool success = RenjuAPI::generateMove(gs_string, 1, 8, 1,
                                           &move_r, &move_c, nullptr, nullptr, nullptr);
 
     if (success) {
