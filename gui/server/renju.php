@@ -20,14 +20,12 @@
     // A simple PHP script as the HTTP interface of renju-parallel executable.
     // Receives data via GET and responds with stdout in the body.
 
-    $cmdline = "bin/renju";
+    $cmdline = "renju";
 
     if (isset($_GET['s'])) $cmdline .= ' -s ' . $_GET['s'];
     if (isset($_GET['p'])) $cmdline .= ' -p ' . $_GET['p'];
     if (isset($_GET['t'])) $cmdline .= ' -t ' . $_GET['t'];
     // if (isset($_GET['d'])) $cmdline .= ' -d ' . $_GET['d'];
-
-    $cmdline .= ' -d 8';
 
     // Allow access form any origin
     header("Access-Control-Allow-Origin: *");

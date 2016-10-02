@@ -28,7 +28,7 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
     if (argc < 2) {
         std::cerr << "Usage: renju-parallel -s <state>        The game state (required)" << std::endl;
         std::cerr << "                      [-p <ai_player>]  AI player (1: black, 2: white; default: 1)" << std::endl;
-        std::cerr << "                      [-d <depth>]      AI Search depth (default: 6)" << std::endl;
+        std::cerr << "                      [-d <depth>]      AI Search depth (default: 8)" << std::endl;
         std::cerr << "                      [-t <threads>]    Number of threads (default: 1)" << std::endl;
         return false;
     }
@@ -38,7 +38,7 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
     char gs_string[362] = {0};
     int ai_player  = 1;
     int num_threads  = 1;
-    int search_depth = 1;
+    int search_depth = 8;
 
     // Iterate through arguments
     for (int i = 0; i < argc; i++) {
@@ -73,7 +73,6 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
             //     gs_string[i] = '0';
             memcpy(gs_string, "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000012000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", 362);
             ai_player = 1;
-            search_depth = 8;
         }
     }
 
