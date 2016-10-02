@@ -31,8 +31,8 @@
     <script src="assets/bootstrap.min.js"></script>
   </head>
 
-  <body style="font-size: 14px; background-color: #fff; margin: 10px;">
-    <nav class="navbar navbar-default navbar-fixed-top">
+  <body style="font-size: 14px; background-color: #fff;">
+    <nav class="navbar navbar-default navbar-static-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -77,6 +77,14 @@
           </div>
 
           <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title">Game Control</h3></div>
+            <div class="panel-body">
+              <button id="btn_restart" type="button" class="btn btn-primary btn-md" onclick="restartGame();">Restart</button>
+              <button id="btn_undo" type="button" class="btn btn-primary btn-md" disabled="true" onclick="undoMove();">Undo</button>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
             <div class="panel-heading"><h3 class="panel-title">Statistics</h3></div>
             <div id="panel_stats" class="panel-body" style="font-family: 'Monaco','Consolas','monospace'; font-size: 10px;">
               No data available.
@@ -110,37 +118,43 @@
     // Bind elements
     var tbl_board = document.getElementById('tbl_board');
     var div_gamearea = document.getElementById('div_gamearea');
+    var btn_restart = $('#btn_restart');
+    var btn_undo = $('#btn_undo');
 
     // Global game variables
+    var board_size = 19;
     var game_active;
     var current_board;
     var human_player, ai_player;
+    var move_log;
 
-    init();
+    // Randomly select first player
+    human_player = 1;
+    if (Math.random() > 0.5) human_player = 2;
+
+    // Initialize
+    init(human_player);
 
     // Initializes client
-    function init() {
-      // Board
+    function init(human_player) {
+      // Data
       current_board = initBoard();
-
-      // Randomly select first player
-      human_player = '1';
-      ai_player = '2';
-      if (Math.random() > 0.5) {
-        human_player = '2';
-        ai_player = '1';
-      }
-
-      if (human_player == '2') {
-        // Put a piece for black (AI)
-        current_board = replaceCell(current_board, 7, 7, '1');
-      }
+      move_log = [];
 
       initGameDisplay();
+
+      if (human_player == 1) {
+        ai_player = 2;
+      } else {
+        ai_player = 1;
+        // Put a piece for black (AI)
+        addPiece(board_size >> 1, board_size >> 1, 1);
+      }
+
       renderCurrentBoard();
 
       // Game status
-      game_active = true;
+      gameActive(true);
       updateStatusPanel('Connected', playerColors());
     }
 
@@ -151,25 +165,26 @@
       var container_size = panel_gamearea.offsetWidth - 32;
 
       // Control table size with cell size
-      var cell_width = Math.floor((container_size) / 15);
-      var cell_height = Math.floor((container_size) / 15);
+      var cell_width = Math.floor((container_size) / board_size);
+      var cell_height = Math.floor((container_size) / board_size);
 
       // No more blurry
       cell_width -= cell_width % 2;
       cell_height -= cell_height % 2;
 
       // Set containing div size
-      div_gamearea.style.width = cell_width * 15 + 'px';
-      div_gamearea.style.height = cell_height * 15 + 'px';
+      div_gamearea.style.width = cell_width * board_size + 'px';
+      div_gamearea.style.height = cell_height * board_size + 'px';
 
       // Initialize tbl_board
-      for (var r = 0; r < 15; r++) {
+      tbl_board.innerHTML = "";
+      for (var r = 0; r < board_size; r++) {
         var row = tbl_board.insertRow();
-        for (var c = 0; c < 15; c++) {
+        for (var c = 0; c < board_size; c++) {
           // New cell and data
           var cell = row.insertCell();
           cell.r = r; cell.c = c;
-          cell.board_data = '0';
+          cell.board_data = 0;
 
           // Style
           cell.width = cell_width; cell.height = cell_height;
@@ -182,10 +197,108 @@
       }
     }
 
+    // Initializes empty board
+    function initBoard() {
+      var b = [];
+      for (var i = 0; i < board_size * board_size; i++)
+        b.push('0');
+
+      return b.join('');
+    }
+
+    // Gets cell value
+    function getCell(board, r, c) {
+      return parseInt(board[board_size * r + c]);
+    }
+
+    // Generates a new board after replacing a cell
+    function replaceCell(board, r, c, val) {
+      if (r < 0 || r >= board_size || c < 0 || c >= board_size) return board;
+      var idx = board_size * r + c;
+      return board.substr(0, idx) + val.toString() + board.substr(idx + 1);
+    }
+
+    // Add a piece on board
+    function addPiece(r, c, player) {
+      // Log move
+      move_log.push([r, c, player]);
+
+      current_board = replaceCell(current_board, r, c, player);
+      renderCurrentBoard(r, c);
+    }
+
+    function restartGame() {
+      if (human_player == 1) {
+        human_player = 2;
+      } else {
+        human_player = 1;
+      }
+      init(human_player);
+    }
+
+    function undoMove() {
+      var move;
+      if (move_log.length < 2) return;
+
+      // Remove last 2 moves
+      for (var i = 0; i < 2; i++) {
+        move = move_log[move_log.length - 1];
+        move_log.pop();
+        current_board = replaceCell(current_board, move[0], move[1], 0);
+      }
+
+      // Render board
+      if (move_log.length > 0) {
+        move = move_log[move_log.length - 1];
+        renderCurrentBoard(move[0], move[1]);
+      } else {
+        renderCurrentBoard();
+      }
+
+      // Update GUI
+      gameActive(true);
+      updateStatusPanel('Connected', playerColors());
+    }
+
+    // Enables or disables game interaction
+    function gameActive(board, buttons) {
+      if (typeof buttons === 'undefined') buttons = board;
+
+      if (board) {
+        game_active = true;
+      } else {
+        game_active = false;
+      }
+
+      if (buttons) {
+        btn_restart.prop("disabled",false);
+        btn_undo.prop("disabled",false);
+        if (move_log.length < 2)
+          btn_undo.prop("disabled",true);
+      } else {
+        btn_restart.prop("disabled",true);
+        btn_undo.prop("disabled",true);
+      }
+    }
+
+    // Updates status panel
+    function updateStatusPanel(status, message, statusColor) {
+      if (typeof statusColor === 'undefined') statusColor = '#00c853';
+
+      // Generate status indicator
+      var status_html = '<div class="status-indicator" style="background-color:' + statusColor + ';"></div>';
+
+      // Append message
+      status_html += ' ' + status;
+      status_html += '<br>' + message;
+      status_html += '<br>Rules: <a href="https://en.wikipedia.org/wiki/Gomoku" target="_blank"><u>Gomoku</u></a>';
+      document.getElementById('panel_status').innerHTML = status_html;
+    }
+
     // Renders tbl_board with board data
     function renderCurrentBoard(new_piece_r, new_piece_c) {
-      for (var r = 0; r < 15; r++) {
-        for (var c = 0; c < 15; c++) {
+      for (var r = 0; r < board_size; r++) {
+        for (var c = 0; c < board_size; c++) {
           var cell = tbl_board.rows[r].cells[c];
           var cell_innerhtml = '<svg style="display: block; width: 100%; height: 100%;">';
 
@@ -197,12 +310,11 @@
           // Grid (lines)
           if (r > 0)  cell_innerhtml += svg_lines[0];
           if (c > 0)  cell_innerhtml += svg_lines[1];
-          if (r < 14) cell_innerhtml += svg_lines[2];
-          if (c < 14) cell_innerhtml += svg_lines[3];
+          if (r < board_size - 1) cell_innerhtml += svg_lines[2];
+          if (c < board_size - 1) cell_innerhtml += svg_lines[3];
 
           // Pieces
-          if (cell_value == '1') cell_innerhtml += svg_circles[0];
-          if (cell_value == '2') cell_innerhtml += svg_circles[1];
+          cell_innerhtml += svg_circles[cell_value - 1];
 
           // Mark new piece
           if (typeof new_piece_r !== 'undefined' && typeof new_piece_c !== 'undefined') {
@@ -220,65 +332,30 @@
       }
     }
 
-    // Initializes empty board
-    function initBoard() {
-      var b = [];
-      for (var i = 0; i < 225; i++)
-        b.push('0');
-
-      return b.join('');
-    }
-
-    // Gets cell value
-    function getCell(board, r, c) {
-      return board[15 * r + c];
-    }
-
-    // Generates a new board after replacing a cell
-    function replaceCell(board, r, c, val) {
-      if (r < 0 || r >= 15 || c < 0 || c >= 15) return board;
-      var idx = 15 * r + c;
-      return board.substr(0, idx) + val + board.substr(idx + 1);
-    }
-
-    // Generates an HTML string of player colors
-    function playerColors() {
-      if (human_player == '1') {
-        return 'Player: black<br>AI: white';
-      } else {
-        return 'Player: white<br>AI: black';
-      }
-    }
-
     // Handles tbl_board cells click events
     function tblBoardOnClick(e) {
       var r = e.currentTarget.r, c = e.currentTarget.c;
 
       if (!game_active) return;
-      if (getCell(current_board, r, c) != '0') return;
+      if (getCell(current_board, r, c) != 0) return;
 
-      game_active = false;
+      gameActive(false);
       updateStatusPanel('Working', playerColors(), '#ff9800');
 
       // Place piece
-      current_board = replaceCell(current_board, r, c, human_player);
-      renderCurrentBoard(r, c);
+      addPiece(r, c, human_player);
 
       // Send game status
       sendGameStatus(current_board, ai_player);
     }
 
-    // Updates status panel
-    function updateStatusPanel(status, message, statusColor) {
-      if (typeof statusColor === 'undefined') statusColor = '#00c853';
-
-      // Generate status indicator
-      var status_html = '<div class="status-indicator" style="background-color:' + statusColor + ';"></div>';
-
-      // Append message
-      status_html += ' ' + status;
-      status_html += '<br><br>' + message;
-      document.getElementById('panel_status').innerHTML = status_html;
+    // Generates an HTML string of player colors
+    function playerColors() {
+      if (human_player == 1) {
+        return '<br>Player: black<br>AI: white';
+      } else {
+        return '<br>Player: white<br>AI: black';
+      }
     }
 
     // Sends status to backend api
@@ -287,6 +364,8 @@
 
       $.get(req_url, function(data) {
         processResponse(data);
+      }).fail(function() {
+        updateStatusPanel('Error', 'Unable to request data from server.<br>', '#f44336');
       });
     }
 
@@ -295,24 +374,25 @@
       // Process response
       var result = $.parseJSON(data);
       if (result.result === null) {
-        updateStatusPanel('Error', 'Failed to process response: ' + result.message, '#f44336');
+        updateStatusPanel('Error', 'Failed to process response: ' + result.message + '<br>', '#f44336');
         return;
       }
 
       // Extract data
       result = result.result;
 
-      // Update board
-      current_board = replaceCell(current_board, parseInt(result.move_r), parseInt(result.move_c), ai_player);
-      renderCurrentBoard(result.move_r, result.move_c);
+      // Add piece on board
+      addPiece(parseInt(result.move_r), parseInt(result.move_c), ai_player);
 
       // Winning
       if (result.winning_player == '1') {
-        updateStatusPanel('Black wins! <a href="."><u>Restart</u></a>', playerColors(), '#448aff');
+        updateStatusPanel('Black wins!', playerColors(), '#448aff');
+        gameActive(false, true);
       } else if (result.winning_player == '2') {
-        updateStatusPanel('White wins! <a href="."><u>Restart</u></a>', playerColors(), '#448aff');
+        updateStatusPanel('White wins!', playerColors(), '#448aff');
+        gameActive(false, true);
       } else {
-        game_active = true;
+        gameActive(true);
         updateStatusPanel('Connected', playerColors());
       }
 

@@ -22,7 +22,7 @@
 
 class RenjuAIEvalTest : public ::testing::Test {
  protected:
-    char gs[255] = {0};
+    char gs[361] = {0};
 };
 
 TEST_F(RenjuAIEvalTest, winningPlayer) {
@@ -37,7 +37,7 @@ TEST_F(RenjuAIEvalTest, winningPlayer) {
     gs[7] = 1;
     EXPECT_EQ(1, RenjuAIEval::winningPlayer(gs));
 
-    memset(gs, 0, 225);
+    memset(gs, 0, 361);
 
     gs[2] = 1; gs[3] = 2; gs[4] = 2; gs[5] = 2; gs[6] = 2; gs[7] = 2;
     EXPECT_EQ(2, RenjuAIEval::winningPlayer(gs));
@@ -87,7 +87,7 @@ TEST_F(RenjuAIEvalTest, meausreDirection) {
     // 0 0 0 0 0
     // 0 1 * 1 0
     // 0 0 0 0 0
-    memset(gs, 0, 225);
+    memset(gs, 0, 361);
     RenjuAIUtils::setCell(gs, 1, 1, 1);
     RenjuAIUtils::setCell(gs, 1, 3, 1);
     RenjuAIEval::measureDirection(gs, 1, 2, 0, 1, 1, true, &dm);
@@ -169,7 +169,7 @@ TEST_F(RenjuAIEvalTest, matchPattern) {
     // 0 2 0
     // 0 * 0
     // 0 0 0
-    memset(gs, 0, 225);
+    memset(gs, 0, 361);
     RenjuAIUtils::setCell(gs, 1, 1, 2);
     RenjuAIUtils::setCell(gs, 2, 1, 2);
     RenjuAIUtils::setCell(gs, 3, 1, 2);
@@ -182,7 +182,7 @@ TEST_F(RenjuAIEvalTest, matchPattern) {
     // 0 0 0 0
     // 0 2 0 0
     // 0 0 0 0
-    memset(gs, 0, 225);
+    memset(gs, 0, 361);
     RenjuAIUtils::setCell(gs, 1, 2, 2);
     RenjuAIUtils::setCell(gs, 1, 3, 2);
     RenjuAIUtils::setCell(gs, 2, 1, 2);
@@ -196,7 +196,7 @@ TEST_F(RenjuAIEvalTest, matchPattern) {
     // 0 0 0 2 0
     // 0 0 0 0 0
     // 0 0 0 0 0
-    memset(gs, 0, 225);
+    memset(gs, 0, 361);
     RenjuAIUtils::setCell(gs, 1, 2, 2);
     RenjuAIUtils::setCell(gs, 1, 3, 2);
     RenjuAIUtils::setCell(gs, 2, 2, 2);
@@ -210,7 +210,7 @@ TEST_F(RenjuAIEvalTest, matchPattern) {
     // 0 2 0 0 0 0
     // 0 2 0 0 0 0
     // 0 1 0 0 0 0
-    memset(gs, 0, 225);
+    memset(gs, 0, 361);
     RenjuAIUtils::setCell(gs, 1, 2, 2);
     RenjuAIUtils::setCell(gs, 1, 4, 2);
     RenjuAIUtils::setCell(gs, 2, 1, 2);
@@ -229,7 +229,7 @@ TEST_F(RenjuAIEvalTest, evalMove) {
     // 0 2 0
     // 0 * 0
     // 0 0 0
-    memset(gs, 0, 225);
+    memset(gs, 0, 361);
     RenjuAIUtils::setCell(gs, 1, 1, 2);
     RenjuAIUtils::setCell(gs, 2, 1, 2);
     RenjuAIUtils::setCell(gs, 3, 1, 2);
@@ -241,7 +241,7 @@ TEST_F(RenjuAIEvalTest, evalMove) {
     // 0 2 0 0 0 0
     // 0 2 0 0 0 0
     // 0 1 0 0 0 0
-    memset(gs, 0, 225);
+    memset(gs, 0, 361);
     RenjuAIUtils::setCell(gs, 1, 2, 2);
     RenjuAIUtils::setCell(gs, 1, 4, 2);
     RenjuAIUtils::setCell(gs, 2, 1, 2);
@@ -257,7 +257,7 @@ TEST_F(RenjuAIEvalTest, evalMove) {
     // 0 0 0 1 0 0
     // 0 0 0 0 1 0
     // 0 0 0 0 0 0
-    memset(gs, 0, 225);
+    memset(gs, 0, 361);
     RenjuAIUtils::setCell(gs, 1, 2, 1);
     RenjuAIUtils::setCell(gs, 1, 3, 1);
     RenjuAIUtils::setCell(gs, 1, 4, 1);

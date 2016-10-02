@@ -129,11 +129,29 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
 std::vector<RenjuAINegamax::Move> *RenjuAINegamax::searchMovesOrdered(const char *gs, int player) {
     std::vector<Move> *result = new std::vector<Move>();
 
-    // Loop through all cells
+    // Find an extent to reduce unnecessary calls to RenjuAIUtils::remoteCell
+    int min_r = INT_MAX, min_c = INT_MAX, max_r = INT_MIN, max_c = INT_MIN;
     for (int r = 0; r < g_board_size; ++r) {
         for (int c = 0; c < g_board_size; ++c) {
+            if(gs[g_board_size * r + c] != 0) {
+                if (r < min_r) min_r = r;
+                if (c < min_c) min_c = c;
+                if (r > max_r) max_r = r;
+                if (c > max_c) max_c = c;
+            }
+        }
+    }
+
+    if (min_r - 2 < 0) min_r = 2;
+    if (min_c - 2 < 0) min_c = 2;
+    if (max_r + 2 >= g_board_size) max_r = g_board_size - 3;
+    if (max_c + 2 >= g_board_size) max_c = g_board_size - 3;
+
+    // Loop through all cells
+    for (int r = min_r - 2; r <= max_r + 2; ++r) {
+        for (int c = min_c - 2; c <= max_c + 2; ++c) {
             // Consider only empty cells
-            if (RenjuAIUtils::getCell(gs, r, c) != 0) continue;
+            if (gs[g_board_size * r + c] != 0) continue;
 
             // Skip remote cells (no pieces within 2 cells)
             if (RenjuAIUtils::remoteCell(gs, r, c)) continue;
