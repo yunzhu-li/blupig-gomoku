@@ -31,7 +31,7 @@ class RenjuProtocolCLI {
 
     // Generate move and responds in json
     static std::string generateMove(const char *gs_string, int ai_player_id,
-                                    int serach_depth, int num_threads);
+                                    int search_depth, int num_threads);
 
  private:
     // Generate json response

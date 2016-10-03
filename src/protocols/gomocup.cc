@@ -149,8 +149,8 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
 void RenjuProtocolGomocup::performAndWriteMove(char *gs_string) {
     // Generate move
     int move_r, move_c;
-    bool success = RenjuAPI::generateMove(gs_string, 1, 6, 1,
-                                          &move_r, &move_c, nullptr, nullptr, nullptr);
+    bool success = RenjuAPI::generateMove(gs_string, 1, 8, 1,
+                                          &move_r, &move_c, nullptr, nullptr, nullptr, nullptr);
 
     if (success) {
         // Update board
@@ -165,7 +165,7 @@ void RenjuProtocolGomocup::performAndWriteMove(char *gs_string) {
 
 void RenjuProtocolGomocup::splitLine(const char *line, int *output) {
     // Copy input
-    int in_length = strlen(line);
+    size_t in_length = strlen(line);
     char *_line = new char[in_length];
     memcpy(_line, line, in_length);
 

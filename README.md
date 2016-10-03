@@ -30,36 +30,39 @@ git clone https://github.com/yunzhu-li/renju-parallel.git
 
 ```
 sudo apt update
-sudo apt install -y make clang nginx php7.0-fpm
+sudo apt install -y make cmake clang nginx php7.0-fpm
 ```
 
-##### 3. Build the game
+##### 3. Build and install the game
 ```
-cd renju-parallel
-make
+mkdir renju-parallel/build
+cd renju-parallel/build
+cmake .. -DENABLE_TESTING=YES
+sudo make install
 ```
 
 ##### 4. Test the binary
 ```
-bin/renju test
-```
+./renju_test
 
-After a few seconds, you should see an output like this:
-```
-{"message":"ok","result":{"ai_player":"1","cpu_time":"1833","eval_count":"4804587","move_c":"9","move_r":"8","num_threads":"1","pm_count":"144137610","winning_player":"0"}}
+...
+
+[  PASSED  ] 5 tests.
 ```
 
 ##### 5. Copy files
 Copy game files to default nginx html file location, if you have a different one, change accordingly.
 ```
-mkdir -p /var/www/html/renju/bin/
-cp bin/renju /var/www/html/renju/bin/
+cd ..
+sudo mkdir -p /var/www/html/renju/
+sudo chmod -R 777 /var/www/html/renju/
 cp gui/server/renju.php /var/www/html/renju/index.php
 cp -r gui/client/* /var/www/html/renju/
+mv /var/www/html/renju/index.html /var/www/html/renju/renju.html
 ```
 
 ##### 6. Configure HTML client
-Open `/var/www/html/renju/renju.html`, search for this line:
+Open `/var/www/html/renju/index.html`, search for this line:
 ```
 var api_base_url = 'http://127.0.0.1';
 ```
@@ -86,10 +89,9 @@ server {
 
 ##### 8. Start server
 ```
-systemctl restart nginx
-systemctl restart php7.0-fpm
+sudo systemctl restart nginx
+sudo systemctl restart php7.0-fpm
 ```
 
 ##### 9. Test setup
 Open `http://<server-ip>/renju/renju.html` in your browser, you should be able to play the game.
-

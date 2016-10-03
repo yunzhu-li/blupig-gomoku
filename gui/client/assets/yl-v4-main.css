@@ -7,7 +7,6 @@ html {
 
 body {
     margin-bottom: 50px;
-    padding-top: 50px;
     font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: 400;
     font-size: 15px;
@@ -54,6 +53,17 @@ ol, ul {
     padding: 7px 20px;
 }
 
+.btn-primary {
+    background-color: #1D98F6;
+    border-color: #218ADB;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #218ADB;
+    border-color: #0F7ACC;
+}
+
 .footer {
     position: absolute;
     padding: 14px;
@@ -75,11 +85,11 @@ ol, ul {
     color: 333;
 }
 .container {
-    max-width: 900px;
+    max-width: 1100px;
 }
 
 .container-fluid {
-    max-width: 900px;
+    max-width: 1100px;
 }
 
 .separator-line {

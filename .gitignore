@@ -27,5 +27,5 @@
 *.exe
 *.out
 *.app
-/bin/
-
+/build/
+/.idea/

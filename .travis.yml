@@ -3,17 +3,17 @@ notifications:
 
 os:
   - linux
-  - osx
+#  - osx
 
 language: cpp
 
 compiler:
-  - gcc
   - clang
+  - gcc
 
 install:
-  - if [ "$CXX" = "g++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CX="g++-4.9" CC="gcc-4.9"; fi
-  - if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CX="clang++-3.7" CC="clang-3.7"; fi
+  - if [ "$CXX" = "g++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
+  - if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="clang++-3.7" CC="clang-3.7"; fi
 
 addons:
   apt:
@@ -26,5 +26,9 @@ addons:
       - clang-3.7
 
 script:
-  - make debug
-  - make test
+  - mkdir build
+  - cd build
+  - cmake .. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=YES
+  - make
+  - ./renju test
+  - ./renju_test

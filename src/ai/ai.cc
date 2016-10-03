@@ -23,9 +23,10 @@
 #include <utils/globals.h>
 #include <cstring>
 
-void RenjuAI::generateMove(const char *gs, int player, int serach_depth,
+void RenjuAI::generateMove(const char *gs, int player, int search_depth,
                            int *move_r, int *move_c, int *winning_player,
-                           int *eval_count, int *pm_count) {
+                           unsigned int *node_count, unsigned int *eval_count,
+                           unsigned int *pm_count) {
     // Check arguments
     if (move_r == nullptr || move_c == nullptr) return;
 
@@ -46,24 +47,25 @@ void RenjuAI::generateMove(const char *gs, int player, int serach_depth,
     }
 
     // Copy game state
-    int state_length = g_board_size * g_board_size;
+    size_t state_length = (size_t)g_board_size * g_board_size;
     char *b = new char[state_length];
     std::memcpy(b, gs, state_length);
 
     // Run negamax
-    RenjuAINegamax::heuristicNegamax(b, player, serach_depth, move_r, move_c);
+    RenjuAINegamax::heuristicNegamax(b, player, search_depth, move_r, move_c);
 
     // Execute the move
     std::memcpy(b, gs, state_length);
-    RenjuAIUtils::setCell(b, *move_r, *move_c, player);
+    RenjuAIUtils::setCell(b, *move_r, *move_c, (char)player);
 
     // Check if anyone wins the game
     _winning_player = RenjuAIEval::winningPlayer(b);
 
     // Write output
     if (winning_player != nullptr) *winning_player = _winning_player;
+    if (node_count != nullptr) *node_count = g_node_count;
     if (eval_count != nullptr) *eval_count = g_eval_count;
-    if (pm_count != nullptr) *pm_count = g_eval_count * 30;
+    if (pm_count != nullptr) *pm_count = g_eval_count * 22;
 
     delete[] b;
 }
