@@ -145,13 +145,13 @@
 
       if (human_player == 1) {
         ai_player = 2;
+        renderCurrentBoard();
       } else {
         ai_player = 1;
         // Put a piece for black (AI)
         addPiece(board_size >> 1, board_size >> 1, 1);
+        renderCurrentBoard(board_size >> 1, board_size >> 1);
       }
-
-      renderCurrentBoard();
 
       // Game status
       gameActive(true);
@@ -297,6 +297,12 @@
 
     // Renders tbl_board with board data
     function renderCurrentBoard(new_piece_r, new_piece_c) {
+
+      if (typeof new_piece_r === 'undefined') {
+        new_piece_r = -1;
+        new_piece_c = -1;
+      }
+
       for (var r = 0; r < board_size; r++) {
         for (var c = 0; c < board_size; c++) {
           var cell = tbl_board.rows[r].cells[c];
@@ -304,7 +310,9 @@
 
           // Skip unchanged cells
           var cell_value = getCell(current_board, r, c);
-          if (cell.cache_val == cell_value) continue;
+          if (cell.cache_val == cell_value && r != new_piece_r && c != new_piece_c) {
+              continue;
+          }
           cell.cache_val = cell_value;
 
           // Grid (lines)
@@ -317,13 +325,11 @@
           cell_innerhtml += svg_circles[cell_value - 1];
 
           // Mark new piece
-          if (typeof new_piece_r !== 'undefined' && typeof new_piece_c !== 'undefined') {
-            if (new_piece_r == r && new_piece_c == c) {
-              cell_innerhtml += svg_lines[4];
+          if (new_piece_r == r && new_piece_c == c) {
+            cell_innerhtml += svg_lines[4];
 
-              // Refresh cell in next rendering
-              cell.cache_val = -2;
-            }
+            // Refresh cell in next rendering
+            cell.cache_val = -2;
           }
 
           // Update node
