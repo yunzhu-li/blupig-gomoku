@@ -25,7 +25,8 @@
 
 void RenjuAI::generateMove(const char *gs, int player, int search_depth,
                            int *move_r, int *move_c, int *winning_player,
-                           int *eval_count, int *pm_count) {
+                           unsigned int *node_count, unsigned int *eval_count,
+                           unsigned int *pm_count) {
     // Check arguments
     if (move_r == nullptr || move_c == nullptr) return;
 
@@ -62,6 +63,7 @@ void RenjuAI::generateMove(const char *gs, int player, int search_depth,
 
     // Write output
     if (winning_player != nullptr) *winning_player = _winning_player;
+    if (node_count != nullptr) *node_count = g_node_count;
     if (eval_count != nullptr) *eval_count = g_eval_count;
     if (pm_count != nullptr) *pm_count = g_eval_count * 22;
 

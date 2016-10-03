@@ -31,16 +31,16 @@
 
 int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
                                      int *move_r, int *move_c) {
-    return heuristicNegamax(gs, player, depth, INT_MIN / 2, INT_MAX / 2, move_r, move_c);
+    return heuristicNegamax(gs, player, depth, depth, INT_MIN / 2, INT_MAX / 2, move_r, move_c);
 }
 
-int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
-                                     int alpha, int beta,
-                                     int *move_r, int *move_c) {
-    // End condition
+int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, int depth,
+                                     int alpha, int beta, int *move_r, int *move_c) {
+    // Leaf node
     if (depth == 0) return 0;
 
-    g_cc_0++;
+    // Count node
+    g_node_count++;
 
     int max_score = INT_MIN;
     int opponent = player == 1 ? 2 : 1;
@@ -50,9 +50,28 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
     auto moves_opponent = searchMovesOrdered(gs, opponent);
     auto candidate_moves = new std::vector<RenjuAINegamax::Move>();
 
-    // If opponent has good potential moves, consider blocking them first
+    // End if no move could be performed
+    if (moves_player->size() == 0) return 0;
+
+    // End directly if only one move or a winning move is found
+    if (moves_player->size() == 1 || (*moves_player)[0].heuristic_val >= 10000) {
+        auto move = (*moves_player)[0];
+        if (move_r != nullptr) *move_r = move.r;
+        if (move_c != nullptr) *move_c = move.c;
+
+        // Release memory
+        delete moves_player;
+        delete moves_opponent;
+        delete candidate_moves;
+
+        return move.heuristic_val;
+    }
+
+    // If opponent has threatening moves, consider blocking them first
+    bool block_opponent = false;
     int tmp_size = std::min((int)moves_opponent->size(), 2);
-    if (tmp_size > 0 && (*moves_opponent)[0].heuristic_val > 200) {
+    if ((*moves_opponent)[0].heuristic_val > 200) {
+        block_opponent = true;
         for (int i = 0; i < tmp_size; ++i) {
             auto move = (*moves_opponent)[i];
 
@@ -64,8 +83,9 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
         }
     }
 
+    // Consider more moves on first layer of each player
     int breadth = kSearchBreadth;
-    if ((breadth + 1) >> 2 == 4) breadth = 12;
+    if ((depth + 1) >> 1 == initial_depth >> 1) breadth = 12;
 
     // Copy moves for current player
     tmp_size = std::min((int)moves_player->size(), breadth);
@@ -77,45 +97,53 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
     for (int i = 0; i < size; ++i) {
         auto move = (*candidate_moves)[i];
 
-        // Stop if a winning move is found
-        if (move.heuristic_val >= 50000) {
-            max_score = move.heuristic_val;
-            if (move_r != nullptr) *move_r = move.r;
-            if (move_c != nullptr) *move_c = move.c;
-            break;
-        }
-
         // Execute move
         RenjuAIUtils::setCell(gs, move.r, move.c, (char)player);
 
         // Run negamax recursively
-        int score = heuristicNegamax(gs,         // Game state
-                                     opponent,   // Change player
-                                     depth - 1,  // Reduce depth by 1
+        int score = heuristicNegamax(gs,            // Game state
+                                     opponent,      // Change player
+                                     initial_depth, // Initial depth
+                                     depth - 1,     // Reduce depth by 1
                                      -beta,
                                      -alpha + move.heuristic_val,
-                                     nullptr,    // Result move not required
+                                     nullptr,       // Result move not required
                                      nullptr);
 
-        // A little bit more aggressive
-        //if (score > 10) score *= 0.9;
+        // Closer moves get more score
+        // if (score > 10) score *= 0.9;
+
+        // Calculate score difference
+        move.actual_score = move.heuristic_val - score;
+
+        // Store back to candidate array
+        (*candidate_moves)[i].actual_score = move.actual_score;
 
         // Restore
         RenjuAIUtils::setCell(gs, move.r, move.c, 0);
 
         // Update maximum score
-        int score_diff = move.heuristic_val - score;
-        if (score_diff > max_score) {
-            max_score = score_diff;
+        if (move.actual_score > max_score) {
+            max_score = move.actual_score;
             if (move_r != nullptr) *move_r = move.r;
             if (move_c != nullptr) *move_c = move.c;
         }
 
-        if (score_diff > alpha) alpha = score_diff;
+        // Alpha-beta
+        if (move.actual_score > alpha) alpha = move.actual_score;
         if (alpha >= beta) break;
+    }
 
-        // An experimental pruning
-        // if (score < 100 && i >= 15) break;
+    // If no moves that are much better than blocking threatening moves, block them.
+    // This attempts blocking even winning is impossible if the opponent plays optimally.
+    if (depth == initial_depth && block_opponent) {
+        auto blocking_move = (*candidate_moves)[0];
+        int b_score = blocking_move.actual_score;
+        if (b_score == 0 || ((max_score - b_score) / (float)std::abs(b_score) < 0.2)) {
+            if (move_r != nullptr) *move_r = blocking_move.r;
+            if (move_c != nullptr) *move_c = blocking_move.c;
+            max_score = blocking_move.actual_score;
+        }
     }
 
     // Release memory

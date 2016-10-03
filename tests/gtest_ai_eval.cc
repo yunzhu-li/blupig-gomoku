@@ -248,8 +248,7 @@ TEST_F(RenjuAIEvalTest, evalMove) {
     RenjuAIUtils::setCell(gs, 3, 1, 2);
     RenjuAIUtils::setCell(gs, 4, 1, 2);
     RenjuAIUtils::setCell(gs, 5, 1, 1);
-    EXPECT_EQ(500, RenjuAIEval::evalMove(gs, 1, 1, 2));
-
+    EXPECT_EQ(700, RenjuAIEval::evalMove(gs, 1, 1, 2));
 
     // 0 0 0 0 0 0
     // 0 * 1 1 1 2
@@ -264,10 +263,40 @@ TEST_F(RenjuAIEvalTest, evalMove) {
     RenjuAIUtils::setCell(gs, 1, 5, 2);
     RenjuAIUtils::setCell(gs, 3, 3, 1);
     RenjuAIUtils::setCell(gs, 4, 4, 1);
-    EXPECT_EQ(500, RenjuAIEval::evalMove(gs, 1, 1, 1));
+    EXPECT_EQ(700, RenjuAIEval::evalMove(gs, 1, 1, 1));
+
+    // 2 0 0 0 0 0 0
+    // 0 * 1 0 1 0 2
+    // 0 0 1 0 0 0 0
+    // 0 0 0 0 0 0 0
+    // 0 0 0 0 1 0 0
+    // 0 0 0 0 0 1 0
+    memset(gs, 0, 361);
+    RenjuAIUtils::setCell(gs, 0, 0, 2);
+    RenjuAIUtils::setCell(gs, 1, 2, 1);
+    RenjuAIUtils::setCell(gs, 1, 4, 1);
+    RenjuAIUtils::setCell(gs, 1, 6, 2);
+    RenjuAIUtils::setCell(gs, 2, 2, 1);
+    RenjuAIUtils::setCell(gs, 4, 4, 1);
+    RenjuAIUtils::setCell(gs, 5, 5, 1);
+    EXPECT_EQ(700, RenjuAIEval::evalMove(gs, 1, 1, 1));
+
+    // 2 0 0 0 0 0 0
+    // 0 * 1 0 1 0 2
+    // 0 0 1 0 0 0 0
+    // 0 0 0 0 0 0 0
+    // 0 0 0 0 1 0 0
+    // 0 0 0 0 0 1 0
+    memset(gs, 0, 361);
+    RenjuAIUtils::setCell(gs, 0, 0, 2);
+    RenjuAIUtils::setCell(gs, 1, 2, 1);
+    RenjuAIUtils::setCell(gs, 1, 4, 1);
+    RenjuAIUtils::setCell(gs, 1, 6, 2);
+    RenjuAIUtils::setCell(gs, 2, 2, 1);
+    RenjuAIUtils::setCell(gs, 4, 4, 1);
+    RenjuAIUtils::setCell(gs, 5, 5, 1);
+    EXPECT_EQ(700, RenjuAIEval::evalMove(gs, 1, 1, 1));
 }
-
-
 
 int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);

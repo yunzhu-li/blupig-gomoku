@@ -150,7 +150,7 @@ void RenjuProtocolGomocup::performAndWriteMove(char *gs_string) {
     // Generate move
     int move_r, move_c;
     bool success = RenjuAPI::generateMove(gs_string, 1, 8, 1,
-                                          &move_r, &move_c, nullptr, nullptr, nullptr);
+                                          &move_r, &move_c, nullptr, nullptr, nullptr, nullptr);
 
     if (success) {
         // Update board

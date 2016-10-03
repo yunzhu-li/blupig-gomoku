@@ -38,6 +38,7 @@ class RenjuAINegamax {
         int r;
         int c;
         int heuristic_val;
+        int actual_score;
 
         // Overloads < for sorting
         bool operator<(Move other) const {
@@ -45,9 +46,8 @@ class RenjuAINegamax {
         }
     };
 
-    static int heuristicNegamax(char *gs, int player, int depth,
-                                int alpha, int beta,
-                                int *move_r, int *move_c);
+    static int heuristicNegamax(char *gs, int player, int initial_depth, int depth,
+                                int alpha, int beta, int *move_r, int *move_c);
 
     // Search possible moves based on a given state, sorted by heuristic values.
     static std::vector<Move> *searchMovesOrdered(const char *gs, int player);
