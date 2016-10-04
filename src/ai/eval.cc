@@ -124,7 +124,8 @@ int RenjuAIEval::matchPattern(DirectionMeasurement *all_direction_measurement,
             auto dm = all_direction_measurement[j];
 
             // Requires exact match
-            if (dm.length == p.length && dm.block_count == p.block_count &&
+            if (dm.length == p.length &&
+                (p.block_count == -1 || dm.block_count == p.block_count) &&
                 (p.space_count == -1 || dm.space_count == p.space_count)) {
                 single_pattern_match++;
             }
@@ -210,46 +211,50 @@ void RenjuAIEval::measureDirection(const char *gs,
     }
 
     // More than 5 pieces in a row is equivalent to 5 pieces
-    if (result->length >= 5 && result->space_count == 0) {
-        result->length = 5;
-        result->block_count = 0;
+    if (result->length >= 5) {
+        if (result->space_count == 0) {
+            result->length = 5;
+            result->block_count = 0;
+        } else {
+            result->length = 4;
+            result->block_count = 1;
+        }
     }
 }
 
 void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
                                          int **preset_scores,
                                          int *preset_patterns_size) {
-
     DirectionPattern patterns[22] = {
-        {1, 5, 0,  0}, {0, 0, 0,  0}, // 100000
-        {1, 4, 0,  0}, {0, 0, 0,  0}, // 1000
-        {2, 4, 1, -1}, {0, 0, 0,  0}, // 1000
-        {2, 4, 2,  1}, {0, 0, 0,  0}, // 1000
-        {1, 4, 1, -1}, {1, 4, 2,  1}, // 1000
-        {1, 4, 1, -1}, {1, 3, 0, -1}, // 700
-        {1, 4, 2,  1}, {1, 3, 0, -1}, // 700
-        {2, 3, 0, -1}, {0, 0, 0,  0}, // 400
-        //{1, 4, 1, -1}, {0, 0, 0,  0}, // 10
-        //{1, 4, 2,  1}, {0, 0, 0,  0}, // 10
-        {1, 3, 0, -1}, {0, 0, 0,  0}, // 20
-        {2, 2, 0, -1}, {0, 0, 0,  0}, // 20
-        {1, 2, 0, -1}, {0, 0, 0,  0}  // 5
+        {1, 5,  0,  0}, {0, 0,  0,  0}, // 1000
+        {1, 4,  0,  0}, {0, 0,  0,  0}, // 70
+        {2, 4,  1,  0}, {0, 0,  0,  0}, // 70
+        {2, 4, -1,  1}, {0, 0,  0,  0}, // 70
+        {1, 4,  1,  0}, {1, 4, -1,  1}, // 70
+        {1, 4,  1,  0}, {1, 3,  0, -1}, // 50
+        {1, 4, -1,  1}, {1, 3,  0, -1}, // 50
+        {2, 3,  0, -1}, {0, 0,  0,  0}, // 30
+        //{1, 4,  1,  0}, {0, 0,  0,  0}, // 1
+        //{1, 4, -1,  1}, {0, 0,  0,  0}, // 1
+        {1, 3,  0, -1}, {0, 0,  0,  0}, // 2
+        {2, 2,  0, -1}, {0, 0,  0,  0}, // 2
+        {1, 2,  0, -1}, {0, 0,  0,  0}  // 1
     };
 
     int scores[11] = {
-        100000,
         1000,
-        1000,
-        1000,
-        1000,
-        700,
-        700,
-        400,
-        //10,
-        //10,
-        20,
-        20,
-        5
+        70,
+        70,
+        70,
+        70,
+        50,
+        50,
+        30,
+        //1,
+        //1,
+        2,
+        2,
+        1
     };
 
     *preset_patterns = new DirectionPattern[22];

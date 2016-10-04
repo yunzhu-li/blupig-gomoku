@@ -19,6 +19,9 @@
 #ifndef INCLUDE_AI_EVAL_H_
 #define INCLUDE_AI_EVAL_H_
 
+#define RENJU_AI_EVAL_WINNING_SCORE 1000
+#define RENJU_AI_EVAL_THREATENING_SCORE 30
+
 class RenjuAIEval {
  public:
     RenjuAIEval();
