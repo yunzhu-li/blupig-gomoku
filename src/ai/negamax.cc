@@ -111,7 +111,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
                                      nullptr);
 
         // Closer moves get more score
-        // if (score > 10) score *= 0.9;
+        if (std::abs(score) > 10) score *= 0.95;
 
         // Calculate score difference
         move.actual_score = move.heuristic_val - score;
@@ -130,7 +130,9 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
         }
 
         // Alpha-beta
-        if (move.actual_score > alpha) alpha = move.actual_score;
+        int reduced_score = move.actual_score;
+        if (std::abs(score) > 10) reduced_score *= 0.95;
+        if (reduced_score > alpha) alpha = reduced_score;
         if (alpha >= beta) break;
     }
 
