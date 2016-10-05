@@ -44,9 +44,9 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
     if (depth == 0 || depth < -1) return;
 
     // Copy game state
-    size_t state_length = (size_t)g_board_size * g_board_size;
-    char *_gs = new char[state_length];
-    memcpy(_gs, gs, state_length);
+    size_t gs_size = (size_t)g_board_size * g_board_size;
+    char *_gs = new char[gs_size];
+    memcpy(_gs, gs, gs_size);
 
     if (depth > 0) {
         if (actual_depth != nullptr) *actual_depth = depth;
@@ -58,7 +58,7 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
         for (int d = 4;; d += 2) {
             std::clock_t c_iteration_start = std::clock();
 
-            memcpy(_gs, gs, state_length);
+            memcpy(_gs, gs, gs_size);
             heuristicNegamax(_gs, player, d, d, enable_ab_pruning,
                              INT_MIN / 2,INT_MAX / 2, move_r, move_c);
 
@@ -71,7 +71,6 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
             }
         }
     }
-
     delete[] _gs;
 }
 
