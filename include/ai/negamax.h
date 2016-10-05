@@ -26,8 +26,8 @@ class RenjuAINegamax {
     RenjuAINegamax();
     ~RenjuAINegamax();
 
-    static int heuristicNegamax(char *gs, int player, int depth, bool enable_ab_pruning,
-                                int *move_r, int *move_c);
+    static void heuristicNegamax(const char *gs, int player, int depth, int time_limit, bool enable_ab_pruning,
+                                 int *actual_depth, int *move_r, int *move_c);
 
  private:
     // A move (candidate)
