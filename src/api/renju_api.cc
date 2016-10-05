@@ -41,7 +41,7 @@ bool RenjuAPI::generateMove(const char *gs_string, int ai_player_id,
     std::memcpy(gs, gs_string, input_length);
 
     // Convert from string
-    for (int i = 0; i < input_length; i++) gs[i] -= '0';
+    gsFromString(gs_string, gs);
 
     // Generate move
     RenjuAI::generateMove(gs, ai_player_id, search_depth,
@@ -50,6 +50,15 @@ bool RenjuAPI::generateMove(const char *gs_string, int ai_player_id,
     // Release memory
     delete[] gs;
     return true;
+}
+
+void RenjuAPI::gsFromString(const char *gs_string, char *gs) {
+    size_t input_length = (size_t)g_board_size * g_board_size;
+    if (strlen(gs_string) != input_length) return;
+
+    for (int i = 0; i < input_length; i++) {
+        gs[i] = gs_string[i] - '0';
+    }
 }
 
 std::string RenjuAPI::renderGameState(const char *gs) {

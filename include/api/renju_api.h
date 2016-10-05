@@ -33,6 +33,9 @@ class RenjuAPI {
                              unsigned int *node_count, unsigned int *eval_count,
                              unsigned int *pm_count);
 
+    // Convert a game state string to game state binary array
+    static void gsFromString(const char *gs_string, char *gs);
+
  private:
     // Render game state into text
     static std::string renderGameState(const char *gs);

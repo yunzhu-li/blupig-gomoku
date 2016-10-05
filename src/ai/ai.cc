@@ -52,7 +52,7 @@ void RenjuAI::generateMove(const char *gs, int player, int search_depth,
     std::memcpy(b, gs, state_length);
 
     // Run negamax
-    RenjuAINegamax::heuristicNegamax(b, player, search_depth, move_r, move_c);
+    RenjuAINegamax::heuristicNegamax(b, player, search_depth, true, move_r, move_c);
 
     // Execute the move
     std::memcpy(b, gs, state_length);

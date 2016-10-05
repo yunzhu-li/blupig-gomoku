@@ -19,8 +19,8 @@
 #ifndef INCLUDE_AI_EVAL_H_
 #define INCLUDE_AI_EVAL_H_
 
-#define RENJU_AI_EVAL_WINNING_SCORE 10000
-#define RENJU_AI_EVAL_THREATENING_SCORE 30
+#define kRenjuAiEvalWinningScore 10000
+#define kRenjuAiEvalThreateningScore 30
 
 class RenjuAIEval {
  public:

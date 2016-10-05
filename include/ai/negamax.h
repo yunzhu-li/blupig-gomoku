@@ -26,10 +26,7 @@ class RenjuAINegamax {
     RenjuAINegamax();
     ~RenjuAINegamax();
 
-    static int negamax(char *gs, int player, int depth,
-                       int *move_r, int *move_c);
-
-    static int heuristicNegamax(char *gs, int player, int depth,
+    static int heuristicNegamax(char *gs, int player, int depth, bool enable_ab_pruning,
                                 int *move_r, int *move_c);
 
  private:
@@ -47,10 +44,16 @@ class RenjuAINegamax {
     };
 
     static int heuristicNegamax(char *gs, int player, int initial_depth, int depth,
-                                int alpha, int beta, int *move_r, int *move_c);
+                                bool enable_ab_pruning, int alpha, int beta,
+                                int *move_r, int *move_c);
 
     // Search possible moves based on a given state, sorted by heuristic values.
     static std::vector<Move> *searchMovesOrdered(const char *gs, int player);
+
+    // Currently not used
+    static int negamax(char *gs, int player, int depth,
+                       int *move_r, int *move_c);
+
 };
 
 #endif  // INCLUDE_AI_NEGAMAX_H_

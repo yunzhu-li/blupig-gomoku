@@ -22,20 +22,25 @@
 #include <utils/globals.h>
 #include <algorithm>
 #include <climits>
+#include <iostream>
 
 // Breadth is used to control branching factor
 // Different breadth configurations are possible:
 // A lower breadth for a higher depth
 // Or vice versa
 #define kSearchBreadth 6
+#define kTopLayerSearchBreadth 12
+#define kScoreDecayFactor 0.9f
 
-int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth,
+int RenjuAINegamax::heuristicNegamax(char *gs, int player, int depth, bool enable_ab_pruning,
                                      int *move_r, int *move_c) {
-    return heuristicNegamax(gs, player, depth, depth, INT_MIN / 2, INT_MAX / 2, move_r, move_c);
+    return heuristicNegamax(gs, player, depth, depth, enable_ab_pruning, INT_MIN / 2, INT_MAX / 2,
+                            move_r, move_c);
 }
 
 int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, int depth,
-                                     int alpha, int beta, int *move_r, int *move_c) {
+                                     bool enable_ab_pruning, int alpha, int beta,
+                                     int *move_r, int *move_c) {
     // Leaf node
     if (depth == 0) return 0;
 
@@ -54,7 +59,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
     if (moves_player->size() == 0) return 0;
 
     // End directly if only one move or a winning move is found
-    if (moves_player->size() == 1 || (*moves_player)[0].heuristic_val >= RENJU_AI_EVAL_WINNING_SCORE) {
+    if (moves_player->size() == 1 || (*moves_player)[0].heuristic_val >= kRenjuAiEvalWinningScore) {
         auto move = (*moves_player)[0];
         if (move_r != nullptr) *move_r = move.r;
         if (move_c != nullptr) *move_c = move.c;
@@ -70,7 +75,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
     // If opponent has threatening moves, consider blocking them first
     bool block_opponent = false;
     int tmp_size = std::min((int)moves_opponent->size(), 2);
-    if ((*moves_opponent)[0].heuristic_val >= RENJU_AI_EVAL_THREATENING_SCORE) {
+    if ((*moves_opponent)[0].heuristic_val >= kRenjuAiEvalThreateningScore) {
         block_opponent = true;
         for (int i = 0; i < tmp_size; ++i) {
             auto move = (*moves_opponent)[i];
@@ -85,7 +90,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
 
     // Consider more moves on first layer of each player
     int breadth = kSearchBreadth;
-    if ((depth + 1) >> 1 == initial_depth >> 1) breadth = 12;
+    if ((depth + 1) >> 1 == initial_depth >> 1) breadth = kTopLayerSearchBreadth;
 
     // Copy moves for current player
     tmp_size = std::min((int)moves_player->size(), breadth);
@@ -101,23 +106,28 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
         RenjuAIUtils::setCell(gs, move.r, move.c, (char)player);
 
         // Run negamax recursively
-        int score = heuristicNegamax(gs,            // Game state
-                                     opponent,      // Change player
-                                     initial_depth, // Initial depth
-                                     depth - 1,     // Reduce depth by 1
-                                     -beta,
+        int score = heuristicNegamax(gs,                 // Game state
+                                     opponent,           // Change player
+                                     initial_depth,      // Initial depth
+                                     depth - 1,          // Reduce depth by 1
+                                     enable_ab_pruning,  // Alpha-Beta
+                                     -beta,              //
                                      -alpha + move.heuristic_val,
-                                     nullptr,       // Result move not required
+                                     nullptr,            // Result move not required
                                      nullptr);
 
         // Closer moves get more score
-        if (std::abs(score) > 10) score *= 0.95;
+        score *= kScoreDecayFactor;
 
         // Calculate score difference
         move.actual_score = move.heuristic_val - score;
 
         // Store back to candidate array
         (*candidate_moves)[i].actual_score = move.actual_score;
+
+        // To assist debugging
+        // if (depth >= 8)
+        //     std::cout << depth << " | " << move.r << ", " << move.c << ": " << move.actual_score << std::endl;
 
         // Restore
         RenjuAIUtils::setCell(gs, move.r, move.c, 0);
@@ -130,10 +140,8 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
         }
 
         // Alpha-beta
-        int reduced_score = move.actual_score;
-        if (std::abs(score) > 10) reduced_score *= 0.95;
-        if (reduced_score > alpha) alpha = reduced_score;
-        if (alpha >= beta) break;
+        if (move.actual_score > alpha) alpha = move.actual_score;
+        if (enable_ab_pruning && alpha * kScoreDecayFactor >= beta) break;
     }
 
     // If no moves that are much better than blocking threatening moves, block them.

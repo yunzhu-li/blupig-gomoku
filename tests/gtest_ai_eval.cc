@@ -262,11 +262,4 @@ TEST_F(RenjuAIEvalTest, evalMove) {
     RenjuAIUtils::setCell(gs, 1, 3, 1);
     RenjuAIUtils::setCell(gs, 1, 4, 1);
     EXPECT_EQ(70, RenjuAIEval::evalMove(gs, 1, 2, 1));
-
-
-}
-
-int main(int argc, char** argv) {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }
