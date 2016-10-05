@@ -117,7 +117,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
                                      nullptr);
 
         // Closer moves get more score
-        score *= kScoreDecayFactor;
+        if (score >= 10) score *= kScoreDecayFactor;
 
         // Calculate score difference
         move.actual_score = move.heuristic_val - score;
@@ -140,8 +140,10 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
         }
 
         // Alpha-beta
-        if (move.actual_score > alpha) alpha = move.actual_score;
-        if (enable_ab_pruning && alpha * kScoreDecayFactor >= beta) break;
+        int max_score_decayed = max_score;
+        if (max_score >= 10) max_score_decayed *= kScoreDecayFactor;
+        if (max_score > alpha) alpha = max_score;
+        if (enable_ab_pruning && max_score_decayed >= beta) break;
     }
 
     // If no moves that are much better than blocking threatening moves, block them.
