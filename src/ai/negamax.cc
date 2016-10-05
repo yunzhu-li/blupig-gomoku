@@ -37,7 +37,7 @@
 #define kScoreDecayFactor 0.95f
 
 // Estimated average branching factor for iterative deepening
-#define kAvgBranchingFactor 7
+#define kAvgBranchingFactor 5
 
 void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int time_limit, bool enable_ab_pruning,
                                       int *actual_depth, int *move_r, int *move_c) {
@@ -49,6 +49,7 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
     memcpy(_gs, gs, state_length);
 
     if (depth > 0) {
+        if (actual_depth != nullptr) *actual_depth = depth;
         heuristicNegamax(_gs, player, depth, depth, enable_ab_pruning,
                          INT_MIN / 2, INT_MAX / 2, move_r, move_c);
     } else {
@@ -64,7 +65,7 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
             std::clock_t c_iteration = (std::clock() - c_iteration_start) * 1000 / CLOCKS_PER_SEC;
             std::clock_t c_elapsed = (std::clock() - c_start) * 1000 / CLOCKS_PER_SEC;
 
-            if (d >= 14 || c_elapsed + (c_iteration * kAvgBranchingFactor) > time_limit) {
+            if (d >= 14 || c_elapsed + (c_iteration * kAvgBranchingFactor * 2) > time_limit) {
                 if (actual_depth != nullptr) *actual_depth = d;
                 break;
             }
@@ -184,7 +185,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
 
     // If no moves that are much better than blocking threatening moves, block them.
     // This attempts blocking even winning is impossible if the opponent plays optimally.
-    if (depth == initial_depth && block_opponent) {
+    if (depth == initial_depth && block_opponent && max_score < 0) {
         auto blocking_move = (*candidate_moves)[0];
         int b_score = blocking_move.actual_score;
         if (b_score == 0) b_score = 1;

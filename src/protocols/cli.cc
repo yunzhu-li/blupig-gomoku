@@ -79,7 +79,7 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
             // Build test data
             // for (int i = 0; i < 225; i++)
             //     gs_string[i] = '0';
-            memcpy(gs_string, "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100100000000000000121111200000000000002020000000000000000022100000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", 362);
+            memcpy(gs_string, "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000002111120000000000000111211000000000000002120100000000000000221000000000000000021220000000000000022210000000000000010100000000000000000000020000000000000000000000000000000000000000000000000000000000000000", 362);
             ai_player = 2;
         }
     }
@@ -112,7 +112,7 @@ std::string RenjuProtocolCLI::generateMove(const char *gs_string, int ai_player_
                                                          {"move_c", std::to_string(move_c)},
                                                          {"winning_player", std::to_string(winning_player)},
                                                          {"ai_player", std::to_string(ai_player_id)},
-                                                         {"serach_depth", std::to_string(actual_depth)},
+                                                         {"search_depth", std::to_string(actual_depth)},
                                                          {"cpu_time", std::to_string(cpu_time)},
                                                          {"num_threads", std::to_string(num_threads)},
                                                          {"node_count", std::to_string(node_count)},

@@ -421,6 +421,12 @@
       // Threads
       stats_html += '<br>Threads: ' + result.num_threads;
 
+      // Depth
+      stats_html += '<br><br>Depth: ' + result.search_depth;
+
+      // Branching factor
+      stats_html += '<br>Avg. branching factor: ' + (Math.log(result.node_count) / Math.log(result.search_depth)).toFixed(2);
+
       // Move eval count
       stats_html += '<br>Moves evaluated: ' + numberWithCommas(result.eval_count);
       if (result.cpu_time > 0)
