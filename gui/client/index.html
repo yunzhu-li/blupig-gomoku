@@ -432,7 +432,8 @@
         stats_html += '<br>nps: ' + formatNumber(result.node_count * 1000 / result.cpu_time);
 
       // Branching factor
-      stats_html += '<br>avg. branching factor: ' + (Math.log(result.node_count) / Math.log(result.search_depth)).toFixed(2);
+      if (result.cpu_time > 0)
+        stats_html += '<br>avg. branching factor: ' + (Math.log(result.node_count) / Math.log(result.search_depth)).toFixed(2);
 
       // Move eval count
       stats_html += '<br>move evaluations: ' + formatNumber(result.eval_count);
