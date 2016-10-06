@@ -30,10 +30,10 @@
 // A lower breadth for a higher depth
 // Or vice versa
 #define kSearchBreadth 6
-#define kTopLayerSearchBreadth 12
+#define kTopLayerSearchBreadth 10
 
 // Estimated average branching factor for iterative deepening
-#define kAvgBranchingFactor 5
+#define kAvgBranchingFactor 4
 
 // Maximum depth for iterative deepening
 #define kAvgMaximumDepth 16
@@ -80,7 +80,8 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
             std::clock_t c_iteration = (std::clock() - c_iteration_start) * 1000 / CLOCKS_PER_SEC;
             std::clock_t c_elapsed = (std::clock() - c_start) * 1000 / CLOCKS_PER_SEC;
 
-            if (d >= kAvgMaximumDepth || c_elapsed + (c_iteration * kAvgBranchingFactor * 2) > time_limit) {
+            if (c_elapsed + (c_iteration * kAvgBranchingFactor * kAvgBranchingFactor) > time_limit ||
+                d >= kAvgMaximumDepth) {
                 if (actual_depth != nullptr) *actual_depth = d;
                 break;
             }
