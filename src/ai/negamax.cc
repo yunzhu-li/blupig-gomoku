@@ -32,12 +32,15 @@
 #define kSearchBreadth 6
 #define kTopLayerSearchBreadth 12
 
+// Estimated average branching factor for iterative deepening
+#define kAvgBranchingFactor 5
+
+// Maximum depth for iterative deepening
+#define kAvgMaximumDepth 16
+
 // kScoreDecayFactor decays score each layer so the algorithm
 // prefers closer advantages
 #define kScoreDecayFactor 0.95f
-
-// Estimated average branching factor for iterative deepening
-#define kAvgBranchingFactor 5
 
 void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int time_limit, bool enable_ab_pruning,
                                       int *actual_depth, int *move_r, int *move_c) {
@@ -48,6 +51,14 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
     char *_gs = new char[gs_size];
     memcpy(_gs, gs, gs_size);
 
+    // Speedup first move
+    int _cnt = 0;
+    for (int i = 0; i < gs_size; i++)
+        if (_gs[i] != 0) _cnt++;
+
+    if (_cnt <= 2) depth = 6;
+
+    // Fixed depth or iterative deepening
     if (depth > 0) {
         if (actual_depth != nullptr) *actual_depth = depth;
         heuristicNegamax(_gs, player, depth, depth, enable_ab_pruning,
@@ -58,14 +69,18 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
         for (int d = 4;; d += 2) {
             std::clock_t c_iteration_start = std::clock();
 
+            // Reset game state
             memcpy(_gs, gs, gs_size);
+
+            // Execute negamax
             heuristicNegamax(_gs, player, d, d, enable_ab_pruning,
                              INT_MIN / 2,INT_MAX / 2, move_r, move_c);
 
+            // Times
             std::clock_t c_iteration = (std::clock() - c_iteration_start) * 1000 / CLOCKS_PER_SEC;
             std::clock_t c_elapsed = (std::clock() - c_start) * 1000 / CLOCKS_PER_SEC;
 
-            if (d >= 14 || c_elapsed + (c_iteration * kAvgBranchingFactor * 2) > time_limit) {
+            if (d >= kAvgMaximumDepth || c_elapsed + (c_iteration * kAvgBranchingFactor * 2) > time_limit) {
                 if (actual_depth != nullptr) *actual_depth = d;
                 break;
             }
