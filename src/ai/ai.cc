@@ -23,12 +23,13 @@
 #include <utils/globals.h>
 #include <cstring>
 
-void RenjuAI::generateMove(const char *gs, int player, int search_depth,
-                           int *move_r, int *move_c, int *winning_player,
-                           unsigned int *node_count, unsigned int *eval_count,
-                           unsigned int *pm_count) {
+void RenjuAI::generateMove(const char *gs, int player, int search_depth, int time_limit,
+                           int *actual_depth, int *move_r, int *move_c, int *winning_player,
+                           unsigned int *node_count, unsigned int *eval_count, unsigned int *pm_count) {
     // Check arguments
-    if (move_r == nullptr || move_c == nullptr) return;
+    if (gs == nullptr || player  < 1 || player > 2 ||
+        search_depth == 0 || search_depth > 10 ||
+        move_r == nullptr || move_c == nullptr) return;
 
     // Initialize counters
     g_eval_count = 0;
@@ -47,19 +48,19 @@ void RenjuAI::generateMove(const char *gs, int player, int search_depth,
     }
 
     // Copy game state
-    size_t state_length = (size_t)g_board_size * g_board_size;
-    char *b = new char[state_length];
-    std::memcpy(b, gs, state_length);
+    size_t gs_size = (size_t)g_board_size * g_board_size;
+    char *_gs = new char[gs_size];
+    std::memcpy(_gs, gs, gs_size);
 
     // Run negamax
-    RenjuAINegamax::heuristicNegamax(b, player, search_depth, move_r, move_c);
+    RenjuAINegamax::heuristicNegamax(_gs, player, search_depth, time_limit, true, actual_depth, move_r, move_c);
 
     // Execute the move
-    std::memcpy(b, gs, state_length);
-    RenjuAIUtils::setCell(b, *move_r, *move_c, (char)player);
+    std::memcpy(_gs, gs, gs_size);
+    RenjuAIUtils::setCell(_gs, *move_r, *move_c, (char)player);
 
     // Check if anyone wins the game
-    _winning_player = RenjuAIEval::winningPlayer(b);
+    _winning_player = RenjuAIEval::winningPlayer(_gs);
 
     // Write output
     if (winning_player != nullptr) *winning_player = _winning_player;
@@ -67,5 +68,5 @@ void RenjuAI::generateMove(const char *gs, int player, int search_depth,
     if (eval_count != nullptr) *eval_count = g_eval_count;
     if (pm_count != nullptr) *pm_count = g_eval_count * 22;
 
-    delete[] b;
+    delete[] _gs;
 }

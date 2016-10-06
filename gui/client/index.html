@@ -79,7 +79,7 @@
           <div class="panel panel-default">
             <div class="panel-heading"><h3 class="panel-title">Game Control</h3></div>
             <div class="panel-body">
-              <button id="btn_restart" type="button" class="btn btn-primary btn-md" onclick="restartGame();">Restart</button>
+              <button id="btn_restart" type="button" class="btn btn-primary btn-md" onclick="restartGame();">Restart</button>&nbsp;
               <button id="btn_undo" type="button" class="btn btn-primary btn-md" disabled="true" onclick="undoMove();">Undo</button>
             </div>
           </div>
@@ -414,29 +414,48 @@
 
       // CPU time
       if (result.cpu_time > 0)
-        stats_html += 'CPU time: ' + result.cpu_time / 1000 + 's';
+        stats_html += 'cpu time: ' + result.cpu_time / 1000 + 's';
       else
-        stats_html += 'CPU time: < 1ms';
+        stats_html += 'cpu time: < 1ms';
 
       // Threads
-      stats_html += '<br>Threads: ' + result.num_threads;
+      stats_html += '<br>threads: ' + result.num_threads;
+
+      // --
+      stats_html += '<br>--'
+
+      // Depth
+      stats_html += '<br>depth: ' + result.search_depth;
+
+      // NPS
+      if (result.cpu_time > 0)
+        stats_html += '<br>nps: ' + formatNumber(result.node_count * 1000 / result.cpu_time);
+
+      // Branching factor
+      stats_html += '<br>avg. branching factor: ' + (Math.log(result.node_count) / Math.log(result.search_depth)).toFixed(2);
 
       // Move eval count
-      stats_html += '<br>Moves evaluated: ' + numberWithCommas(result.eval_count);
+      stats_html += '<br>move evaluations: ' + formatNumber(result.eval_count);
       if (result.cpu_time > 0)
-        stats_html += '(' + numberWithCommas(Math.floor(1000 * result.eval_count / result.cpu_time)) + '/s)';
+        stats_html += ' (' + formatNumber(result.eval_count * 1000 / result.cpu_time) + '/s)';
 
       // PM eval count
-      stats_html += '<br>Patterns matched: ' + numberWithCommas(result.pm_count);
+      stats_html += '<br>pattern matchings: ' + formatNumber(result.pm_count);
       if (result.cpu_time > 0)
-        stats_html += '(' + numberWithCommas(Math.floor(1000 * result.pm_count / result.cpu_time)) + '/s)';
+        stats_html += ' (' + formatNumber(result.pm_count * 1000 / result.cpu_time) + '/s)';
+
+      // Build
+      stats_html += '<br>build: ' + result.build;
 
       document.getElementById('panel_stats').innerHTML = stats_html;
     }
 
     // Formats a number with commas as thousands separators
-    function numberWithCommas(x) {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    function formatNumber(x) {
+      if (x < 1000) return x.toString();
+      if (x >= 1000 && x < 1000000) return (x / 1000).toFixed(2) + 'k';
+      if (x >= 1000000 && x < 1000000000) return (x / 1000000).toFixed(2) + 'm';
+      if (x >= 1000000000) return (x / 1000000000).toFixed(2) + 'b';
     }
   </script>
 </html>

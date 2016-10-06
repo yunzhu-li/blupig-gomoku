@@ -38,6 +38,19 @@ class RenjuAIUtils {
     }
 
     static bool remoteCell(const char *gs, int r, int c);
+
+    // Game state hashing
+    static void zobristInit(int size, uint64_t *z1, uint64_t *z2);
+    static uint64_t zobristHash(const char *gs, int size, uint64_t *z1, uint64_t *z2);
+    static inline void zobristUpdate(uint64_t *state, uint64_t *z1, uint64_t *z2,
+                                     int row_size, int r, int c, int player) {
+        if (player == 1) {
+            *state ^= z1[row_size * r + c];
+        } else if (player == 2) {
+            *state ^= z2[row_size * r + c];
+        }
+    }
+
 };
 
 #endif  // INCLUDE_AI_UTILS_H_

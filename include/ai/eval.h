@@ -19,6 +19,9 @@
 #ifndef INCLUDE_AI_EVAL_H_
 #define INCLUDE_AI_EVAL_H_
 
+#define kRenjuAiEvalWinningScore 10000
+#define kRenjuAiEvalThreateningScore 30
+
 class RenjuAIEval {
  public:
     RenjuAIEval();

@@ -17,6 +17,7 @@
  */
 
 #include <ai/utils.h>
+#include <random>
 
 bool RenjuAIUtils::remoteCell(const char *gs, int r, int c) {
     for (int i = r - 2; i <= r + 2; ++i) {
@@ -27,4 +28,28 @@ bool RenjuAIUtils::remoteCell(const char *gs, int r, int c) {
         }
     }
     return true;
+}
+
+void RenjuAIUtils::zobristInit(int size, uint64_t *z1, uint64_t *z2) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<uint64_t> d(0, UINT64_MAX);
+
+    // Generate random values
+    for (int i = 0; i < size; i++) {
+        z1[i] = d(gen);
+        z2[i] = d(gen);
+    }
+}
+
+uint64_t RenjuAIUtils::zobristHash(const char *gs, int size, uint64_t *z1, uint64_t *z2) {
+    uint64_t state = 0;
+    for (int i = 0; i < size; i++) {
+        if (gs[i] == 1) {
+            state ^= z1[i];
+        } else if (gs[i] == 2) {
+            state ^= z2[i];
+        }
+    }
+    return state;
 }

@@ -25,20 +25,22 @@
 bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
     char line[256];
     char *gs_string = nullptr;
+    size_t gs_size = 0;
     bool errored = false;
 
     while (std::cin.getline(line, 256)) {
         // Commands
         if (strncmp(line, "START", 5) == 0) {
             // START
-            int board_size = atoi(&line[6]);
+            unsigned int board_size = (unsigned int)atoi(&line[6]);
             if (board_size >= 15 && board_size <= 20) {
                 g_board_size = board_size;
+                gs_size = (size_t)g_board_size * g_board_size;
 
                 // Initialize game state
-                gs_string = new char[g_board_size * g_board_size + 1];
-                memset(gs_string, 0, g_board_size * g_board_size + 1);
-                memset(gs_string, '0', g_board_size * g_board_size);
+                gs_string = new char[gs_size + 1];
+                memset(gs_string, 0, gs_size + 1);
+                memset(gs_string, '0', gs_size);
 
                 // Write output
                 writeStdout("OK");
@@ -60,7 +62,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
             }
 
             // Reset board
-            memset(gs_string, '0', g_board_size * g_board_size);
+            memset(gs_string, '0', gs_size);
 
             // Put a piece in center
             int move_r = g_board_size / 2, move_c = g_board_size / 2;
@@ -79,7 +81,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
             }
 
             // Reset board
-            memset(gs_string, '0', g_board_size * g_board_size);
+            memset(gs_string, '0', gs_size);
 
             while (std::cin.getline(line, 256)) {
                 // [X],[Y],[field]
@@ -97,7 +99,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
                     }
 
                     // Update board
-                    gs_string[g_board_size * values[1] + values[0]] = '0' + values[2];
+                    gs_string[g_board_size * values[1] + values[0]] = '0' + (char)values[2];
                 }
             }
 
@@ -115,7 +117,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
 
             // Read move
             int values[2] = {-1, -1};
-            int move_r = -1, move_c = -1;
+            int move_r, move_c;
             splitLine(&line[5], values);
             move_c = values[0]; move_r = values[1];
 
@@ -133,7 +135,10 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
 
         } else if (strncmp(line, "INFO", 4) == 0) {
         } else if (strncmp(line, "ABOUT", 5) == 0) {
-            writeStdout("name=\"renju-parallel\", version=\"0.1\", author=\"Yunzhu Li\", country=\"China\"");
+            std::string build_datetime = __DATE__;
+            build_datetime = build_datetime + " " + __TIME__;
+
+            writeStdout("name=\"renju-parallel\", version=\"" + build_datetime + "\", author=\"Yunzhu Li\", country=\"China\"");
         } else {
             writeStdout("UNKNOWN");
         }
@@ -142,15 +147,14 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
     // Release memory
     if (gs_string != nullptr) delete[] gs_string;
 
-    if (errored) return false;
-    return true;
+    return !errored;
 }
 
 void RenjuProtocolGomocup::performAndWriteMove(char *gs_string) {
     // Generate move
     int move_r, move_c;
-    bool success = RenjuAPI::generateMove(gs_string, 1, 8, 1,
-                                          &move_r, &move_c, nullptr, nullptr, nullptr, nullptr);
+    bool success = RenjuAPI::generateMove(gs_string, 1, 8, 3000, 1, nullptr, &move_r, &move_c,
+                                          nullptr, nullptr, nullptr, nullptr);
 
     if (success) {
         // Update board
