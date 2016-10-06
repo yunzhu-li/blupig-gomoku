@@ -18,17 +18,22 @@
 
 #include <protocols/cli.h>
 #include <protocols/gomocup.h>
+#include <cstring>
 
 // Exclude main() if building with tests
 #ifndef RENJU_PARALLEL_TEST
 
 int main(int argc, char const *argv[]) {
-    bool success;
-    success = RenjuProtocolCLI::beginSession(argc, argv);
-    // success = RenjuProtocolGomocup::beginSession(argc, argv);
+    if (argc <= 0) return 1;
 
-    if (success) return 0;
-    return 1;
+    // Select Gomocup protocol if "pbrain' found in file name
+    bool success;
+    if (strstr(argv[0], "pbrain") != nullptr) {
+        success = RenjuProtocolGomocup::beginSession(argc, argv);
+    } else {
+        success = RenjuProtocolCLI::beginSession(argc, argv);
+    }
+    return !success;
 }
 
 #endif  // RENJU_PARALLEL_TEST

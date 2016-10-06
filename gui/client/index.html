@@ -79,7 +79,7 @@
           <div class="panel panel-default">
             <div class="panel-heading"><h3 class="panel-title">Game Control</h3></div>
             <div class="panel-body">
-              <button id="btn_restart" type="button" class="btn btn-primary btn-md" onclick="restartGame();">Restart</button>
+              <button id="btn_restart" type="button" class="btn btn-primary btn-md" onclick="restartGame();">Restart</button>&nbsp;
               <button id="btn_undo" type="button" class="btn btn-primary btn-md" disabled="true" onclick="undoMove();">Undo</button>
             </div>
           </div>
@@ -443,6 +443,9 @@
       stats_html += '<br>pattern matchings: ' + formatNumber(result.pm_count);
       if (result.cpu_time > 0)
         stats_html += ' (' + formatNumber(result.pm_count * 1000 / result.cpu_time) + '/s)';
+
+      // Build
+      stats_html += '<br>build: ' + result.build;
 
       document.getElementById('panel_stats').innerHTML = stats_html;
     }

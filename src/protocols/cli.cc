@@ -107,6 +107,10 @@ std::string RenjuProtocolCLI::generateMove(const char *gs_string, int ai_player_
     std::clock_t clock_end = std::clock();
     std::clock_t cpu_time = (clock_end - clock_begin) * 1000 / CLOCKS_PER_SEC;
 
+    // Build date & time
+    std::string build_datetime = __DATE__;
+    build_datetime = build_datetime + " " + __TIME__;
+
     // Generate result map
     std::unordered_map<std::string, std::string> data = {{"move_r", std::to_string(move_r)},
                                                          {"move_c", std::to_string(move_c)},
@@ -119,7 +123,8 @@ std::string RenjuProtocolCLI::generateMove(const char *gs_string, int ai_player_
                                                          {"eval_count", std::to_string(eval_count)},
                                                          {"pm_count", std::to_string(pm_count)},
                                                          {"cc_0", std::to_string(g_cc_0)},
-                                                         {"cc_1", std::to_string(g_cc_1)}};
+                                                         {"cc_1", std::to_string(g_cc_1)},
+                                                         {"build", build_datetime}};
 
     // Result
     return generateResultJson(&data, "ok");
