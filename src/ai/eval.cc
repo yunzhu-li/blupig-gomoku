@@ -236,8 +236,8 @@ void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
         {2, 3,  0, -1}, {0, 0,  0,  0}, // 30
         //{1, 4,  1,  0}, {0, 0,  0,  0}, // 1
         //{1, 4, -1,  1}, {0, 0,  0,  0}, // 1
+        {3, 2,  0, -1}, {0, 0,  0,  0}, // 5
         {1, 3,  0, -1}, {0, 0,  0,  0}, // 2
-        {2, 2,  0, -1}, {0, 0,  0,  0}, // 2
         {1, 2,  0, -1}, {0, 0,  0,  0}  // 1
     };
 
@@ -252,7 +252,7 @@ void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
         30,
         //1,
         //1,
-        2,
+        5,
         2,
         1
     };
