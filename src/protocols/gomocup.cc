@@ -34,7 +34,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
             unsigned int board_size = (unsigned int)atoi(&line[6]);
             if (board_size >= 15 && board_size <= 20) {
                 g_board_size = board_size;
-                g_gs_size = g_board_size * g_board_size;
+                g_gs_size = (unsigned int)g_board_size * g_board_size;
 
                 // Initialize game state
                 gs_string = new char[g_gs_size + 1];

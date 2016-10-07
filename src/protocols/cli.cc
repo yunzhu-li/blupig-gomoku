@@ -29,7 +29,7 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
         std::cerr << "Usage: renju-parallel" << std::endl;
         std::cerr << "        -s <state>       The game state (required)" << std::endl;
         std::cerr << "       [-p <ai_player>]  AI player (1: black, 2: white; default: 1)" << std::endl;
-        std::cerr << "       [-d <depth>]      AI Search depth (iterative deepening)" << std::endl;
+        std::cerr << "       [-d <depth>]      AI Search depth (8; -1 for iterative deepening)" << std::endl;
         std::cerr << "       [-l <time_limit>] Execution time limit for iterative deepening (3000)" << std::endl;
         std::cerr << "       [-t <threads>]    Number of threads (1)" << std::endl;
         return false;
@@ -37,11 +37,11 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
 
     // Initialize arguments
     g_board_size = 19;
-    g_gs_size = g_board_size * g_board_size;
+    g_gs_size = (unsigned int)g_board_size * g_board_size;
     char gs_string[362] = {0};
     int ai_player = 1;
     int num_threads = 1;
-    int search_depth = -1;
+    int search_depth = 8;
     int time_limit = 3000;
 
     // Iterate through arguments

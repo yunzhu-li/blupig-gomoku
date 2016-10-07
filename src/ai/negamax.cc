@@ -36,7 +36,7 @@
 #define kAvgBranchingFactor 4
 
 // Maximum depth for iterative deepening
-#define kAvgMaximumDepth 16
+#define kMaximumDepth 16
 
 // kScoreDecayFactor decays score each layer so the algorithm
 // prefers closer advantages
@@ -65,7 +65,7 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
     } else {
         // Iterative deepening
         std::clock_t c_start = std::clock();
-        for (int d = 4;; d += 2) {
+        for (int d = 6;; d += 2) {
             std::clock_t c_iteration_start = std::clock();
 
             // Reset game state
@@ -80,7 +80,7 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
             std::clock_t c_elapsed = (std::clock() - c_start) * 1000 / CLOCKS_PER_SEC;
 
             if (c_elapsed + (c_iteration * kAvgBranchingFactor * kAvgBranchingFactor) > time_limit ||
-                d >= kAvgMaximumDepth) {
+                d >= kMaximumDepth) {
                 if (actual_depth != nullptr) *actual_depth = d;
                 break;
             }

@@ -39,6 +39,7 @@ void RenjuAI::generateMove(const char *gs, int player, int search_depth, int tim
     *move_r = -1;
     *move_c = -1;
     int _winning_player = 0;
+    if (actual_depth != nullptr) *actual_depth = 0;
 
     // Check if anyone wins the game
     _winning_player = RenjuAIEval::winningPlayer(gs);
