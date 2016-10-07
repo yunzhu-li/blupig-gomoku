@@ -22,8 +22,9 @@
 #include <utils/globals.h>
 #include <algorithm>
 #include <climits>
-#include <ctime>
 #include <cstring>
+#include <cstdlib>
+#include <ctime>
 
 // kSearchBreadth is used to control branching factor
 // Different breadth configurations are possible:
