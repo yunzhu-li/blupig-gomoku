@@ -57,7 +57,7 @@ void RenjuAI::generateMove(const char *gs, int player, int search_depth, int tim
 
     // Execute the move
     std::memcpy(_gs, gs, g_gs_size);
-    RenjuAIUtils::setCell(_gs, *move_r, *move_c, (char)player);
+    RenjuAIUtils::setCell(_gs, *move_r, *move_c, static_cast<char>(player));
 
     // Check if anyone wins the game
     _winning_player = RenjuAIEval::winningPlayer(_gs);

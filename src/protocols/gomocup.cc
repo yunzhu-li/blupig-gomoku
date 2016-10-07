@@ -98,7 +98,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
                     }
 
                     // Update board
-                    gs_string[g_board_size * values[1] + values[0]] = '0' + (char)values[2];
+                    gs_string[g_board_size * values[1] + values[0]] = '0' + static_cast<char>(values[2]);
                 }
             }
 
@@ -152,7 +152,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
 void RenjuProtocolGomocup::performAndWriteMove(char *gs_string) {
     // Generate move
     int move_r, move_c;
-    bool success = RenjuAPI::generateMove(gs_string, 1, 8, 3000, 1, nullptr, &move_r, &move_c,
+    bool success = RenjuAPI::generateMove(gs_string, 1, -1, 5000, 1, nullptr, &move_r, &move_c,
                                           nullptr, nullptr, nullptr, nullptr);
 
     if (success) {

@@ -48,7 +48,7 @@ class RenjuAINegamax {
                                 int *move_r, int *move_c);
 
     // Search possible moves based on a given state, sorted by heuristic values.
-    static std::vector<Move> *searchMovesOrdered(const char *gs, int player);
+    static void searchMovesOrdered(const char *gs, int player, std::vector<Move> *result);
 
     // Currently not used
     static int negamax(char *gs, int player, int depth,
