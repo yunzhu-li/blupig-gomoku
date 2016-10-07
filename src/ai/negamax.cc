@@ -22,21 +22,22 @@
 #include <utils/globals.h>
 #include <algorithm>
 #include <climits>
-#include <ctime>
 #include <cstring>
+#include <cstdlib>
+#include <ctime>
 
 // kSearchBreadth is used to control branching factor
 // Different breadth configurations are possible:
 // A lower breadth for a higher depth
 // Or vice versa
 #define kSearchBreadth 6
-#define kTopLayerSearchBreadth 12
+#define kTopLayerSearchBreadth 10
 
 // Estimated average branching factor for iterative deepening
-#define kAvgBranchingFactor 5
+#define kAvgBranchingFactor 4
 
 // Maximum depth for iterative deepening
-#define kAvgMaximumDepth 16
+#define kMaximumDepth 16
 
 // kScoreDecayFactor decays score each layer so the algorithm
 // prefers closer advantages
@@ -44,16 +45,19 @@
 
 void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int time_limit, bool enable_ab_pruning,
                                       int *actual_depth, int *move_r, int *move_c) {
-    if (depth == 0 || depth < -1) return;
+    // Check arguments
+    if (gs == nullptr ||
+        player < 1 || player > 2 ||
+        depth == 0 || depth < -1 ||
+        time_limit < 0) return;
 
     // Copy game state
-    size_t gs_size = (size_t)g_board_size * g_board_size;
-    char *_gs = new char[gs_size];
-    memcpy(_gs, gs, gs_size);
+    char *_gs = new char[g_gs_size];
+    memcpy(_gs, gs, g_gs_size);
 
     // Speedup first move
     int _cnt = 0;
-    for (int i = 0; i < gs_size; i++)
+    for (int i = 0; i < g_gs_size; i++)
         if (_gs[i] != 0) _cnt++;
 
     if (_cnt <= 2) depth = 6;
@@ -66,21 +70,22 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
     } else {
         // Iterative deepening
         std::clock_t c_start = std::clock();
-        for (int d = 4;; d += 2) {
+        for (int d = 6;; d += 2) {
             std::clock_t c_iteration_start = std::clock();
 
             // Reset game state
-            memcpy(_gs, gs, gs_size);
+            memcpy(_gs, gs, g_gs_size);
 
             // Execute negamax
             heuristicNegamax(_gs, player, d, d, enable_ab_pruning,
-                             INT_MIN / 2,INT_MAX / 2, move_r, move_c);
+                             INT_MIN / 2, INT_MAX / 2, move_r, move_c);
 
             // Times
             std::clock_t c_iteration = (std::clock() - c_iteration_start) * 1000 / CLOCKS_PER_SEC;
             std::clock_t c_elapsed = (std::clock() - c_start) * 1000 / CLOCKS_PER_SEC;
 
-            if (d >= kAvgMaximumDepth || c_elapsed + (c_iteration * kAvgBranchingFactor * 2) > time_limit) {
+            if (c_elapsed + (c_iteration * kAvgBranchingFactor * kAvgBranchingFactor) > time_limit ||
+                d >= kMaximumDepth) {
                 if (actual_depth != nullptr) *actual_depth = d;
                 break;
             }
@@ -102,40 +107,34 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
     int opponent = player == 1 ? 2 : 1;
 
     // Search and sort possible moves
-    auto moves_player = searchMovesOrdered(gs, player);
-    auto moves_opponent = searchMovesOrdered(gs, opponent);
-    auto candidate_moves = new std::vector<RenjuAINegamax::Move>();
+    std::vector<Move> moves_player, moves_opponent, candidate_moves;
+    searchMovesOrdered(gs, player, &moves_player);
+    searchMovesOrdered(gs, opponent, &moves_opponent);
 
     // End if no move could be performed
-    if (moves_player->size() == 0) return 0;
+    if (moves_player.size() == 0) return 0;
 
     // End directly if only one move or a winning move is found
-    if (moves_player->size() == 1 || (*moves_player)[0].heuristic_val >= kRenjuAiEvalWinningScore) {
-        auto move = (*moves_player)[0];
+    if (moves_player.size() == 1 || moves_player[0].heuristic_val >= kRenjuAiEvalWinningScore) {
+        auto move = moves_player[0];
         if (move_r != nullptr) *move_r = move.r;
         if (move_c != nullptr) *move_c = move.c;
-
-        // Release memory
-        delete moves_player;
-        delete moves_opponent;
-        delete candidate_moves;
-
         return move.heuristic_val;
     }
 
     // If opponent has threatening moves, consider blocking them first
     bool block_opponent = false;
-    int tmp_size = std::min((int)moves_opponent->size(), 2);
-    if ((*moves_opponent)[0].heuristic_val >= kRenjuAiEvalThreateningScore) {
+    int tmp_size = std::min(static_cast<int>(moves_opponent.size()), 2);
+    if (moves_opponent[0].heuristic_val >= kRenjuAiEvalThreateningScore) {
         block_opponent = true;
         for (int i = 0; i < tmp_size; ++i) {
-            auto move = (*moves_opponent)[i];
+            auto move = moves_opponent[i];
 
             // Re-evaluate move as current player
             move.heuristic_val = RenjuAIEval::evalMove(gs, move.r, move.c, player);
 
             // Add to candidate list
-            candidate_moves->push_back(move);
+            candidate_moves.push_back(move);
         }
     }
 
@@ -144,17 +143,17 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
     if ((depth + 1) >> 1 == initial_depth >> 1) breadth = kTopLayerSearchBreadth;
 
     // Copy moves for current player
-    tmp_size = std::min((int)moves_player->size(), breadth);
+    tmp_size = std::min(static_cast<int>(moves_player.size()), breadth);
     for (int i = 0; i < tmp_size; ++i)
-        candidate_moves->push_back((*moves_player)[i]);
+        candidate_moves.push_back(moves_player[i]);
 
     // Loop through every move
-    int size = (int)candidate_moves->size();
+    int size = static_cast<int>(candidate_moves.size());
     for (int i = 0; i < size; ++i) {
-        auto move = (*candidate_moves)[i];
+        auto move = candidate_moves[i];
 
         // Execute move
-        RenjuAIUtils::setCell(gs, move.r, move.c, (char)player);
+        RenjuAIUtils::setCell(gs, move.r, move.c, static_cast<char>(player));
 
         // Run negamax recursively
         int score = heuristicNegamax(gs,                 // Game state
@@ -174,7 +173,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
         move.actual_score = move.heuristic_val - score;
 
         // Store back to candidate array
-        (*candidate_moves)[i].actual_score = move.actual_score;
+        candidate_moves[i].actual_score = move.actual_score;
 
         // To assist debugging
         // if (depth >= 8)
@@ -200,32 +199,27 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
     // If no moves that are much better than blocking threatening moves, block them.
     // This attempts blocking even winning is impossible if the opponent plays optimally.
     if (depth == initial_depth && block_opponent && max_score < 0) {
-        auto blocking_move = (*candidate_moves)[0];
+        auto blocking_move = candidate_moves[0];
         int b_score = blocking_move.actual_score;
         if (b_score == 0) b_score = 1;
-        if ((max_score - b_score) / (float)std::abs(b_score) < 0.2) {
+        if ((max_score - b_score) / static_cast<float>(std::abs(b_score)) < 0.2) {
             if (move_r != nullptr) *move_r = blocking_move.r;
             if (move_c != nullptr) *move_c = blocking_move.c;
             max_score = blocking_move.actual_score;
         }
     }
-
-    // Release memory
-    delete moves_player;
-    delete moves_opponent;
-    delete candidate_moves;
-
     return max_score;
 }
 
-std::vector<RenjuAINegamax::Move> *RenjuAINegamax::searchMovesOrdered(const char *gs, int player) {
-    std::vector<Move> *result = new std::vector<Move>();
+void RenjuAINegamax::searchMovesOrdered(const char *gs, int player, std::vector<Move> *result) {
+    // Clear and previous result
+    result->clear();
 
     // Find an extent to reduce unnecessary calls to RenjuAIUtils::remoteCell
     int min_r = INT_MAX, min_c = INT_MAX, max_r = INT_MIN, max_c = INT_MIN;
     for (int r = 0; r < g_board_size; ++r) {
         for (int c = 0; c < g_board_size; ++c) {
-            if(gs[g_board_size * r + c] != 0) {
+            if (gs[g_board_size * r + c] != 0) {
                 if (r < min_r) min_r = r;
                 if (c < min_c) min_c = c;
                 if (r > max_r) max_r = r;
@@ -260,7 +254,6 @@ std::vector<RenjuAINegamax::Move> *RenjuAINegamax::searchMovesOrdered(const char
         }
     }
     std::sort(result->begin(), result->end());
-    return result;
 }
 
 int RenjuAINegamax::negamax(char *gs, int player, int depth, int *move_r, int *move_c) {
@@ -280,7 +273,7 @@ int RenjuAINegamax::negamax(char *gs, int player, int depth, int *move_r, int *m
             if (RenjuAIUtils::remoteCell(gs, r, c)) continue;
 
             // Execute move
-            RenjuAIUtils::setCell(gs, r, c, (char)player);
+            RenjuAIUtils::setCell(gs, r, c, static_cast<char>(player));
 
             // Run negamax recursively
             int s = -negamax(gs,                   // Game state

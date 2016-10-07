@@ -59,11 +59,17 @@
         <div class="col-md-8">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Board</h3>
+              <h3 class="panel-title">
+                Board
+                  <div id='p_ai' class="progress pull-right" style="opacity: 0; margin-top:5px; width: 100px; height: 10px;">
+                    <div id='pb_ai' class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+                    </div>
+                  </div>
+              </h3>
             </div>
             <div id="panel_gamearea" class="panel-body text-center">
               <div id="div_gamearea" style="margin: 0 auto; ">
-                <table id="tbl_board" style="border-collapse: collapse; border-spacing: 0; background-color: #efefef;">
+                <table id="tbl_board" style="border-collapse: collapse; border-spacing: 0; background-color: #f3f3f3;">
                 </table>
               </div>
             </div>
@@ -120,6 +126,8 @@
     var div_gamearea = document.getElementById('div_gamearea');
     var btn_restart = $('#btn_restart');
     var btn_undo = $('#btn_undo');
+    var p_ai = $('#p_ai');    // Progress bar
+    var pb_ai = $('#pb_ai');
 
     // Global game variables
     var board_size = 19;
@@ -281,6 +289,20 @@
       }
     }
 
+    // Manipulate progress bar
+    function progressBar(on) {
+      pb_ai.stop();
+      if (on) {
+        pb_ai.width('0%');
+        pb_ai.attr('aria-valuenow', 0);
+        p_ai.animate({'opacity': 1}, {duration: 300, queue: false});
+        pb_ai.animate({'width': '100%', 'aria-valuenow': 100}, {duration: 5000, easing: 'linear', queue: false});
+      } else {
+        pb_ai.animate({'width': '100%', 'aria-valuenow': 100}, {duration: 250, queue: false});
+        p_ai.animate({'opacity': 0}, {duration: 300, queue: false});
+      }
+    }
+
     // Updates status panel
     function updateStatusPanel(status, message, statusColor) {
       if (typeof statusColor === 'undefined') statusColor = '#00c853';
@@ -343,10 +365,11 @@
       var r = e.currentTarget.r, c = e.currentTarget.c;
 
       if (!game_active) return;
-      if (getCell(current_board, r, c) != 0) return;
+      if (getCell(current_board, r, c) !== 0) return;
 
       gameActive(false);
       updateStatusPanel('Working', playerColors(), '#ff9800');
+      progressBar(true);
 
       // Place piece
       addPiece(r, c, human_player);
@@ -364,7 +387,7 @@
       }
     }
 
-    // Sends status to backend api
+    // Sends status to backend
     function sendGameStatus(board, ai_player) {
       var req_url = api_base_url + '/renju/?s=' + board + '&p=' + ai_player;
 
@@ -375,8 +398,9 @@
       });
     }
 
-    // Process response from backend api
+    // Process response
     function processResponse(data) {
+      progressBar(false);
       // Process response
       var result = $.parseJSON(data);
       if (result.result === null) {
@@ -422,7 +446,7 @@
       stats_html += '<br>threads: ' + result.num_threads;
 
       // --
-      stats_html += '<br>--'
+      stats_html += '<br>--';
 
       // Depth
       stats_html += '<br>depth: ' + result.search_depth;
@@ -432,7 +456,8 @@
         stats_html += '<br>nps: ' + formatNumber(result.node_count * 1000 / result.cpu_time);
 
       // Branching factor
-      stats_html += '<br>avg. branching factor: ' + (Math.log(result.node_count) / Math.log(result.search_depth)).toFixed(2);
+      if (result.cpu_time > 0)
+        stats_html += '<br>avg. branching factor: ' + (Math.log(result.node_count) / Math.log(result.search_depth)).toFixed(2);
 
       // Move eval count
       stats_html += '<br>move evaluations: ' + formatNumber(result.eval_count);

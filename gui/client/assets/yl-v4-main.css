@@ -64,6 +64,19 @@ ol, ul {
     border-color: #0F7ACC;
 }
 
+.progress {
+    border-radius: 5px;
+}
+
+.progress-bar {
+    background-color: #1D98F6;
+    -webkit-transition: none;
+    -moz-transition: none;
+    -ms-transition: none;
+    -o-transition: none;
+    transition: none;
+}
+
 .footer {
     position: absolute;
     padding: 14px;

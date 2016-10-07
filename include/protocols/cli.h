@@ -34,6 +34,13 @@ class RenjuProtocolCLI {
                                     int time_limit, int num_threads);
 
  private:
+    // Validates a string and parses into an integer
+    static bool parseIntegerArgument(const char *str, int max_length, int *result);
+
+    // Validates a string and returns the length.
+    // If fails validation, -1 is returned.
+    static int validateString(const char *str, int max_length);
+
     // Generate json response
     static std::string generateResultJson(const std::unordered_map<std::string, std::string> *data,
                                           const std::string &message);

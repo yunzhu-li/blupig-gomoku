@@ -31,7 +31,8 @@ int preset_patterns_size = 0;
 
 int RenjuAIEval::evalState(const char *gs, int player) {
     // Check parameters
-    if (gs == nullptr) return 0;
+    if (gs == nullptr ||
+        player < 1 || player > 2) return 0;
 
     // Evaluate all possible moves
     int score = 0;
@@ -45,7 +46,8 @@ int RenjuAIEval::evalState(const char *gs, int player) {
 
 int RenjuAIEval::evalMove(const char *gs, int r, int c, int player) {
     // Check parameters
-    if (gs == nullptr) return 0;
+    if (gs == nullptr ||
+        player < 1 || player > 2) return 0;
 
     // Count evaluations
     g_eval_count++;
@@ -226,19 +228,19 @@ void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
                                          int **preset_scores,
                                          int *preset_patterns_size) {
     DirectionPattern patterns[22] = {
-        {1, 5,  0,  0}, {0, 0,  0,  0}, // 10000
-        {1, 4,  0,  0}, {0, 0,  0,  0}, // 70
-        {2, 4,  1,  0}, {0, 0,  0,  0}, // 70
-        {2, 4, -1,  1}, {0, 0,  0,  0}, // 70
-        {1, 4,  1,  0}, {1, 4, -1,  1}, // 70
-        {1, 4,  1,  0}, {1, 3,  0, -1}, // 50
-        {1, 4, -1,  1}, {1, 3,  0, -1}, // 50
-        {2, 3,  0, -1}, {0, 0,  0,  0}, // 30
-        //{1, 4,  1,  0}, {0, 0,  0,  0}, // 1
-        //{1, 4, -1,  1}, {0, 0,  0,  0}, // 1
-        {3, 2,  0, -1}, {0, 0,  0,  0}, // 5
-        {1, 3,  0, -1}, {0, 0,  0,  0}, // 2
-        {1, 2,  0, -1}, {0, 0,  0,  0}  // 1
+        {1, 5,  0,  0}, {0, 0,  0,  0},  // 10000
+        {1, 4,  0,  0}, {0, 0,  0,  0},  // 70
+        {2, 4,  1,  0}, {0, 0,  0,  0},  // 70
+        {2, 4, -1,  1}, {0, 0,  0,  0},  // 70
+        {1, 4,  1,  0}, {1, 4, -1,  1},  // 70
+        {1, 4,  1,  0}, {1, 3,  0, -1},  // 50
+        {1, 4, -1,  1}, {1, 3,  0, -1},  // 50
+        {2, 3,  0, -1}, {0, 0,  0,  0},  // 30
+        // {1, 4,  1,  0}, {0, 0,  0,  0},  // 1
+        // {1, 4, -1,  1}, {0, 0,  0,  0},  // 1
+        {3, 2,  0, -1}, {0, 0,  0,  0},  // 5
+        {1, 3,  0, -1}, {0, 0,  0,  0},  // 2
+        {1, 2,  0, -1}, {0, 0,  0,  0}   // 1
     };
 
     int scores[11] = {
@@ -250,8 +252,8 @@ void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
         50,
         50,
         30,
-        //1,
-        //1,
+        // 1,
+        // 1,
         5,
         2,
         1
@@ -267,6 +269,7 @@ void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
 }
 
 int RenjuAIEval::winningPlayer(const char *gs) {
+    if (gs == nullptr) return 0;
     for (int r = 0; r < g_board_size; ++r) {
         for (int c = 0; c < g_board_size; ++c) {
             int cell = gs[g_board_size * r + c];

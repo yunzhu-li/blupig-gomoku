@@ -27,8 +27,10 @@ void RenjuAI::generateMove(const char *gs, int player, int search_depth, int tim
                            int *actual_depth, int *move_r, int *move_c, int *winning_player,
                            unsigned int *node_count, unsigned int *eval_count, unsigned int *pm_count) {
     // Check arguments
-    if (gs == nullptr || player  < 1 || player > 2 ||
+    if (gs == nullptr ||
+        player  < 1 || player > 2 ||
         search_depth == 0 || search_depth > 10 ||
+        time_limit < 0 ||
         move_r == nullptr || move_c == nullptr) return;
 
     // Initialize counters
@@ -39,6 +41,7 @@ void RenjuAI::generateMove(const char *gs, int player, int search_depth, int tim
     *move_r = -1;
     *move_c = -1;
     int _winning_player = 0;
+    if (actual_depth != nullptr) *actual_depth = 0;
 
     // Check if anyone wins the game
     _winning_player = RenjuAIEval::winningPlayer(gs);
@@ -48,16 +51,15 @@ void RenjuAI::generateMove(const char *gs, int player, int search_depth, int tim
     }
 
     // Copy game state
-    size_t gs_size = (size_t)g_board_size * g_board_size;
-    char *_gs = new char[gs_size];
-    std::memcpy(_gs, gs, gs_size);
+    char *_gs = new char[g_gs_size];
+    std::memcpy(_gs, gs, g_gs_size);
 
     // Run negamax
     RenjuAINegamax::heuristicNegamax(_gs, player, search_depth, time_limit, true, actual_depth, move_r, move_c);
 
     // Execute the move
-    std::memcpy(_gs, gs, gs_size);
-    RenjuAIUtils::setCell(_gs, *move_r, *move_c, (char)player);
+    std::memcpy(_gs, gs, g_gs_size);
+    RenjuAIUtils::setCell(_gs, *move_r, *move_c, static_cast<char>(player));
 
     // Check if anyone wins the game
     _winning_player = RenjuAIEval::winningPlayer(_gs);

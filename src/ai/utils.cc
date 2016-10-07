@@ -20,6 +20,7 @@
 #include <random>
 
 bool RenjuAIUtils::remoteCell(const char *gs, int r, int c) {
+    if (gs == nullptr) return false;
     for (int i = r - 2; i <= r + 2; ++i) {
         if (i < 0 || i >= g_board_size) continue;
         for (int j = c - 2; j <= c + 2; ++j) {
