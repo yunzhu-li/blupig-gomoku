@@ -27,8 +27,7 @@ bool RenjuAPI::generateMove(const char *gs_string, int ai_player_id,
                             int *actual_depth, int *move_r, int *move_c, int *winning_player,
                             unsigned int *node_count, unsigned int *eval_count, unsigned int *pm_count) {
     // Check input data
-    size_t gs_size = (size_t)g_board_size * g_board_size;
-    if (strlen(gs_string) != gs_size ||
+    if (strlen(gs_string) != g_gs_size ||
         ai_player_id  < 1 || ai_player_id > 2 ||
         search_depth == 0 || search_depth > 10 ||
         num_threads  < 1) {
@@ -36,8 +35,8 @@ bool RenjuAPI::generateMove(const char *gs_string, int ai_player_id,
     }
 
     // Copy game state
-    char *gs = new char[gs_size];
-    std::memcpy(gs, gs_string, gs_size);
+    char *gs = new char[g_gs_size];
+    std::memcpy(gs, gs_string, g_gs_size);
 
     // Convert from string
     gsFromString(gs_string, gs);
@@ -52,10 +51,8 @@ bool RenjuAPI::generateMove(const char *gs_string, int ai_player_id,
 }
 
 void RenjuAPI::gsFromString(const char *gs_string, char *gs) {
-    size_t gs_size = (size_t)g_board_size * g_board_size;
-    if (strlen(gs_string) != gs_size) return;
-
-    for (int i = 0; i < gs_size; i++) {
+    if (strlen(gs_string) != g_gs_size) return;
+    for (int i = 0; i < g_gs_size; i++) {
         gs[i] = gs_string[i] - '0';
     }
 }

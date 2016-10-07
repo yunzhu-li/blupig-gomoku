@@ -25,7 +25,6 @@
 bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
     char line[256];
     char *gs_string = nullptr;
-    size_t gs_size = 0;
     bool errored = false;
 
     while (std::cin.getline(line, 256)) {
@@ -35,12 +34,12 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
             unsigned int board_size = (unsigned int)atoi(&line[6]);
             if (board_size >= 15 && board_size <= 20) {
                 g_board_size = board_size;
-                gs_size = (size_t)g_board_size * g_board_size;
+                g_gs_size = g_board_size * g_board_size;
 
                 // Initialize game state
-                gs_string = new char[gs_size + 1];
-                memset(gs_string, 0, gs_size + 1);
-                memset(gs_string, '0', gs_size);
+                gs_string = new char[g_gs_size + 1];
+                memset(gs_string, 0, g_gs_size + 1);
+                memset(gs_string, '0', g_gs_size);
 
                 // Write output
                 writeStdout("OK");
@@ -62,7 +61,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
             }
 
             // Reset board
-            memset(gs_string, '0', gs_size);
+            memset(gs_string, '0', g_gs_size);
 
             // Put a piece in center
             int move_r = g_board_size / 2, move_c = g_board_size / 2;
@@ -81,7 +80,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
             }
 
             // Reset board
-            memset(gs_string, '0', gs_size);
+            memset(gs_string, '0', g_gs_size);
 
             while (std::cin.getline(line, 256)) {
                 // [X],[Y],[field]

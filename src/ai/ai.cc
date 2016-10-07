@@ -48,15 +48,14 @@ void RenjuAI::generateMove(const char *gs, int player, int search_depth, int tim
     }
 
     // Copy game state
-    size_t gs_size = (size_t)g_board_size * g_board_size;
-    char *_gs = new char[gs_size];
-    std::memcpy(_gs, gs, gs_size);
+    char *_gs = new char[g_gs_size];
+    std::memcpy(_gs, gs, g_gs_size);
 
     // Run negamax
     RenjuAINegamax::heuristicNegamax(_gs, player, search_depth, time_limit, true, actual_depth, move_r, move_c);
 
     // Execute the move
-    std::memcpy(_gs, gs, gs_size);
+    std::memcpy(_gs, gs, g_gs_size);
     RenjuAIUtils::setCell(_gs, *move_r, *move_c, (char)player);
 
     // Check if anyone wins the game

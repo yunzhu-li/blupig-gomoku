@@ -37,9 +37,10 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
 
     // Initialize arguments
     g_board_size = 19;
+    g_gs_size = g_board_size * g_board_size;
     char gs_string[362] = {0};
-    int ai_player  = 1;
-    int num_threads  = 1;
+    int ai_player = 1;
+    int num_threads = 1;
     int search_depth = -1;
     int time_limit = 3000;
 

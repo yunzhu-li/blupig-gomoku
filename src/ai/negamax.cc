@@ -47,13 +47,12 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
     if (depth == 0 || depth < -1) return;
 
     // Copy game state
-    size_t gs_size = (size_t)g_board_size * g_board_size;
-    char *_gs = new char[gs_size];
-    memcpy(_gs, gs, gs_size);
+    char *_gs = new char[g_gs_size];
+    memcpy(_gs, gs, g_gs_size);
 
     // Speedup first move
     int _cnt = 0;
-    for (int i = 0; i < gs_size; i++)
+    for (int i = 0; i < g_gs_size; i++)
         if (_gs[i] != 0) _cnt++;
 
     if (_cnt <= 2) depth = 6;
@@ -70,7 +69,7 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
             std::clock_t c_iteration_start = std::clock();
 
             // Reset game state
-            memcpy(_gs, gs, gs_size);
+            memcpy(_gs, gs, g_gs_size);
 
             // Execute negamax
             heuristicNegamax(_gs, player, d, d, enable_ab_pruning,
