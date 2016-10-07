@@ -31,7 +31,8 @@ int preset_patterns_size = 0;
 
 int RenjuAIEval::evalState(const char *gs, int player) {
     // Check parameters
-    if (gs == nullptr) return 0;
+    if (gs == nullptr ||
+        player < 1 || player > 2) return 0;
 
     // Evaluate all possible moves
     int score = 0;
@@ -45,7 +46,8 @@ int RenjuAIEval::evalState(const char *gs, int player) {
 
 int RenjuAIEval::evalMove(const char *gs, int r, int c, int player) {
     // Check parameters
-    if (gs == nullptr) return 0;
+    if (gs == nullptr ||
+        player < 1 || player > 2) return 0;
 
     // Count evaluations
     g_eval_count++;
@@ -267,6 +269,7 @@ void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
 }
 
 int RenjuAIEval::winningPlayer(const char *gs) {
+    if (gs == nullptr) return 0;
     for (int r = 0; r < g_board_size; ++r) {
         for (int c = 0; c < g_board_size; ++c) {
             int cell = gs[g_board_size * r + c];

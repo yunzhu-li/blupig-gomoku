@@ -36,9 +36,6 @@ class RenjuAIEval {
     // Check if any player is winning based on a given state
     static int winningPlayer(const char *gs);
 
-    // Unit tests
-    static void test(char *gs);
-
 // Allow testing private members in this class
 #ifndef RENJU_PARALLEL_TEST
  private:

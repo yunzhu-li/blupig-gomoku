@@ -45,7 +45,11 @@
 
 void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int time_limit, bool enable_ab_pruning,
                                       int *actual_depth, int *move_r, int *move_c) {
-    if (depth == 0 || depth < -1) return;
+    // Check arguments
+    if (gs == nullptr ||
+        player < 1 || player > 2 ||
+        depth == 0 || depth < -1 ||
+        time_limit < 0) return;
 
     // Copy game state
     char *_gs = new char[g_gs_size];
@@ -74,7 +78,7 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
 
             // Execute negamax
             heuristicNegamax(_gs, player, d, d, enable_ab_pruning,
-                             INT_MIN / 2,INT_MAX / 2, move_r, move_c);
+                             INT_MIN / 2, INT_MAX / 2, move_r, move_c);
 
             // Times
             std::clock_t c_iteration = (std::clock() - c_iteration_start) * 1000 / CLOCKS_PER_SEC;
@@ -208,7 +212,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
 }
 
 void RenjuAINegamax::searchMovesOrdered(const char *gs, int player, std::vector<Move> *result) {
-    if (result == nullptr) return;
+    // Clear and previous result
     result->clear();
 
     // Find an extent to reduce unnecessary calls to RenjuAIUtils::remoteCell

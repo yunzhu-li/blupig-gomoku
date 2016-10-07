@@ -30,6 +30,7 @@ bool RenjuAPI::generateMove(const char *gs_string, int ai_player_id,
     if (strlen(gs_string) != g_gs_size ||
         ai_player_id  < 1 || ai_player_id > 2 ||
         search_depth == 0 || search_depth > 10 ||
+        time_limit < 0    ||
         num_threads  < 1) {
         return false;
     }

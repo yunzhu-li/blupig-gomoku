@@ -27,8 +27,10 @@ void RenjuAI::generateMove(const char *gs, int player, int search_depth, int tim
                            int *actual_depth, int *move_r, int *move_c, int *winning_player,
                            unsigned int *node_count, unsigned int *eval_count, unsigned int *pm_count) {
     // Check arguments
-    if (gs == nullptr || player  < 1 || player > 2 ||
+    if (gs == nullptr ||
+        player  < 1 || player > 2 ||
         search_depth == 0 || search_depth > 10 ||
+        time_limit < 0 ||
         move_r == nullptr || move_c == nullptr) return;
 
     // Initialize counters
