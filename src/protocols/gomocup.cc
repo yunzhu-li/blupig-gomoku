@@ -151,11 +151,18 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
 
 void RenjuProtocolGomocup::performAndWriteMove(char *gs_string) {
     // Generate move
-    int move_r, move_c;
-    bool success = RenjuAPI::generateMove(gs_string, 1, -1, 5000, 1, nullptr, &move_r, &move_c,
-                                          nullptr, nullptr, nullptr, nullptr);
+    int move_r, move_c, winning_player, actual_depth;
+    unsigned int node_count, eval_count;
+    bool success = RenjuAPI::generateMove(gs_string, 1, -1, 7000, 1, &actual_depth, &move_r, &move_c,
+                                          &winning_player, &node_count, &eval_count, nullptr);
 
     if (success) {
+        // Write MESSAGE
+        std::cout << "MESSAGE" <<
+                     " d=" << actual_depth <<
+                     " node_cnt=" << node_count <<
+                     " eval_cnt=" << eval_count << std::endl;
+
         // Update board
         gs_string[g_board_size * move_r + move_c] = '1';
 
