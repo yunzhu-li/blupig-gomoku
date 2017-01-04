@@ -8,7 +8,7 @@ A Renju (連珠, 五子棋, Gomoku, Five in a Row) AI with a customized `heurist
 
 Currently runs single-threaded, I'm working on the parallelization, pattern analysis and more to increase depth.
 
-A live version is hosted on: [https://yunzhu.li/apps/renju](https://yunzhu.li/apps/renju)
+A live demo is hosted on: https://apps.yunzhu.li/renju
 
 ![Alt text](gui/screenshots/00.png?raw=true "Screenshot")
 
