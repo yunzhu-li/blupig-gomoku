@@ -153,7 +153,7 @@ void RenjuProtocolGomocup::performAndWriteMove(char *gs_string) {
     // Generate move
     int move_r, move_c, winning_player, actual_depth;
     unsigned int node_count, eval_count;
-    bool success = RenjuAPI::generateMove(gs_string, 1, -1, 7000, 1, &actual_depth, &move_r, &move_c,
+    bool success = RenjuAPI::generateMove(gs_string, 1, -1, 1500, 1, &actual_depth, &move_r, &move_c,
                                           &winning_player, &node_count, &eval_count, nullptr);
 
     if (success) {

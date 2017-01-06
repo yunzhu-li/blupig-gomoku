@@ -20,7 +20,7 @@
 #define INCLUDE_AI_EVAL_H_
 
 #define kRenjuAiEvalWinningScore 10000
-#define kRenjuAiEvalThreateningScore 30
+#define kRenjuAiEvalThreateningScore 300
 
 class RenjuAIEval {
  public:
@@ -62,9 +62,13 @@ class RenjuAIEval {
     static int *preset_scores;
 
     // Loads preset patterns into memory
+    // preset_patterns_skip is the number of patterns to skip for a maximum
+    // measured length in an all_direction_measurement (e.g. longest is 3 pieces
+    // in an ADM, then skip first few patterns that require 4 pieces or more).
     static void generatePresetPatterns(DirectionPattern **preset_patterns,
                                        int **preset_scores,
-                                       int *preset_patterns_size);
+                                       int *preset_patterns_size,
+                                       int *preset_patterns_skip);
 
     // Evaluates an all-direction measurement
     static int evalADM(DirectionMeasurement *all_direction_measurement);

@@ -25,13 +25,14 @@
 #include <cstring>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
 
 // kSearchBreadth is used to control branching factor
 // Different breadth configurations are possible:
 // A lower breadth for a higher depth
 // Or vice versa
-#define kSearchBreadth 6
-#define kTopLayerSearchBreadth 10
+#define kSearchBreadth 7
+#define kTopLayerSearchBreadth 12
 
 // Estimated average branching factor for iterative deepening
 #define kAvgBranchingFactor 4
@@ -147,6 +148,14 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
     for (int i = 0; i < tmp_size; ++i)
         candidate_moves.push_back(moves_player[i]);
 
+      // Print heuristic values for debugging
+//    if (depth >= 8) {
+//        for (int i = 0; i < moves_player.size(); ++i) {
+//            auto move = moves_player[i];
+//            std::cout << depth << " | " << move.r << ", " << move.c << ": " << move.heuristic_val << std::endl;
+//        }
+//    }
+
     // Loop through every move
     int size = static_cast<int>(candidate_moves.size());
     for (int i = 0; i < size; ++i) {
@@ -167,7 +176,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
                                      nullptr);
 
         // Closer moves get more score
-        if (score >= 10) score *= kScoreDecayFactor;
+        if (score >= 2) score *= kScoreDecayFactor;
 
         // Calculate score difference
         move.actual_score = move.heuristic_val - score;
@@ -175,9 +184,9 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
         // Store back to candidate array
         candidate_moves[i].actual_score = move.actual_score;
 
-        // To assist debugging
-        // if (depth >= 8)
-        //     std::cout << depth << " | " << move.r << ", " << move.c << ": " << move.actual_score << std::endl;
+        // Print actual scores for debugging
+//        if (depth >= 8)
+//            std::cout << depth << " | " << move.r << ", " << move.c << ": " << move.actual_score << std::endl;
 
         // Restore
         RenjuAIUtils::setCell(gs, move.r, move.c, 0);
@@ -191,7 +200,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
 
         // Alpha-beta
         int max_score_decayed = max_score;
-        if (max_score >= 10) max_score_decayed *= kScoreDecayFactor;
+        if (max_score >= 2) max_score_decayed *= kScoreDecayFactor;
         if (max_score > alpha) alpha = max_score;
         if (enable_ab_pruning && max_score_decayed >= beta) break;
     }
