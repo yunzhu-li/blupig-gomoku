@@ -5,7 +5,8 @@
     "start": "node ."
   },
   "dependencies": {
-    "express": ">=4.14.0"
+    "express": ">=4.14.0",
+    "cors": ">=2.8.1"
   },
   "license": "GPL-3.0"
 }
