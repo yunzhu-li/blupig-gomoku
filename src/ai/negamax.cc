@@ -58,7 +58,7 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
 
     // Speedup first move
     int _cnt = 0;
-    for (int i = 0; i < g_gs_size; i++)
+    for (int i = 0; i < static_cast<int>(g_gs_size); i++)
         if (_gs[i] != 0) _cnt++;
 
     if (_cnt <= 2) depth = 6;
@@ -176,7 +176,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
                                      nullptr);
 
         // Closer moves get more score
-        if (score >= 2) score *= kScoreDecayFactor;
+        if (score >= 2) score = static_cast<int>(score * kScoreDecayFactor);
 
         // Calculate score difference
         move.actual_score = move.heuristic_val - score;
@@ -200,7 +200,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
 
         // Alpha-beta
         int max_score_decayed = max_score;
-        if (max_score >= 2) max_score_decayed *= kScoreDecayFactor;
+        if (max_score >= 2) max_score_decayed = static_cast<int>(max_score_decayed * kScoreDecayFactor);
         if (max_score > alpha) alpha = max_score;
         if (enable_ab_pruning && max_score_decayed >= beta) break;
     }

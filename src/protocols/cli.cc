@@ -93,7 +93,7 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
 
 bool RenjuProtocolCLI::parseIntegerArgument(const char *str, int max_length, int *result) {
     if (validateString(str, max_length) < 0) return false;
-    *result = strtol(str, nullptr, 10);
+    *result = (int)strtol(str, nullptr, 10);
     return true;
 }
 
