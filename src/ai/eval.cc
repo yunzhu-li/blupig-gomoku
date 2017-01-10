@@ -266,7 +266,7 @@ void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
         // {1, 4, -1,  1}, {0, 0,  0,  0},  // 1
         {3, 2,  0, -1}, {0, 0,  0,  0},  // 50
         {1, 3,  0, -1}, {0, 0,  0,  0},  // 20
-        {1, 2,  0, -1}, {0, 0,  0,  0}   // 10
+        {1, 2,  0, -1}, {0, 0,  0,  0}   // 9
     };
 
     int scores[_size] = {
@@ -282,7 +282,7 @@ void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
         // 1,
         50,
         20,
-        10
+        9
     };
 
     *preset_patterns = new DirectionPattern[_size * 2];
