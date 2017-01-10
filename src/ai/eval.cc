@@ -84,10 +84,13 @@ int RenjuAIEval::evalADM(DirectionMeasurement *all_direction_measurement) {
     int score = 0;
     int size = preset_patterns_size;
 
+    // Add to score by length on each direction
     // Find the maximum length in ADM and skip some patterns
     int max_measured_len = 0;
     for (int i = 0; i < 4; i++) {
-        max_measured_len = all_direction_measurement[i].length > max_measured_len ? all_direction_measurement[i].length : max_measured_len;
+        int len = all_direction_measurement[i].length;
+        max_measured_len = len > max_measured_len ? len : max_measured_len;
+        score += len - 1;
     }
     int start_pattern = preset_patterns_skip[max_measured_len];
 
