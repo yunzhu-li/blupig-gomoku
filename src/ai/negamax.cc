@@ -98,9 +98,6 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
 int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, int depth,
                                      bool enable_ab_pruning, int alpha, int beta,
                                      int *move_r, int *move_c) {
-    // Leaf node
-    if (depth == 0) return 0;
-
     // Count node
     g_node_count++;
 
@@ -141,7 +138,8 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
 
     // Consider more moves on first layer of each player
     int breadth = kSearchBreadth;
-    if ((depth + 1) >> 1 == initial_depth >> 1) breadth = kTopLayerSearchBreadth;
+    if (depth == initial_depth || depth == initial_depth - 1) breadth = kTopLayerSearchBreadth;
+    //if (depth <= 2) breadth = 3;
 
     // Copy moves for current player
     tmp_size = std::min(static_cast<int>(moves_player.size()), breadth);
@@ -165,15 +163,16 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
         RenjuAIUtils::setCell(gs, move.r, move.c, static_cast<char>(player));
 
         // Run negamax recursively
-        int score = heuristicNegamax(gs,                 // Game state
-                                     opponent,           // Change player
-                                     initial_depth,      // Initial depth
-                                     depth - 1,          // Reduce depth by 1
-                                     enable_ab_pruning,  // Alpha-Beta
-                                     -beta,              //
-                                     -alpha + move.heuristic_val,
-                                     nullptr,            // Result move not required
-                                     nullptr);
+        int score = 0;
+        if (depth > 1) score = heuristicNegamax(gs,                 // Game state
+                                                opponent,           // Change player
+                                                initial_depth,      // Initial depth
+                                                depth - 1,          // Reduce depth by 1
+                                                enable_ab_pruning,  // Alpha-Beta
+                                                -beta,              //
+                                                -alpha + move.heuristic_val,
+                                                nullptr,            // Result move not required
+                                                nullptr);
 
         // Closer moves get more score
         if (score >= 2) score = static_cast<int>(score * kScoreDecayFactor);
