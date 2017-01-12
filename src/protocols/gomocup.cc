@@ -26,6 +26,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
     char line[256];
     char *gs_string = nullptr;
     bool errored = false;
+    int time_limit = 1500;
 
     while (std::cin.getline(line, 256)) {
         // Commands
@@ -103,7 +104,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
             }
 
             // Generate, perform a move and write to stdout
-            performAndWriteMove(gs_string);
+            performAndWriteMove(gs_string, time_limit);
 
         } else if (strncmp(line, "TURN", 4) == 0) {
             // TURN [X],[Y]
@@ -130,9 +131,13 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
             gs_string[g_board_size * move_r + move_c] = '2';
 
             // Generate, perform a move and write to stdout
-            performAndWriteMove(gs_string);
+            performAndWriteMove(gs_string, time_limit);
 
         } else if (strncmp(line, "INFO", 4) == 0) {
+            // INFO [key] [value]
+            if (strncmp(line + 5, "timeout_turn", 12) == 0) {
+                time_limit = atoi(line + 5 + 12 + 1) + 500;
+            }
         } else if (strncmp(line, "ABOUT", 5) == 0) {
             std::string build_datetime = __DATE__;
             build_datetime = build_datetime + " " + __TIME__;
@@ -149,11 +154,11 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
     return !errored;
 }
 
-void RenjuProtocolGomocup::performAndWriteMove(char *gs_string) {
+void RenjuProtocolGomocup::performAndWriteMove(char *gs_string, int time_limit) {
     // Generate move
     int move_r, move_c, winning_player, actual_depth;
     unsigned int node_count, eval_count;
-    bool success = RenjuAPI::generateMove(gs_string, 1, -1, 1500, 1, &actual_depth, &move_r, &move_c,
+    bool success = RenjuAPI::generateMove(gs_string, 1, -1, time_limit, 1, &actual_depth, &move_r, &move_c,
                                           &winning_player, &node_count, &eval_count, nullptr);
 
     if (success) {

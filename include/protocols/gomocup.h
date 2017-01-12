@@ -29,7 +29,7 @@ class RenjuProtocolGomocup {
     static bool beginSession(int argc, char const *argv[]);
 
  private:
-    static void performAndWriteMove(char *gs_string);
+    static void performAndWriteMove(char *gs_string, int time_limit);
     static void splitLine(const char *line, int *output);
     static void writeStdout(std::string str);
 };
