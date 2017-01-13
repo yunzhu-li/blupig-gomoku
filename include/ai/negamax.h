@@ -30,6 +30,11 @@ class RenjuAINegamax {
                                  int *actual_depth, int *move_r, int *move_c);
 
  private:
+    // Preset search breadth
+    // From root to leaf, each element is for 2 layers
+    // e.g. {10, 5, 2} -> 10, 10, 5, 5, 2, 2, 2, ...
+    static int presetSearchBreadth[5];
+
     // A move (candidate)
     struct Move {
         int r;
@@ -53,7 +58,6 @@ class RenjuAINegamax {
     // Currently not used
     static int negamax(char *gs, int player, int depth,
                        int *move_r, int *move_c);
-
 };
 
 #endif  // INCLUDE_AI_NEGAMAX_H_

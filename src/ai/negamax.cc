@@ -31,11 +31,10 @@
 // Different breadth configurations are possible:
 // A lower breadth for a higher depth
 // Or vice versa
-#define kSearchBreadth 7
-#define kTopLayerSearchBreadth 12
+int RenjuAINegamax::presetSearchBreadth[5] = {12, 7, 5, 3, 3};
 
 // Estimated average branching factor for iterative deepening
-#define kAvgBranchingFactor 4
+#define kAvgBranchingFactor 3
 
 // Maximum depth for iterative deepening
 #define kMaximumDepth 16
@@ -136,10 +135,10 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
         }
     }
 
-    // Consider more moves on first layer of each player
-    int breadth = kSearchBreadth;
-    if (depth == initial_depth || depth == initial_depth - 1) breadth = kTopLayerSearchBreadth;
-    //if (depth <= 2) breadth = 3;
+    // Set breadth
+    int breadth = (initial_depth >> 1) - ((depth + 1) >> 1);
+    if (breadth > 4) breadth = presetSearchBreadth[4];
+    else             breadth = presetSearchBreadth[breadth];
 
     // Copy moves for current player
     tmp_size = std::min(static_cast<int>(moves_player.size()), breadth);
