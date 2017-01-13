@@ -43,7 +43,7 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
     int ai_player = 1;
     int num_threads = 1;
     int search_depth = -1;
-    int time_limit = 7000;
+    int time_limit = 3500;
 
     // Iterate through arguments
     for (int i = 0; i < argc; i++) {
@@ -79,9 +79,7 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
 
         } else if (strncmp(arg, "test", 4) == 0) {
             // Build test data
-            // for (int i = 0; i < 225; i++)
-            //     gs_string[i] = '0';
-            memcpy(gs_string, "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000002111120000000000000111211000000000000002120100000000000000221000000000000000021220000000000000022210000000000000010100000000000000000000020000000000000000000000000000000000000000000000000000000000000000", 362);
+            memcpy(gs_string, "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002121000000000000001211112000000000000022122110000000000001211002200000000000002010200000000000000000200000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000", 362);
             search_depth = 8;
             ai_player = 2;
         }
@@ -95,7 +93,7 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
 
 bool RenjuProtocolCLI::parseIntegerArgument(const char *str, int max_length, int *result) {
     if (validateString(str, max_length) < 0) return false;
-    *result = strtol(str, nullptr, 10);
+    *result = (int)strtol(str, nullptr, 10);
     return true;
 }
 

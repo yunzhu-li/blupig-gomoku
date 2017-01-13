@@ -159,7 +159,8 @@ TEST_F(RenjuAIEvalTest, matchPattern) {
     RenjuAIEval::DirectionPattern *preset_patterns = nullptr;
     int *preset_scores = nullptr;
     int preset_patterns_size = 0;
-    RenjuAIEval::generatePresetPatterns(&preset_patterns, &preset_scores, &preset_patterns_size);
+    int preset_patterns_skip[6] = {0};
+    RenjuAIEval::generatePresetPatterns(&preset_patterns, &preset_scores, &preset_patterns_size, preset_patterns_skip);
 
     RenjuAIEval::DirectionMeasurement adm[4];
 
@@ -232,7 +233,7 @@ TEST_F(RenjuAIEvalTest, evalMove) {
     RenjuAIUtils::setCell(gs, 1, 4, 1);
     RenjuAIUtils::setCell(gs, 1, 5, 1);
     RenjuAIUtils::setCell(gs, 1, 6, 2);
-    EXPECT_EQ(10000, RenjuAIEval::evalMove(gs, 1, 1, 1));
+    EXPECT_EQ(10004, RenjuAIEval::evalMove(gs, 1, 1, 1));
 
     // 0 0 0 0 0 0 0 0
     // 0 1 1 * 1 1 1 0
@@ -243,7 +244,7 @@ TEST_F(RenjuAIEvalTest, evalMove) {
     RenjuAIUtils::setCell(gs, 1, 4, 1);
     RenjuAIUtils::setCell(gs, 1, 5, 1);
     RenjuAIUtils::setCell(gs, 1, 6, 1);
-    EXPECT_EQ(10000, RenjuAIEval::evalMove(gs, 1, 3, 1));
+    EXPECT_EQ(10004, RenjuAIEval::evalMove(gs, 1, 3, 1));
 
     // 0 0 0 0 0 0
     // 0 * 1 1 1 0
@@ -252,7 +253,7 @@ TEST_F(RenjuAIEvalTest, evalMove) {
     RenjuAIUtils::setCell(gs, 1, 2, 1);
     RenjuAIUtils::setCell(gs, 1, 3, 1);
     RenjuAIUtils::setCell(gs, 1, 4, 1);
-    EXPECT_EQ(70, RenjuAIEval::evalMove(gs, 1, 1, 1));
+    EXPECT_EQ(703, RenjuAIEval::evalMove(gs, 1, 1, 1));
 
     // 0 0 0 0 0 0
     // 0 1 * 1 1 0
@@ -261,5 +262,5 @@ TEST_F(RenjuAIEvalTest, evalMove) {
     RenjuAIUtils::setCell(gs, 1, 1, 1);
     RenjuAIUtils::setCell(gs, 1, 3, 1);
     RenjuAIUtils::setCell(gs, 1, 4, 1);
-    EXPECT_EQ(70, RenjuAIEval::evalMove(gs, 1, 2, 1));
+    EXPECT_EQ(703, RenjuAIEval::evalMove(gs, 1, 2, 1));
 }

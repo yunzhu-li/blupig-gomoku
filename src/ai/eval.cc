@@ -28,6 +28,7 @@
 RenjuAIEval::DirectionPattern *RenjuAIEval::preset_patterns = nullptr;
 int *RenjuAIEval::preset_scores = nullptr;
 int preset_patterns_size = 0;
+int preset_patterns_skip[6] = {0};
 
 int RenjuAIEval::evalState(const char *gs, int player) {
     // Check parameters
@@ -54,7 +55,7 @@ int RenjuAIEval::evalMove(const char *gs, int r, int c, int player) {
 
     // Generate preset patterns structure in memory
     if (preset_patterns == nullptr) {
-        generatePresetPatterns(&preset_patterns, &preset_scores, &preset_patterns_size);
+        generatePresetPatterns(&preset_patterns, &preset_scores, &preset_patterns_size, preset_patterns_skip);
     }
 
     // Allocate 4 direction measurements
@@ -83,12 +84,24 @@ int RenjuAIEval::evalADM(DirectionMeasurement *all_direction_measurement) {
     int score = 0;
     int size = preset_patterns_size;
 
+    // Add to score by length on each direction
+    // Find the maximum length in ADM and skip some patterns
+    int max_measured_len = 0;
+    for (int i = 0; i < 4; i++) {
+        int len = all_direction_measurement[i].length;
+        max_measured_len = len > max_measured_len ? len : max_measured_len;
+        score += len - 1;
+    }
+    int start_pattern = preset_patterns_skip[max_measured_len];
+
+    // = preset_patterns_skip[max_measured_len];
+
     // Loop through and try to match all preset patterns
-    for (int i = 0; i < size; ++i) {
+    for (int i = start_pattern; i < size; ++i) {
         score += matchPattern(all_direction_measurement, &preset_patterns[2 * i]) * preset_scores[i];
 
-        // Only match highest scored pattern
-        if (score > 0) break;
+        // Only match one threatening pattern
+        if (score >= kRenjuAiEvalThreateningScore) break;
     }
 
     // // If no match, calculate score as the number of open ends
@@ -109,6 +122,9 @@ int RenjuAIEval::matchPattern(DirectionMeasurement *all_direction_measurement,
     // Check arguments
     if (all_direction_measurement == nullptr) return -1;
     if (patterns == nullptr) return -1;
+
+    // Increment PM count
+    g_pm_count++;
 
     // Initialize match_count to INT_MAX since minimum value will be output
     int match_count = INT_MAX, single_pattern_match = 0;
@@ -226,46 +242,56 @@ void RenjuAIEval::measureDirection(const char *gs,
 
 void RenjuAIEval::generatePresetPatterns(DirectionPattern **preset_patterns,
                                          int **preset_scores,
-                                         int *preset_patterns_size) {
-    DirectionPattern patterns[22] = {
+                                         int *preset_patterns_size,
+                                         int *preset_patterns_skip) {
+    const int _size = 11;
+    preset_patterns_skip[5] = 0;
+    preset_patterns_skip[4] = 1;
+    preset_patterns_skip[3] = 7;
+    preset_patterns_skip[2] = 10;
+
+    preset_patterns_skip[1] = _size;
+    preset_patterns_skip[0] = _size;
+
+    DirectionPattern patterns[_size * 2] = {
         {1, 5,  0,  0}, {0, 0,  0,  0},  // 10000
-        {1, 4,  0,  0}, {0, 0,  0,  0},  // 70
-        {2, 4,  1,  0}, {0, 0,  0,  0},  // 70
-        {2, 4, -1,  1}, {0, 0,  0,  0},  // 70
-        {1, 4,  1,  0}, {1, 4, -1,  1},  // 70
-        {1, 4,  1,  0}, {1, 3,  0, -1},  // 50
-        {1, 4, -1,  1}, {1, 3,  0, -1},  // 50
-        {2, 3,  0, -1}, {0, 0,  0,  0},  // 30
+        {1, 4,  0,  0}, {0, 0,  0,  0},  // 700
+        {2, 4,  1,  0}, {0, 0,  0,  0},  // 700
+        {2, 4, -1,  1}, {0, 0,  0,  0},  // 700
+        {1, 4,  1,  0}, {1, 4, -1,  1},  // 700
+        {1, 4,  1,  0}, {1, 3,  0, -1},  // 500
+        {1, 4, -1,  1}, {1, 3,  0, -1},  // 500
+        {2, 3,  0, -1}, {0, 0,  0,  0},  // 300
         // {1, 4,  1,  0}, {0, 0,  0,  0},  // 1
         // {1, 4, -1,  1}, {0, 0,  0,  0},  // 1
-        {3, 2,  0, -1}, {0, 0,  0,  0},  // 5
-        {1, 3,  0, -1}, {0, 0,  0,  0},  // 2
-        {1, 2,  0, -1}, {0, 0,  0,  0}   // 1
+        {3, 2,  0, -1}, {0, 0,  0,  0},  // 50
+        {1, 3,  0, -1}, {0, 0,  0,  0},  // 20
+        {1, 2,  0, -1}, {0, 0,  0,  0}   // 9
     };
 
-    int scores[11] = {
+    int scores[_size] = {
         10000,
-        70,
-        70,
-        70,
-        70,
-        50,
-        50,
-        30,
+        700,
+        700,
+        700,
+        700,
+        500,
+        500,
+        300,
         // 1,
         // 1,
-        5,
-        2,
-        1
+        50,
+        20,
+        9
     };
 
-    *preset_patterns = new DirectionPattern[22];
-    *preset_scores   = new int[11];
+    *preset_patterns = new DirectionPattern[_size * 2];
+    *preset_scores   = new int[_size];
 
-    memcpy(*preset_patterns, patterns, sizeof(DirectionPattern) * 22);
-    memcpy(*preset_scores, scores, sizeof(int) * 11);
+    memcpy(*preset_patterns, patterns, sizeof(DirectionPattern) * _size * 2);
+    memcpy(*preset_scores, scores, sizeof(int) * _size);
 
-    *preset_patterns_size = 11;
+    *preset_patterns_size = _size;
 }
 
 int RenjuAIEval::winningPlayer(const char *gs) {

@@ -68,7 +68,7 @@ void RenjuAI::generateMove(const char *gs, int player, int search_depth, int tim
     if (winning_player != nullptr) *winning_player = _winning_player;
     if (node_count != nullptr) *node_count = g_node_count;
     if (eval_count != nullptr) *eval_count = g_eval_count;
-    if (pm_count != nullptr) *pm_count = g_eval_count * 22;
+    if (pm_count != nullptr) *pm_count = g_pm_count;
 
     delete[] _gs;
 }

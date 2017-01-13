@@ -25,16 +25,16 @@
 #include <cstring>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
 
 // kSearchBreadth is used to control branching factor
 // Different breadth configurations are possible:
 // A lower breadth for a higher depth
 // Or vice versa
-#define kSearchBreadth 6
-#define kTopLayerSearchBreadth 10
+int RenjuAINegamax::presetSearchBreadth[5] = {10, 6, 6, 3, 3};
 
 // Estimated average branching factor for iterative deepening
-#define kAvgBranchingFactor 4
+#define kAvgBranchingFactor 3
 
 // Maximum depth for iterative deepening
 #define kMaximumDepth 16
@@ -57,7 +57,7 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
 
     // Speedup first move
     int _cnt = 0;
-    for (int i = 0; i < g_gs_size; i++)
+    for (int i = 0; i < static_cast<int>(g_gs_size); i++)
         if (_gs[i] != 0) _cnt++;
 
     if (_cnt <= 2) depth = 6;
@@ -97,9 +97,6 @@ void RenjuAINegamax::heuristicNegamax(const char *gs, int player, int depth, int
 int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, int depth,
                                      bool enable_ab_pruning, int alpha, int beta,
                                      int *move_r, int *move_c) {
-    // Leaf node
-    if (depth == 0) return 0;
-
     // Count node
     g_node_count++;
 
@@ -138,14 +135,23 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
         }
     }
 
-    // Consider more moves on first layer of each player
-    int breadth = kSearchBreadth;
-    if ((depth + 1) >> 1 == initial_depth >> 1) breadth = kTopLayerSearchBreadth;
+    // Set breadth
+    int breadth = (initial_depth >> 1) - ((depth + 1) >> 1);
+    if (breadth > 4) breadth = presetSearchBreadth[4];
+    else             breadth = presetSearchBreadth[breadth];
 
     // Copy moves for current player
     tmp_size = std::min(static_cast<int>(moves_player.size()), breadth);
     for (int i = 0; i < tmp_size; ++i)
         candidate_moves.push_back(moves_player[i]);
+
+      // Print heuristic values for debugging
+//    if (depth >= 8) {
+//        for (int i = 0; i < moves_player.size(); ++i) {
+//            auto move = moves_player[i];
+//            std::cout << depth << " | " << move.r << ", " << move.c << ": " << move.heuristic_val << std::endl;
+//        }
+//    }
 
     // Loop through every move
     int size = static_cast<int>(candidate_moves.size());
@@ -156,18 +162,19 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
         RenjuAIUtils::setCell(gs, move.r, move.c, static_cast<char>(player));
 
         // Run negamax recursively
-        int score = heuristicNegamax(gs,                 // Game state
-                                     opponent,           // Change player
-                                     initial_depth,      // Initial depth
-                                     depth - 1,          // Reduce depth by 1
-                                     enable_ab_pruning,  // Alpha-Beta
-                                     -beta,              //
-                                     -alpha + move.heuristic_val,
-                                     nullptr,            // Result move not required
-                                     nullptr);
+        int score = 0;
+        if (depth > 1) score = heuristicNegamax(gs,                 // Game state
+                                                opponent,           // Change player
+                                                initial_depth,      // Initial depth
+                                                depth - 1,          // Reduce depth by 1
+                                                enable_ab_pruning,  // Alpha-Beta
+                                                -beta,              //
+                                                -alpha + move.heuristic_val,
+                                                nullptr,            // Result move not required
+                                                nullptr);
 
         // Closer moves get more score
-        if (score >= 10) score *= kScoreDecayFactor;
+        if (score >= 2) score = static_cast<int>(score * kScoreDecayFactor);
 
         // Calculate score difference
         move.actual_score = move.heuristic_val - score;
@@ -175,9 +182,9 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
         // Store back to candidate array
         candidate_moves[i].actual_score = move.actual_score;
 
-        // To assist debugging
-        // if (depth >= 8)
-        //     std::cout << depth << " | " << move.r << ", " << move.c << ": " << move.actual_score << std::endl;
+        // Print actual scores for debugging
+//        if (depth >= 8)
+//            std::cout << depth << " | " << move.r << ", " << move.c << ": " << move.actual_score << std::endl;
 
         // Restore
         RenjuAIUtils::setCell(gs, move.r, move.c, 0);
@@ -191,7 +198,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
 
         // Alpha-beta
         int max_score_decayed = max_score;
-        if (max_score >= 10) max_score_decayed *= kScoreDecayFactor;
+        if (max_score >= 2) max_score_decayed = static_cast<int>(max_score_decayed * kScoreDecayFactor);
         if (max_score > alpha) alpha = max_score;
         if (enable_ab_pruning && max_score_decayed >= beta) break;
     }

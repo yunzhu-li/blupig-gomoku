@@ -135,6 +135,7 @@
     var current_board;
     var human_player, ai_player;
     var move_log;
+    var undo_remaining;
 
     // Randomly select first player
     human_player = 1;
@@ -148,6 +149,7 @@
       // Data
       current_board = initBoard();
       move_log = [];
+      undo_remaining = 3;
 
       initGameDisplay();
 
@@ -246,7 +248,10 @@
 
     function undoMove() {
       var move;
-      if (move_log.length < 2) return;
+      if (move_log.length < 2 || undo_remaining <= 0) return;
+
+      // Reduce remaining undos
+      undo_remaining--;
 
       // Remove last 2 moves
       for (var i = 0; i < 2; i++) {
@@ -281,12 +286,13 @@
       if (buttons) {
         btn_restart.prop("disabled",false);
         btn_undo.prop("disabled",false);
-        if (move_log.length < 2)
+        if (move_log.length < 2 || undo_remaining <= 0)
           btn_undo.prop("disabled",true);
       } else {
         btn_restart.prop("disabled",true);
         btn_undo.prop("disabled",true);
       }
+      btn_undo.text('Undo (' + undo_remaining + ')');
     }
 
     // Manipulate progress bar

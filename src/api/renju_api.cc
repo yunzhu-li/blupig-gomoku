@@ -53,7 +53,7 @@ bool RenjuAPI::generateMove(const char *gs_string, int ai_player_id,
 
 void RenjuAPI::gsFromString(const char *gs_string, char *gs) {
     if (strlen(gs_string) != g_gs_size) return;
-    for (int i = 0; i < g_gs_size; i++) {
+    for (int i = 0; i < static_cast<int>(g_gs_size); i++) {
         gs[i] = gs_string[i] - '0';
     }
 }
