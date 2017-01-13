@@ -31,7 +31,7 @@
 // Different breadth configurations are possible:
 // A lower breadth for a higher depth
 // Or vice versa
-int RenjuAINegamax::presetSearchBreadth[5] = {12, 7, 5, 3, 3};
+int RenjuAINegamax::presetSearchBreadth[5] = {10, 6, 6, 3, 3};
 
 // Estimated average branching factor for iterative deepening
 #define kAvgBranchingFactor 3
