@@ -3,8 +3,8 @@ services:
   app:
     # Containers
     build: .
-    image: renju-parallel
-    container_name: renju-parallel
+    image: blupig
+    container_name: blupig
 
     # Networking
     network_mode: "bridge"

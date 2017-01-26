@@ -1,6 +1,6 @@
 /*
- * renju-parallel
- * Copyright (C) 2016 Yunzhu Li
+ * blupig
+ * Copyright (C) 2016-2017 Yunzhu Li
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ bool RenjuProtocolGomocup::beginSession(int argc, char const *argv[]) {
             std::string build_datetime = __DATE__;
             build_datetime = build_datetime + " " + __TIME__;
 
-            writeStdout("name=\"renju-parallel\", version=\"" + build_datetime + "\", author=\"Yunzhu Li\", country=\"China\"");
+            writeStdout("name=\"blupig\", version=\"" + build_datetime + "\", author=\"Yunzhu Li\", country=\"China\"");
         } else {
             writeStdout("UNKNOWN");
         }

@@ -1,6 +1,6 @@
 /*
- * renju-parallel
- * Copyright (C) 2016 Yunzhu Li
+ * blupig
+ * Copyright (C) 2016-2017 Yunzhu Li
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class RenjuAIEval {
     static int winningPlayer(const char *gs);
 
 // Allow testing private members in this class
-#ifndef RENJU_PARALLEL_TEST
+#ifndef BLUPIG_TEST
  private:
 #endif
     // Result of a single direction measurement

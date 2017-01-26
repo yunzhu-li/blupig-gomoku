@@ -1,6 +1,6 @@
 /*
- * renju-parallel
- * Copyright (C) 2016 Yunzhu Li
+ * blupig
+ * Copyright (C) 2016-2017 Yunzhu Li
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class RenjuAIUtils {
     // Game state hashing
     static void zobristInit(int size, uint64_t *z1, uint64_t *z2);
     static uint64_t zobristHash(const char *gs, int size, uint64_t *z1, uint64_t *z2);
-    static inline void zobristUpdate(uint64_t *state, uint64_t *z1, uint64_t *z2,
+    static inline void zobristToggle(uint64_t *state, uint64_t *z1, uint64_t *z2,
                                      int row_size, int r, int c, int player) {
         if (player == 1) {
             *state ^= z1[row_size * r + c];

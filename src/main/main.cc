@@ -1,6 +1,6 @@
 /*
- * renju-parallel
- * Copyright (C) 2016 Yunzhu Li
+ * blupig
+ * Copyright (C) 2016-2017 Yunzhu Li
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include <cstring>
 
 // Exclude main() if building with tests
-#ifndef RENJU_PARALLEL_TEST
+#ifndef BLUPIG_TEST
 
 int main(int argc, char const *argv[]) {
     if (argc <= 0) return 1;
@@ -36,4 +36,4 @@ int main(int argc, char const *argv[]) {
     return !success;
 }
 
-#endif  // RENJU_PARALLEL_TEST
+#endif  // BLUPIG_TEST

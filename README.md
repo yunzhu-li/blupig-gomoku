@@ -1,12 +1,11 @@
-renju-parallel
+blupig
 ------
 
-master [![Build Status](https://travis-ci.org/yunzhu-li/renju-parallel.svg?branch=master)](https://travis-ci.org/yunzhu-li/renju-parallel) &nbsp; dev [![Build Status](https://travis-ci.org/yunzhu-li/renju-parallel.svg?branch=dev)](https://travis-ci.org/yunzhu-li/renju-parallel)
+master [![Build Status](https://travis-ci.org/yunzhu-li/blupig.svg?branch=master)](https://travis-ci.org/yunzhu-li/blupig) &nbsp; dev [![Build Status](https://travis-ci.org/yunzhu-li/blupig.svg?branch=dev)](https://travis-ci.org/yunzhu-li/blupig)
 
+A Renju (連珠, 五子棋, Gomoku, Five in a Row) AI with a custom `heuristic negamax` algorithm with `α-β pruning` and built-in rules and cut-offs, written in `C++`.
 
-A Renju (連珠, 五子棋, Gomoku, Five in a Row) AI with a customized `heuristic negamax` algorithm, written in `C++`.
-
-Currently runs single-threaded, I'm working on the parallelization, pattern analysis and more to increase depth.
+Currently runs single-threaded, supports only `Gomoku` rules.
 
 A live demo is hosted on: https://apps.yunzhu.li/renju
 

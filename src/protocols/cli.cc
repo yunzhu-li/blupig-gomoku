@@ -1,6 +1,6 @@
 /*
- * renju-parallel
- * Copyright (C) 2016 Yunzhu Li
+ * blupig
+ * Copyright (C) 2016-2017 Yunzhu Li
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
     // Print usage if no arguments provided
     if (argc < 2) {
-        std::cerr << "Usage: renju-parallel" << std::endl;
+        std::cerr << "Usage: renju" << std::endl;
         std::cerr << "        -s <state>       The game state (required)" << std::endl;
         std::cerr << "       [-p <ai_player>]  AI player (1: black, 2: white; default: 1)" << std::endl;
         std::cerr << "       [-d <depth>]      AI Search depth (iterative deepening)" << std::endl;

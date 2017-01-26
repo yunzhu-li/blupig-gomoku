@@ -1,6 +1,6 @@
 /*
- * renju-parallel
- * Copyright (C) 2016 Yunzhu Li
+ * blupig
+ * Copyright (C) 2016-2017 Yunzhu Li
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ int RenjuAIEval::evalMove(const char *gs, int r, int c, int player) {
         player < 1 || player > 2) return 0;
 
     // Count evaluations
-    g_eval_count++;
+    ++g_eval_count;
 
     // Generate preset patterns structure in memory
     if (preset_patterns == nullptr) {

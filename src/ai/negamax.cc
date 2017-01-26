@@ -1,6 +1,6 @@
 /*
- * renju-parallel
- * Copyright (C) 2016 Yunzhu Li
+ * blupig
+ * Copyright (C) 2016-2017 Yunzhu Li
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
                                      bool enable_ab_pruning, int alpha, int beta,
                                      int *move_r, int *move_c) {
     // Count node
-    g_node_count++;
+    ++g_node_count;
 
     int max_score = INT_MIN;
     int opponent = player == 1 ? 2 : 1;
