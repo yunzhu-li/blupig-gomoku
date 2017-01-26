@@ -43,7 +43,7 @@ bool RenjuProtocolCLI::beginSession(int argc, char const *argv[]) {
     int ai_player = 1;
     int num_threads = 1;
     int search_depth = -1;
-    int time_limit = 3500;
+    int time_limit = 5500;
 
     // Iterate through arguments
     for (int i = 0; i < argc; i++) {
