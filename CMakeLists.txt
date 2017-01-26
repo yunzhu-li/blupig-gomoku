@@ -1,6 +1,6 @@
 #
-# renju-parallel
-# Copyright (C) 2016 Yunzhu Li
+# blupig
+# Copyright (C) 2016-2017 Yunzhu Li
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #
 
 cmake_minimum_required(VERSION 2.8)
-project(renju-parallel)
+project(blupig)
 
 # Enable C++ 11
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -49,7 +49,7 @@ endif()
 # Test executable
 if (ENABLE_TESTING)
     add_executable(renju_test ${SRC} ${SRC_TEST})
-    set_target_properties(renju_test PROPERTIES COMPILE_FLAGS "-D RENJU_PARALLEL_TEST")
+    set_target_properties(renju_test PROPERTIES COMPILE_FLAGS "-D BLUPIG_TEST")
     find_package(Threads)
     target_link_libraries(renju_test ${CMAKE_THREAD_LIBS_INIT})
 endif()
