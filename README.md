@@ -7,7 +7,9 @@ master [![Build Status](https://travis-ci.org/yunzhu-li/blupig.svg?branch=master
 
 A Renju (連珠, 五子棋, Gomoku, Five in a Row) AI with a custom `heuristic negamax` algorithm with `α-β pruning` and built-in rules and cut-offs, written in `C++`.
 
-Currently runs single-threaded, supports only `Gomoku` rules.
+Currently runs single-threaded, supports only `Gomoku` rules, future plans:
+- MCTS with parallelization
+- Self-learning
 
 A live demo is hosted on: https://apps.yunzhu.li/renju
 
