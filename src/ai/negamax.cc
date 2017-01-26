@@ -98,7 +98,7 @@ int RenjuAINegamax::heuristicNegamax(char *gs, int player, int initial_depth, in
                                      bool enable_ab_pruning, int alpha, int beta,
                                      int *move_r, int *move_c) {
     // Count node
-    g_node_count++;
+    ++g_node_count;
 
     int max_score = INT_MIN;
     int opponent = player == 1 ? 2 : 1;
