@@ -146,10 +146,12 @@
 
     // Fetch remaining games
     if (typeof Cookies.get('g') === 'undefined') {
-      Cookies.set('g', '5', { expires: 365 });
+      Cookies.set('g', '6', { expires: 365 });
     }
 
     games_remaining = parseInt(Cookies.get('g'));
+    if (games_remaining > 0) games_remaining--;
+    Cookies.set('g', games_remaining, { expires: 365 });
 
     // Randomly select first player
     human_player = 1;
