@@ -22,13 +22,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
     <meta name="keywords" content="Gomoku,blupig,AI">
     <meta name="author" content="Yunzhu Li">
-    <title>Gomoku</title>
+    <title>blupig</title>
 
-    <link href="assets/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/yl-v4-main.css" rel="stylesheet">
-    <link href="assets/proxima_nova.css" rel="stylesheet">
-    <script src="assets/jquery-3.1.0.min.js"></script>
-    <script src="assets/bootstrap.min.js"></script>
+    <link href="../assets/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/yl-v4-main.css" rel="stylesheet">
+    <link href="../assets/proxima_nova.css" rel="stylesheet">
+    <script src="../assets/jquery-3.1.0.min.js"></script>
+    <script src="../assets/bootstrap.min.js"></script>
+    <script src="../assets/js.cookie.js"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
   </head>
 
@@ -42,13 +43,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href=".">Renju</a>
+          <a class="navbar-brand" href=".">blupig</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
 
-            <li><a href="https://yunzhu.li/contact/" target="_blank">Contact</a></li>
-            <li><a href="https://github.com/yunzhu-li/blupig" target="_blank">Project on GitHub</a></li>
+            <li><a href="https://yunzhu.li/contact/" target="_blank">联系</a></li>
+            <li><a href="https://github.com/yunzhu-li/blupig" target="_blank">GitHub</a></li>
           </ul>
         </div>
       </div>
@@ -61,7 +62,7 @@
           <div class="panel panel-default">
             <div class="panel-heading">
               <h3 class="panel-title">
-                Board
+                棋盘
                   <div id='p_ai' class="progress pull-right" style="opacity: 0; margin-top:5px; width: 100px; height: 10px;">
                     <div id='pb_ai' class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
                     </div>
@@ -80,7 +81,7 @@
         <div class="col-md-4">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Game Status
+              <h3 class="panel-title">状态
               <!-- GitHub Button -->
               <span class="pull-right" style="margin-top: -3px;"><a class="github-button" href="https://github.com/yunzhu-li/blupig" data-style="mega" data-count-href="/yunzhu-li/blupig/stargazers" data-count-api="/repos/yunzhu-li/blupig#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star yunzhu-li/blupig on GitHub">Star</a></span></h3>
             </div>
@@ -88,17 +89,17 @@
           </div>
 
           <div class="panel panel-default">
-            <div class="panel-heading"><h3 class="panel-title">Game Control</h3></div>
+            <div class="panel-heading"><h3 class="panel-title">控制</h3></div>
             <div class="panel-body">
-              <button id="btn_restart" type="button" class="btn btn-primary btn-md" onclick="restartGame();">Restart</button>&nbsp;
-              <button id="btn_undo" type="button" class="btn btn-primary btn-md" disabled="true" onclick="undoMove();">Undo</button>
+              <button id="btn_restart" type="button" class="btn btn-primary btn-md" onclick="restartGame();">新开局 / 交换顺序</button>&nbsp;
+              <button id="btn_undo" type="button" class="btn btn-primary btn-md" disabled="true" onclick="undoMove();">撤销</button>
             </div>
           </div>
 
           <div class="panel panel-default">
-            <div class="panel-heading"><h3 class="panel-title">Statistics</h3></div>
+            <div class="panel-heading"><h3 class="panel-title">统计</h3></div>
             <div id="panel_stats" class="panel-body" style="font-family: 'Monaco','Consolas','monospace'; font-size: 10px;">
-              No data available.
+              暂时没有数据.
             </div>
           </div>
         </div>
@@ -109,7 +110,7 @@
   <script>
     // Script: Game display control, input and message
     // Configurations
-    var api_base_url = 'http://127.0.0.1:8000';
+    var api_base_url = 'https://apps.yunzhu.li/renju';
 
     // Preset graphics
     var svg_lines = [
@@ -141,6 +142,14 @@
     var human_player, ai_player;
     var move_log;
     var undo_remaining;
+    var games_remaining;
+
+    // Fetch remaining games
+    if (typeof Cookies.get('g') === 'undefined') {
+      Cookies.set('g', '5', { expires: 365 });
+    }
+
+    games_remaining = parseInt(Cookies.get('g'));
 
     // Randomly select first player
     human_player = 1;
@@ -154,7 +163,7 @@
       // Data
       current_board = initBoard();
       move_log = [];
-      undo_remaining = 10;
+      undo_remaining = 3;
 
       initGameDisplay();
 
@@ -169,8 +178,14 @@
       }
 
       // Game status
-      gameActive(true);
-      updateStatusPanel('Connected', playerColors());
+      if (games_remaining > 0) {
+        gameActive(true);
+        updateStatusPanel('已连接', playerColors());
+      } else {
+        gameActive(false);
+        updateStatusPanel('挑战机会已用完', '访问 <a href="https://apps.yunzhu.li/renju/">无限制版本</a>', '#f44336');
+      }
+
     }
 
     // Initializes game display
@@ -248,6 +263,8 @@
       } else {
         human_player = 1;
       }
+      games_remaining--;
+      Cookies.set('g', games_remaining, { expires: 365 });
       init(human_player);
     }
 
@@ -275,7 +292,7 @@
 
       // Update GUI
       gameActive(true);
-      updateStatusPanel('Connected', playerColors());
+      updateStatusPanel('已连接', playerColors());
     }
 
     // Enables or disables game interaction
@@ -297,7 +314,8 @@
         btn_restart.prop("disabled",true);
         btn_undo.prop("disabled",true);
       }
-      btn_undo.text('Undo (' + undo_remaining + ')');
+      btn_undo.text('撤销 (' + undo_remaining + ')');
+      btn_restart.text('新开局 / 交换顺序 (' + games_remaining + ')');
     }
 
     // Manipulate progress bar
@@ -324,7 +342,7 @@
       // Append message
       status_html += ' ' + status;
       status_html += '<br>' + message;
-      status_html += '<br>Rules: <a href="https://en.wikipedia.org/wiki/Gomoku" target="_blank"><u>Gomoku</u></a>';
+      status_html += '<br><a href="https://zh.wikipedia.org/wiki/%E4%BA%94%E5%AD%90%E6%A3%8B" target="_blank"><u>规则</u></a>';
       document.getElementById('panel_status').innerHTML = status_html;
     }
 
@@ -379,7 +397,7 @@
       if (getCell(current_board, r, c) !== 0) return;
 
       gameActive(false);
-      updateStatusPanel('Working', playerColors(), '#ff9800');
+      updateStatusPanel('计算中', playerColors(), '#ff9800');
       progressBar(true);
 
       // Place piece
@@ -392,9 +410,9 @@
     // Generates an HTML string of player colors
     function playerColors() {
       if (human_player == 1) {
-        return '<br>Player: black<br>AI: white';
+        return '<br>玩家: 黑<br>AI: 白';
       } else {
-        return '<br>Player: white<br>AI: black';
+        return '<br>玩家: 白<br>AI: 黑';
       }
     }
 
@@ -427,14 +445,20 @@
 
       // Winning
       if (result.winning_player == '1') {
-        updateStatusPanel('Black wins!', playerColors(), '#448aff');
+        updateStatusPanel('黑棋胜!', playerColors(), '#448aff');
+        if (human_player == result.winning_player)
+          updateStatusPanel('黑棋胜! ¥', playerColors(), '#448aff');
+
         gameActive(false, true);
       } else if (result.winning_player == '2') {
-        updateStatusPanel('White wins!', playerColors(), '#448aff');
+        updateStatusPanel('白棋胜!', playerColors(), '#448aff');
+        if (human_player == result.winning_player)
+          updateStatusPanel('白棋胜! ¥', playerColors(), '#448aff');
+
         gameActive(false, true);
       } else {
         gameActive(true);
-        updateStatusPanel('Connected', playerColors());
+        updateStatusPanel('已连接', playerColors());
       }
 
       // Stats
@@ -447,38 +471,38 @@
       // Build stats output
       var stats_html = '';
 
-      // CPU time
-      if (result.cpu_time > 0)
-        stats_html += 'cpu time: ' + result.cpu_time / 1000 + 's';
-      else
-        stats_html += 'cpu time: < 1ms';
+      // // CPU time
+      // if (result.cpu_time > 0)
+      //   stats_html += 'cpu time: ' + result.cpu_time / 1000 + 's';
+      // else
+      //   stats_html += 'cpu time: < 1ms';
 
-      // Threads
-      stats_html += '<br>threads: ' + result.num_threads;
+      // // Threads
+      // stats_html += '<br>threads: ' + result.num_threads;
 
-      // --
-      stats_html += '<br>--';
+      // // --
+      // stats_html += '<br>--';
 
-      // Depth
-      stats_html += '<br>depth: ' + result.search_depth;
+      // // Depth
+      // stats_html += '<br>depth: ' + result.search_depth;
 
-      // NPS
-      if (result.cpu_time > 0)
-        stats_html += '<br>nps: ' + formatNumber(result.node_count * 1000 / result.cpu_time);
+      // // NPS
+      // if (result.cpu_time > 0)
+      //   stats_html += '<br>nps: ' + formatNumber(result.node_count * 1000 / result.cpu_time);
 
-      // Branching factor
-      if (result.cpu_time > 0)
-        stats_html += '<br>avg. branching factor: ' + (Math.log(result.node_count) / Math.log(result.search_depth)).toFixed(2);
+      // // Branching factor
+      // if (result.cpu_time > 0)
+      //   stats_html += '<br>avg. branching factor: ' + (Math.log(result.node_count) / Math.log(result.search_depth)).toFixed(2);
 
       // Move eval count
-      stats_html += '<br>move evaluations: ' + formatNumber(result.eval_count);
+      stats_html += 'eval: ' + formatNumber(result.eval_count);
       if (result.cpu_time > 0)
         stats_html += ' (' + formatNumber(result.eval_count * 1000 / result.cpu_time) + '/s)';
 
-      // PM eval count
-      stats_html += '<br>pattern matchings: ' + formatNumber(result.pm_count);
-      if (result.cpu_time > 0)
-        stats_html += ' (' + formatNumber(result.pm_count * 1000 / result.cpu_time) + '/s)';
+      // // PM eval count
+      // stats_html += '<br>pattern matchings: ' + formatNumber(result.pm_count);
+      // if (result.cpu_time > 0)
+      //   stats_html += ' (' + formatNumber(result.pm_count * 1000 / result.cpu_time) + '/s)';
 
       // Build
       stats_html += '<br>build: ' + result.build;
