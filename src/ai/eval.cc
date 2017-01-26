@@ -94,8 +94,6 @@ int RenjuAIEval::evalADM(DirectionMeasurement *all_direction_measurement) {
     }
     int start_pattern = preset_patterns_skip[max_measured_len];
 
-    // = preset_patterns_skip[max_measured_len];
-
     // Loop through and try to match all preset patterns
     for (int i = start_pattern; i < size; ++i) {
         score += matchPattern(all_direction_measurement, &preset_patterns[2 * i]) * preset_scores[i];
@@ -103,16 +101,6 @@ int RenjuAIEval::evalADM(DirectionMeasurement *all_direction_measurement) {
         // Only match one threatening pattern
         if (score >= kRenjuAiEvalThreateningScore) break;
     }
-
-    // // If no match, calculate score as the number of open ends
-    // if (score == 0) {
-    //     for (int i = 0; i < 4; i++) {
-    //         if (all_direction_measurement[i].block_count > 0) {
-    //             score = 1;
-    //             break;
-    //         }
-    //     }
-    // }
 
     return score;
 }
