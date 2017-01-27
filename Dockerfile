@@ -1,7 +1,7 @@
 FROM node:7-alpine
 
-# Install nginx
-RUN apk --no-cache add nginx alpine-sdk cmake
+# Install packages for building and debugging
+RUN apk --no-cache add nginx alpine-sdk cmake bash
 
 # Copy code & configuration
 COPY . /app
