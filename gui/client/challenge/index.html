@@ -60,9 +60,9 @@
         <!-- Renju -->
         <div class="col-md-8">
           <div class="panel panel-default">
-            <div class="panel-heading">
+            <div id="bph" class="panel-heading">
               <h3 class="panel-title">
-                棋盘
+                五子棋
                   <div id='p_ai' class="progress pull-right" style="opacity: 0; margin-top:5px; width: 100px; height: 10px;">
                     <div id='pb_ai' class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
                     </div>
@@ -91,7 +91,7 @@
           <div class="panel panel-default">
             <div class="panel-heading"><h3 class="panel-title">控制</h3></div>
             <div class="panel-body">
-              <button id="btn_restart" type="button" class="btn btn-primary btn-md" onclick="restartGame();">新开局 / 交换顺序</button>&nbsp;
+              <button id="btn_restart" type="button" class="btn btn-primary btn-md" onclick="restartGame();">重新开始 (挑战机会 -1)</button>&nbsp;
               <button id="btn_undo" type="button" class="btn btn-primary btn-md" disabled="true" onclick="undoMove();">撤销</button>
             </div>
           </div>
@@ -153,7 +153,7 @@
     if (games_remaining > 0) games_remaining--;
     Cookies.set('g', games_remaining, { expires: 365 });
 
-    // games_remaining = 2;
+    games_remaining = 2;
 
     // AI is the first player
     human_player = 2;
@@ -345,7 +345,6 @@
       // Append message
       status_html += ' ' + status;
       status_html += '<br>' + message;
-      status_html += '<br><a href="https://zh.wikipedia.org/wiki/%E4%BA%94%E5%AD%90%E6%A3%8B" target="_blank"><u>规则</u></a>';
       document.getElementById('panel_status').innerHTML = status_html;
     }
 
@@ -450,13 +449,13 @@
       if (result.winning_player == '1') {
         updateStatusPanel('黑棋胜!', playerColors(), '#448aff');
         if (human_player == result.winning_player)
-          updateStatusPanel('黑棋胜! ¥', playerColors(), '#448aff');
+          $('#bph').css("background-color", "#42A5F5");
 
         gameActive(false, true);
       } else if (result.winning_player == '2') {
         updateStatusPanel('白棋胜!', playerColors(), '#448aff');
         if (human_player == result.winning_player)
-          updateStatusPanel('白棋胜! ¥', playerColors(), '#448aff');
+          $('#bph').css("background-color", "#42A5F5");
 
         gameActive(false, true);
       } else {
