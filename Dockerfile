@@ -19,5 +19,8 @@ WORKDIR /app/gui/server
 # Install dependencies
 RUN npm install
 
-# Start command
+# Remove building toolchain
+RUN apk del --no-cache alpine-sdk cmake
+
+# Set command
 CMD ["sh", "-c", "nginx && npm start"]
