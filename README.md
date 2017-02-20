@@ -15,17 +15,17 @@ A live demo is hosted on: https://apps.yunzhu.li/renju
 
 ![Alt text](gui/screenshots/00.png?raw=true "Screenshot")
 
-Build & Run Your Own Copy
+Run Your Own Copy
 -----
-It is very easy to run this containerized app.
+This application is available as a docker image.
 
-- Make sure you have `docker` and `docker-compose` installed on your local environment.
+- Make sure you have access to `docker`.
 
-- Clone this repo, in the repo root, run:
-```
-docker-compose up -d
-```
+- Run:
+  ```
+  docker run -d --rm -p 8000:8000 -e SERVER_URI="http://<server-ip>:8000" yunzhu/blupig
+  ```
 
-- Access `http://localhost:8000` in your browser.
+- Access `http://<server-ip>:8000` in your browser.
 
 - Play!

@@ -13,14 +13,14 @@ RUN mkdir /app/build && \
     cmake .. && \
     make install
 
-# Change working directory
-WORKDIR /app/gui/server
-
-# Install dependencies
-RUN npm install
+# Install node.js dependencies
+RUN cd /app/gui/server && npm install
 
 # Remove building toolchain
 RUN apk del --no-cache alpine-sdk cmake
 
+# nginx listens on 8000
+EXPOSE 8000
+
 # Set command
-CMD ["sh", "-c", "nginx && npm start"]
+CMD ["/app/start.sh"]
