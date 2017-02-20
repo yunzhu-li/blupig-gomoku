@@ -1,7 +1,7 @@
 FROM node:7-alpine
 
-# Install nginx
-RUN apk --no-cache add nginx alpine-sdk cmake
+# Install packages for building and debugging
+RUN apk --no-cache add nginx alpine-sdk cmake bash
 
 # Copy code & configuration
 COPY . /app
@@ -13,11 +13,14 @@ RUN mkdir /app/build && \
     cmake .. && \
     make install
 
-# Change working directory
-WORKDIR /app/gui/server
+# Install node.js dependencies
+RUN cd /app/gui/server && npm install
 
-# Install dependencies
-RUN npm install
+# Remove building toolchain
+RUN apk del --no-cache alpine-sdk cmake
 
-# Start command
-CMD ["sh", "-c", "nginx && npm start"]
+# nginx listens on 8000
+EXPOSE 8000
+
+# Set command
+CMD ["/app/start.sh"]
