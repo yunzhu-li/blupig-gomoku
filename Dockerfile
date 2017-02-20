@@ -5,7 +5,7 @@ RUN apk --no-cache add nginx alpine-sdk cmake bash
 
 # Copy code & configuration
 COPY . /app
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY docker-nginx.conf /etc/nginx/nginx.conf
 
 # Build program
 RUN mkdir /app/build && \
@@ -23,4 +23,4 @@ RUN apk del --no-cache alpine-sdk cmake
 EXPOSE 8000
 
 # Set command
-CMD ["/app/start.sh"]
+CMD ["/app/docker-start.sh"]
