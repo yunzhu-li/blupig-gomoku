@@ -28,4 +28,10 @@
 *.out
 *.app
 /build/
+
+# IDE
 /.idea/
+
+# Node modules
+/gui/server/node_modules/
+
