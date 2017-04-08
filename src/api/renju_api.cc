@@ -17,7 +17,7 @@
  */
 
 #include <api/renju_api.h>
-#include <ai/ai.h>
+#include <ai/ai_controller.h>
 #include <ai/utils.h>
 #include <utils/globals.h>
 #include <cstring>
@@ -43,8 +43,8 @@ bool RenjuAPI::generateMove(const char *gs_string, int ai_player_id,
     gsFromString(gs_string, gs);
 
     // Generate move
-    RenjuAI::generateMove(gs, ai_player_id, search_depth, time_limit, actual_depth,
-                          move_r, move_c, winning_player, node_count, eval_count, pm_count);
+    RenjuAIController::generateMove(gs, ai_player_id, search_depth, time_limit, actual_depth,
+                                    move_r, move_c, winning_player, node_count, eval_count, pm_count);
 
     // Release memory
     delete[] gs;

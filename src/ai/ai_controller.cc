@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ai/ai.h>
+#include <ai/ai_controller.h>
 #include <ai/eval.h>
 #include <ai/negamax.h>
 #include <ai/utils.h>
 #include <utils/globals.h>
 #include <cstring>
 
-void RenjuAI::generateMove(const char *gs, int player, int search_depth, int time_limit,
+void RenjuAIController::generateMove(const char *gs, int player, int search_depth, int time_limit,
                            int *actual_depth, int *move_r, int *move_c, int *winning_player,
                            unsigned int *node_count, unsigned int *eval_count, unsigned int *pm_count) {
     // Check arguments
