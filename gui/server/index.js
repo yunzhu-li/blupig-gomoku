@@ -35,7 +35,7 @@ function start() {
     var player = req.query.p;
 
     // Build command
-    var cmd = 'renju';
+    var cmd = 'gomoku';
     if (typeof state !== 'undefined' && state.length > 0) cmd += ' -s ' + state;
     if (typeof player !== 'undefined' && player.length > 0) cmd += ' -p ' + player;
 

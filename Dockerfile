@@ -1,8 +1,8 @@
-FROM node:8-alpine
+# Build container
+FROM alpine
 
-# Copy code & configuration
+# Copy code
 COPY . /app
-COPY docker-nginx.conf /etc/nginx/nginx.conf
 
 # Install packages and build program then remove building toolchain
 RUN apk --no-cache add nginx alpine-sdk cmake bash && \
@@ -11,6 +11,19 @@ RUN apk --no-cache add nginx alpine-sdk cmake bash && \
     cmake .. && \
     make install && \
     apk del --no-cache alpine-sdk cmake
+
+# Runtime container
+FROM node:8-alpine
+
+# Copy code & configuration
+COPY . /app
+COPY docker-nginx.conf /etc/nginx/nginx.conf
+
+# Copy built binary from build container
+COPY --from=0 /app/build/gomoku /bin/gomoku
+
+# Install nginx
+RUN apk --no-cache add nginx
 
 # Install node.js dependencies
 RUN cd /app/gui/server && npm install

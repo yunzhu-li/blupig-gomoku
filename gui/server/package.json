@@ -1,12 +1,12 @@
 {
-  "name": "blupig-server",
-  "version": "0.0.1",
+  "name": "blupig-gomoku-server",
+  "version": "0.0.2",
   "scripts": {
     "start": "node ."
   },
   "dependencies": {
-    "express": ">=4.14.0",
-    "cors": ">=2.8.1"
+    "express": ">=4.16.2",
+    "cors": ">=2.8.4"
   },
   "license": "GPL-3.0"
 }

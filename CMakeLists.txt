@@ -36,23 +36,23 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 # Main executable
-add_executable(renju ${SRC})
+add_executable(gomoku ${SRC})
 
 # Profiling executable
 if (ENABLE_PROFILING)
     set(CMAKE_BUILD_TYPE Debug)
-    add_executable(renju_prof ${SRC})
-    set_target_properties(renju_prof PROPERTIES COMPILE_FLAGS "-pg")
-    set_target_properties(renju_prof PROPERTIES LINK_FLAGS "-pg")
+    add_executable(gomoku_prof ${SRC})
+    set_target_properties(gomoku_prof PROPERTIES COMPILE_FLAGS "-pg")
+    set_target_properties(gomoku_prof PROPERTIES LINK_FLAGS "-pg")
 endif()
 
 # Test executable
 if (ENABLE_TESTING)
-    add_executable(renju_test ${SRC} ${SRC_TEST})
-    set_target_properties(renju_test PROPERTIES COMPILE_FLAGS "-D BLUPIG_TEST")
+    add_executable(gomoku_test ${SRC} ${SRC_TEST})
+    set_target_properties(gomoku_test PROPERTIES COMPILE_FLAGS "-D BLUPIG_TEST")
     find_package(Threads)
-    target_link_libraries(renju_test ${CMAKE_THREAD_LIBS_INIT})
+    target_link_libraries(gomoku_test ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 # Allow installing using 'make install'
-install(TARGETS renju DESTINATION bin)
+install(TARGETS gomoku DESTINATION bin)
