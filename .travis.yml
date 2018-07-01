@@ -12,23 +12,23 @@ compiler:
   - gcc
 
 install:
-  - if [ "$CXX" = "g++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
-  - if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="clang++-3.7" CC="clang-3.7"; fi
+  - if [ "$CXX" = "g++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="g++-7" CC="gcc-7"; fi
+  - if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="clang++-5.0" CC="clang-5.0"; fi
 
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise-3.7
+      - llvm-toolchain-trusty-5.0
     packages:
-      - gcc-4.9
-      - g++-4.9
-      - clang-3.7
+      - gcc-7
+      - g++-7
+      - clang-5.0
 
 script:
   - mkdir build
   - cd build
   - cmake .. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=YES
   - make
-  - ./renju test
-  - ./renju_test
+  - ./gomoku test
+  - ./gomoku_test

@@ -24,12 +24,19 @@ console.log('Start listening...');
 start();
 
 function start() {
+  const corsOptions = {
+    origin: 'https://apps.yunzhu.li',
+  }
+
   var app = express();
   app.use(cors());
 
-  // Serve '/move'
-  app.get('/move', function (req, server_resp) {
+  app.get('/status', function (req, res) {
+    res.send('ok');
+  });
 
+  // Compute move
+  app.get('/move', function (req, res) {
     // Get query parameters
     var state = req.query.s;
     var player = req.query.p;
@@ -42,9 +49,8 @@ function start() {
     // Execute command
     exec(cmd, function(error, stdout, stderr) {
       // Write response
-      server_resp.write(stdout);
-      // server_resp.write(stderr);
-      server_resp.end();
+      res.write(stdout);
+      res.end();
     });
   });
   app.listen(8001);

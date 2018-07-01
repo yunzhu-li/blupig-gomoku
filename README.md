@@ -1,11 +1,16 @@
-blupig
+blupig-gomoku
 ------
 
 ![blupig](gui/client/assets/blupig.jpg "blupig")
 
-master [![Build Status](https://travis-ci.org/yunzhu-li/blupig.svg?branch=master)](https://travis-ci.org/yunzhu-li/blupig) &nbsp; dev [![Build Status](https://travis-ci.org/yunzhu-li/blupig.svg?branch=dev)](https://travis-ci.org/yunzhu-li/blupig)
+[![Build Status](https://travis-ci.org/yunzhu-li/blupig-gomoku.svg?branch=master)](https://travis-ci.org/yunzhu-li/blupig-gomoku)
 
-A Renju (連珠, 五子棋, Gomoku, Five in a Row) AI with a custom `heuristic negamax` algorithm with `α-β pruning` and built-in rules and cut-offs, written in `C++`.
+A Gomoku (五子棋, Five in a Row) AI with a custom `heuristic negamax` algorithm with `alpha-beta pruning` and built-in rules and cut-offs, written in `C++`.
+
+It provides:
+  - A REST API (used by the [HTML client](gui))
+  - A CLI interface
+  - The stdin / stdout based [protocol](http://petr.lastovicka.sweb.cz/protocl2en.htm) used in Gomocup
 
 Currently runs single-threaded, supports only `Gomoku` rules, future plans:
 - MCTS with parallelization
@@ -23,7 +28,7 @@ This application is available as a docker image `yunzhu/blupig-gomoku`.
 
 - Run:
   ```
-  docker run -d --rm -p 8000:8000 -e SERVER_URI="http://<server-ip>:8000" yunzhu/blupig-gomoku
+  docker run -d --rm -p 8000:8000 -e SERVER_URI="http://<server-ip>:8000" yunzhu/gomoku
   ```
 
 - Access `http://<server-ip>:8000` in your browser.
