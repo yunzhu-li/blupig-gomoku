@@ -32,7 +32,13 @@ This application is available as a docker image `yunzhu/blupig-gomoku`.
   ```
   docker run -d --rm -p 8000:8000 -e SERVER_URI="http://<server-ip>:8000" yunzhu/gomoku
   ```
+  Access `http://<server-ip>:8000` in your browser.
 
-- Access `http://<server-ip>:8000` in your browser.
+  or
+  ```
+  docker build -t gomoku .
+  docker run -d --rm -p 8000:8000" gomoku
+  ```
+  Access `http://127.0.0.1:8000` in your browser.
 
 - Play!
