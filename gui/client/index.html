@@ -102,6 +102,9 @@
               No data available.
             </div>
           </div>
+
+          <!-- GitHub Button -->
+          <a href="https://ainize.ai"><img src="./assets/ainize.svg" style="margin-top: -11px; margin-left: 1px;"></a>
         </div>
       </div>
     </div>
@@ -110,7 +113,7 @@
   <script>
     // Script: Game display control, input and message
     // Configurations
-    var api_base_url = 'http://192.168.99.100:8000';
+    var api_base_url = window.location.href;
 
     // Preset graphics
     var svg_lines = [
@@ -401,7 +404,7 @@
 
     // Sends status to backend
     function sendGameStatus(board, ai_player) {
-      var req_url = api_base_url + '/move?s=' + board + '&p=' + ai_player;
+      var req_url = api_base_url + 'move?s=' + board + '&p=' + ai_player;
 
       $.get(req_url, function(data) {
         processResponse(data);

@@ -17,19 +17,13 @@
  */
 
 var express = require('express');
-var cors = require('cors');
 var exec = require('child_process').exec;
 
 console.log('Start listening...');
 start();
 
 function start() {
-  const corsOptions = {
-    origin: 'https://apps.yunzhu.li',
-  }
-
   var app = express();
-  app.use(cors());
 
   app.get('/status', function (req, res) {
     res.send('ok');
