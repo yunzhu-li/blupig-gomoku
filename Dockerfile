@@ -13,7 +13,7 @@ RUN apk --no-cache add nginx alpine-sdk cmake bash && \
     apk del --no-cache alpine-sdk cmake
 
 # Runtime container
-FROM node:8-alpine
+FROM node:16-alpine
 
 # Copy code & configuration
 COPY . /app
